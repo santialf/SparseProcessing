@@ -1,9 +1,11 @@
 # SparseProcessing
 
 # Compile:
-cmake -B build
+mkdir build && cd build
 
-cmake --build build
+cmake ..
+
+make
 
 # Run:
 ./build/src/run
