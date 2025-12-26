@@ -1,7 +1,8 @@
 # SparseProcessing
 
 # Compile:
-g++ src/main.cpp -o build/run
+cmake -B build
+cmake --build build
 
 # Run:
 ./build/run
