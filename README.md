@@ -9,3 +9,9 @@ make
 
 # Run:
 ./build/src/run
+
+# Repository objective:
+- read sparse matrix in .mtx format
+- convert sparse matrix into compressed formats (CSR, CSC, COO, BlockedEll)
+- reorder sparse matrix (RCM, SlashBurn, Metis, BOBA, Nested Dissection)
+- output should be reordered matrix
