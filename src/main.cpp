@@ -1,6 +1,6 @@
 #include <iostream>
-// #include "mmio.c"
-// #include "smsh.c"
+#include "mmio.c"
+#include "smsh.c"
 
 
 int main(int argc, char* argv[]) {
