@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 extern "C" {
 #include "mmio.h"
@@ -9,6 +10,26 @@ struct matrixStructure {
     int num_cols;
     int nz;
 };
+
+struct COO {
+    int row;
+    int col;
+    double val;
+};
+
+void readMtxCoordinates(FILE* f, std::vector<COO>& entries, const int &nz){
+    int row, col;
+    double val;
+    for (int i = 0; i < nz; i++) {
+        if (fscanf(f, "%d %d %lf", &row, &col, &val) != 3) {
+            std::cerr << "Error reading MTX entry at index " << i << "\n";
+            exit(1);
+        }
+
+        // Convert from 1-based to 0-based indexing
+        entries.push_back({row - 1, col - 1, val});
+    }
+}
 
 int main(int argc, char* argv[]) {
 
@@ -45,6 +66,10 @@ int main(int argc, char* argv[]) {
         printf("Could not read matrix dimensions.\n");
         exit(1);
     }
+
+    std::vector<COO> entries;
+    readMtxCoordinates(f, entries, mtx.nz);
+    
 
     std::cout << "mtx rows: " << mtx.num_rows << "\n";
     std::cout << "mtx cols: " << mtx.num_cols << "\n";
