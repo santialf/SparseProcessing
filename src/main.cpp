@@ -4,6 +4,12 @@ extern "C" {
 #include "mmio.h"
 }
 
+struct matrixStructure {
+    int num_rows;
+    int num_cols;
+    int nz;
+};
+
 int main(int argc, char* argv[]) {
 
     // TODO:
@@ -12,7 +18,7 @@ int main(int argc, char* argv[]) {
     // fill-in missing information
 
     if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " matrix.mtx\n";
+        std::cerr << "Usage: " << argv[0] << " <mtx file>\n";
         return 1;
     }
 
@@ -26,19 +32,23 @@ int main(int argc, char* argv[]) {
 
     // Read mtx header
     MM_typecode matcode;
-    if (mm_read_banner(f, &matcode) != 0)
+    if (mm_read_banner(f, &matcode))
     {
         printf("Could not process Matrix Market banner.\n");
         exit(1);
     }
 
     // Read mtx dimensions
-    int ret_code, A_num_rows, A_num_cols, nz;
-    if ((ret_code = mm_read_mtx_crd_size(f, &A_num_rows, &A_num_cols, &nz)) != 0)
+    matrixStructure mtx;
+    if (mm_read_mtx_crd_size(f, &mtx.num_rows, &mtx.num_cols, &mtx.nz))
     {
         printf("Could not read matrix dimensions.\n");
         exit(1);
     }
+
+    std::cout << "mtx rows: " << mtx.num_rows << "\n";
+    std::cout << "mtx cols: " << mtx.num_cols << "\n";
+    std::cout << "mtx nz: " << mtx.nz << "\n";
 
     return 0;
 }

@@ -8,7 +8,7 @@ cmake ..
 make
 
 # Run:
-./build/src/run
+./build/src/executable <mtx file>
 
 # Repository objective:
 - read sparse matrix in .mtx format
