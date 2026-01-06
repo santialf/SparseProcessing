@@ -1,23 +1,28 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
-extern "C" {
+extern "C" 
+{
 #include "mmio.h"
 }
 
-struct matrixStructure {
+struct matrixStructure 
+{
     int num_rows;
     int num_cols;
     int nz;
 };
 
-struct COO {
+struct COO 
+{
     int row;
     int col;
     double val;
 };
 
-COO readMtxLine(FILE* f, MM_typecode matcode){
+COO readMtxLine(FILE* f, MM_typecode matcode)
+{
     int row, col;
     double val;
     if (mm_is_pattern(matcode)) {
@@ -41,7 +46,8 @@ COO readMtxLine(FILE* f, MM_typecode matcode){
     return COO{row - 1, col - 1, val};
 }
 
-void readMtxCoordinates(FILE* f, MM_typecode matcode, std::vector<COO>& entries, int nz){
+void readMtxCoordinates(FILE* f, MM_typecode matcode, std::vector<COO>& entries, int nz)
+{
     for (int i = 0; i < nz; i++) {
         COO coordinate = readMtxLine(f, matcode);
         entries.push_back(coordinate);
@@ -56,21 +62,30 @@ void printCOO(const std::vector<COO>& entries)
 {
     for (size_t i = 0; i < entries.size(); ++i) {
         std::cout << "Entry " << i << ": "
-                  << "row = " << entries[i].row
-                  << ", col = " << entries[i].col
-                  << ", val = " << entries[i].val
+                  << entries[i].row << " "
+                  << entries[i].col << " "
+                  << entries[i].val
                   << "\n";
     }
 }
 
-int main(int argc, char* argv[]) {
+void sortCOO(std::vector<COO>& entries)
+{
+    std::sort(entries.begin(), entries.end(),
+        [](const COO& a, const COO& b) {
+            if (a.row != b.row)
+                return a.row < b.row;
+            return a.col < b.col;
+        });
+}
 
+int main(int argc, char* argv[]) 
+{
     // TODO:
-    // properly read matrix information into structure
-    // fill-in missing information
-    // if not matrix and not sparse, give error
-    // confirm if its being properly printed
+    // confirm if its being properly read
     // implement reading of complex values
+    // Find best structure for CSR
+    // convert COO to CSR
 
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <mtx file>\n";
@@ -108,11 +123,14 @@ int main(int argc, char* argv[]) {
 
     std::vector<COO> entries;
     readMtxCoordinates(f, matcode, entries, mtx.nz);
+    sortCOO(entries);
 
     std::cout << "mtx rows: " << mtx.num_rows << "\n";
     std::cout << "mtx cols: " << mtx.num_cols << "\n";
     std::cout << "mtx nz: " << mtx.nz << "\n";
     printCOO(entries);
+
+    // build CSR
 
     return 0;
 }
