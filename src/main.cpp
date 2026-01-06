@@ -29,6 +29,8 @@ COO readMtxLine(FILE* f, MM_typecode matcode){
     } 
     else if (mm_is_complex(matcode)) {
         // TO BE IMPLEMENTED
+        std::cerr << "Matrix with complex numbers to be implemented...\n";
+        exit(1);
     }
     else {
         if (fscanf(f, "%d %d %lf", &row, &col, &val) != 3) {
@@ -79,7 +81,7 @@ int main(int argc, char* argv[]) {
     FILE *f;
     if ((f = fopen(argv[1], "r")) == NULL)
     {
-        printf("Could not locate the matrix file. Please make sure the pathname is valid.\n");
+        std::cerr << "Could not locate the matrix file. Please make sure the pathname is valid.\n";
         exit(1);
     }
 
@@ -87,7 +89,12 @@ int main(int argc, char* argv[]) {
     MM_typecode matcode;
     if (mm_read_banner(f, &matcode))
     {
-        printf("Could not process Matrix Market banner.\n");
+        std::cerr << "Could not process Matrix Market banner.\n";
+        exit(1);
+    }
+
+    if (!mm_is_matrix(matcode) || !mm_is_coordinate(matcode)) {
+        std::cerr << "Input must be a sparse Matrix Market matrix (coordinate format).\n";
         exit(1);
     }
 
@@ -95,7 +102,7 @@ int main(int argc, char* argv[]) {
     matrixStructure mtx;
     if (mm_read_mtx_crd_size(f, &mtx.num_rows, &mtx.num_cols, &mtx.nz))
     {
-        printf("Could not read matrix dimensions.\n");
+        std::cerr << "Could not read matrix dimensions.\n";
         exit(1);
     }
 
