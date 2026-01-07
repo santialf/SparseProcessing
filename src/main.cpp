@@ -103,6 +103,24 @@ void convertCOOToCSR(const std::vector<COO>& coo, CSR& csr, const int nrows)
     }
 }
 
+void printCSR(const CSR& csr)
+{
+    std::cout << "row_ptr: ";
+    for (int v : csr.row_ptr)
+        std::cout << v << " ";
+    std::cout << "\n";
+
+    std::cout << "col_idx: ";
+    for (int v : csr.col_idx)
+        std::cout << v << " ";
+    std::cout << "\n";
+
+    std::cout << "values : ";
+    for (double v : csr.values)
+        std::cout << v << " ";
+    std::cout << "\n";
+}
+
 int main(int argc, char* argv[]) 
 {
     // TODO:
@@ -156,6 +174,7 @@ int main(int argc, char* argv[])
     std::cout << "mtx cols: " << mtx.num_cols << "\n";
     std::cout << "mtx nz: " << mtx.nz << "\n";
     printCOO(entries);
+    printCSR(csr);
 
     // build CSR
 
