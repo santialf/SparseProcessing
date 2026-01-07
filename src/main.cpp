@@ -14,11 +14,18 @@ struct matrixStructure
     int nz;
 };
 
-struct COO 
+struct COO
 {
     int row;
     int col;
     double val;
+};
+
+struct CSR 
+{
+    std::vector<int> row_ptr;
+    std::vector<int> col_idx;
+    std::vector<double> values;
 };
 
 COO readMtxLine(FILE* f, MM_typecode matcode)
@@ -79,6 +86,11 @@ void sortCOO(std::vector<COO>& entries)
         });
 }
 
+void convertCOOToCSR(const std::vector<COO>& entries, std::vector<CSR>& csr) 
+{
+
+}
+
 int main(int argc, char* argv[]) 
 {
     // TODO:
@@ -124,6 +136,9 @@ int main(int argc, char* argv[])
     std::vector<COO> entries;
     readMtxCoordinates(f, matcode, entries, mtx.nz);
     sortCOO(entries);
+
+    std::vector<CSR> csr;
+    convertCOOToCSR(entries, csr);
 
     std::cout << "mtx rows: " << mtx.num_rows << "\n";
     std::cout << "mtx cols: " << mtx.num_cols << "\n";
