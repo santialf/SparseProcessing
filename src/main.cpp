@@ -11,7 +11,8 @@ struct matrixStructure
 {
     int num_rows;
     int num_cols;
-    int nz;
+    int entries;
+    int nz = 0;
 };
 
 struct COO
@@ -32,20 +33,25 @@ COO readMtxLine(FILE* f, MM_typecode matcode)
 {
     int row, col;
     double val;
-    if (mm_is_pattern(matcode)) {
-        if (fscanf(f, "%d %d", &row, &col) != 2) {
+    if (mm_is_pattern(matcode)) 
+    {
+        if (fscanf(f, "%d %d", &row, &col) != 2) 
+        {
             std::cerr << "Error reading MTX entry at index\n";
             exit(1);
         }
         val = 1;
     } 
-    else if (mm_is_complex(matcode)) {
+    else if (mm_is_complex(matcode)) 
+    {
         // TO BE IMPLEMENTED
         std::cerr << "Matrix with complex numbers to be implemented...\n";
         exit(1);
     }
-    else {
-        if (fscanf(f, "%d %d %lf", &row, &col, &val) != 3) {
+    else 
+    {
+        if (fscanf(f, "%d %d %lf", &row, &col, &val) != 3) 
+        {
             std::cerr << "Error reading MTX entry at index\n";
             exit(1);
         }
@@ -53,15 +59,19 @@ COO readMtxLine(FILE* f, MM_typecode matcode)
     return COO{row - 1, col - 1, val};
 }
 
-void readMtxCoordinates(FILE* f, MM_typecode matcode, std::vector<COO>& entries, const int nz)
+void readMtxCoordinates(FILE* f, MM_typecode matcode, std::vector<COO>& entries, matrixStructure& mtx)
 {
-    for (int i = 0; i < nz; i++) {
+    for (int i = 0; i < mtx.entries; i++) 
+    {
         COO coordinate = readMtxLine(f, matcode);
         entries.push_back(coordinate);
 
-        if (mm_is_symmetric(matcode) && coordinate.row != coordinate.col){
+        if (mm_is_symmetric(matcode) && coordinate.row != coordinate.col)
+        {
             entries.push_back({coordinate.col, coordinate.row, coordinate.val});
+            mtx.nz++;
         }
+        mtx.nz++;
     }
 }
 
@@ -79,9 +89,12 @@ void printCOO(const std::vector<COO>& entries)
 void sortCOO(std::vector<COO>& entries)
 {
     std::sort(entries.begin(), entries.end(),
-        [](const COO& a, const COO& b) {
-            if (a.row != b.row)
+        [](const COO& a, const COO& b) 
+        {
+            if (a.row != b.row) 
+            {
                 return a.row < b.row;
+            }
             return a.col < b.col;
         });
 }
@@ -132,10 +145,10 @@ int main(int argc, char* argv[])
     // TODO:
     // confirm if its being properly read
     // implement reading of complex values
-    // Find best structure for CSR
-    // convert COO to CSR
+    // add unit tests
 
-    if (argc != 2) {
+    if (argc != 2) 
+    {
         std::cerr << "Usage: " << argv[0] << " <mtx file>\n";
         return 1;
     }
@@ -163,14 +176,14 @@ int main(int argc, char* argv[])
 
     // Read mtx dimensions
     matrixStructure mtx;
-    if (mm_read_mtx_crd_size(f, &mtx.num_rows, &mtx.num_cols, &mtx.nz))
+    if (mm_read_mtx_crd_size(f, &mtx.num_rows, &mtx.num_cols, &mtx.entries))
     {
         std::cerr << "Could not read matrix dimensions.\n";
         exit(1);
     }
 
     std::vector<COO> entries;
-    readMtxCoordinates(f, matcode, entries, mtx.nz);
+    readMtxCoordinates(f, matcode, entries, mtx);
     sortCOO(entries);
 
     CSR csr;
