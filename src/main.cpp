@@ -67,11 +67,11 @@ void readMtxCoordinates(FILE* f, MM_typecode matcode, std::vector<COO>& entries,
 
 void printCOO(const std::vector<COO>& entries)
 {
-    for (size_t i = 0; i < entries.size(); ++i) {
-        std::cout << "Entry " << i << ": "
-                  << entries[i].row << " "
-                  << entries[i].col << " "
-                  << entries[i].val
+    for (const auto& e : entries) 
+    {
+        std::cout << e.row << " "
+                  << e.col << " "
+                  << e.val
                   << "\n";
     }
 }
@@ -106,18 +106,24 @@ void convertCOOToCSR(const std::vector<COO>& coo, CSR& csr, const int nrows)
 void printCSR(const CSR& csr)
 {
     std::cout << "row_ptr: ";
-    for (int v : csr.row_ptr)
+    for (int v : csr.row_ptr) 
+    {
         std::cout << v << " ";
+    }
     std::cout << "\n";
 
     std::cout << "col_idx: ";
-    for (int v : csr.col_idx)
+    for (int v : csr.col_idx) 
+    {
         std::cout << v << " ";
+    }   
     std::cout << "\n";
 
     std::cout << "values : ";
-    for (double v : csr.values)
+    for (double v : csr.values) 
+    {
         std::cout << v << " ";
+    }
     std::cout << "\n";
 }
 
