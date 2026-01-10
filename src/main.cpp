@@ -2,142 +2,12 @@
 #include <vector>
 #include <algorithm>
 
+#include "csr.hpp"
+#include "coo.hpp"
+
 extern "C" 
 {
 #include "mmio.h"
-}
-
-struct matrixStructure 
-{
-    int num_rows;
-    int num_cols;
-    int entries;
-    int nz = 0;
-};
-
-struct COO
-{
-    int row;
-    int col;
-    double val;
-};
-
-struct CSR 
-{
-    std::vector<int> row_ptr;
-    std::vector<int> col_idx;
-    std::vector<double> values;
-};
-
-COO readMtxLine(FILE* f, MM_typecode matcode)
-{
-    int row, col;
-    double val;
-    if (mm_is_pattern(matcode)) 
-    {
-        if (fscanf(f, "%d %d", &row, &col) != 2) 
-        {
-            std::cerr << "Error reading MTX entry at index\n";
-            exit(1);
-        }
-        val = 1;
-    } 
-    else if (mm_is_complex(matcode)) 
-    {
-        // TO BE IMPLEMENTED
-        std::cerr << "Matrix with complex numbers to be implemented...\n";
-        exit(1);
-    }
-    else 
-    {
-        if (fscanf(f, "%d %d %lf", &row, &col, &val) != 3) 
-        {
-            std::cerr << "Error reading MTX entry at index\n";
-            exit(1);
-        }
-    }
-    return COO{row - 1, col - 1, val};
-}
-
-void readMtxCoordinates(FILE* f, MM_typecode matcode, std::vector<COO>& entries, matrixStructure& mtx)
-{
-    for (int i = 0; i < mtx.entries; i++) 
-    {
-        COO coordinate = readMtxLine(f, matcode);
-        entries.push_back(coordinate);
-
-        if (mm_is_symmetric(matcode) && coordinate.row != coordinate.col)
-        {
-            entries.push_back({coordinate.col, coordinate.row, coordinate.val});
-            mtx.nz++;
-        }
-        mtx.nz++;
-    }
-}
-
-void printCOO(const std::vector<COO>& entries)
-{
-    for (const auto& e : entries) 
-    {
-        std::cout << e.row << " "
-                  << e.col << " "
-                  << e.val
-                  << "\n";
-    }
-}
-
-void sortCOO(std::vector<COO>& entries)
-{
-    std::sort(entries.begin(), entries.end(),
-        [](const COO& a, const COO& b) 
-        {
-            if (a.row != b.row) 
-            {
-                return a.row < b.row;
-            }
-            return a.col < b.col;
-        });
-}
-
-void convertCOOToCSR(const std::vector<COO>& coo, CSR& csr, const int nrows)
-{
-    csr.row_ptr.assign(nrows + 1, 0);
-
-    for (const auto& e : coo) 
-    {
-        csr.col_idx.push_back(e.col);
-        csr.values.push_back(e.val);
-        csr.row_ptr[e.row + 1]++;
-    }
-
-    for (int i = 0; i < nrows; i++)
-    {
-        csr.row_ptr[i + 1] += csr.row_ptr[i];
-    }
-}
-
-void printCSR(const CSR& csr)
-{
-    std::cout << "row_ptr: ";
-    for (int v : csr.row_ptr) 
-    {
-        std::cout << v << " ";
-    }
-    std::cout << "\n";
-
-    std::cout << "col_idx: ";
-    for (int v : csr.col_idx) 
-    {
-        std::cout << v << " ";
-    }   
-    std::cout << "\n";
-
-    std::cout << "values : ";
-    for (double v : csr.values) 
-    {
-        std::cout << v << " ";
-    }
-    std::cout << "\n";
 }
 
 int main(int argc, char* argv[]) 
@@ -194,8 +64,6 @@ int main(int argc, char* argv[])
     std::cout << "mtx nz: " << mtx.nz << "\n";
     printCOO(entries);
     printCSR(csr);
-
-    // build CSR
 
     return 0;
 }
