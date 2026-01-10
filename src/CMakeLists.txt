@@ -7,10 +7,16 @@ add_library(my_lib
     mmio.c
 )
 
+target_include_directories(my_lib
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 add_executable(executable
     main.cpp
 )
 
 target_link_libraries(executable
-    my_lib
+    PRIVATE
+        my_lib
 )

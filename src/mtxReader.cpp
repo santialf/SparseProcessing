@@ -3,12 +3,6 @@
 #include <algorithm>
 
 #include "mtxReader.hpp"
-#include "coo.hpp"
-
-extern "C" 
-{
-#include "mmio.h"
-}
 
 COO readMtxLine(FILE* f, MM_typecode matcode)
 {

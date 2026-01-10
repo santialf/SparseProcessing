@@ -4,11 +4,6 @@
 
 #include "coo.hpp"
 
-extern "C" 
-{
-#include "mmio.h"
-}
-
 void printCOO(const std::vector<COO>& entries)
 {
     for (const auto& e : entries) 

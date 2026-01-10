@@ -17,7 +17,6 @@ int main(int argc, char* argv[])
     // confirm if its being properly read
     // implement reading of complex values
     // add unit tests
-    // change 'include' to 'import'
     // change structs into classes
     // add representative set of matrices
 

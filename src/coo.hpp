@@ -4,11 +4,6 @@
 #include <vector>
 #include <algorithm>
 
-extern "C" 
-{
-#include "mmio.h"
-}
-
 struct COO
 {
     int row;
