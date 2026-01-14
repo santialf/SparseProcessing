@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <tuple>
 
 #include "coo.hpp"
 
@@ -19,5 +20,5 @@ struct matrixStructure
     int nz = 0;
 };
 
-COO readMtxLine(FILE* f, MM_typecode matcode);
-void readMtxCoordinates(FILE* f, MM_typecode matcode, std::vector<COO>& entries, matrixStructure& mtx);
+std::tuple<int, int, double> readMtxLine(FILE* f, MM_typecode matcode);
+void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& entries, matrixStructure& mtx);

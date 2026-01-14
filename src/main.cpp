@@ -19,6 +19,12 @@ int main(int argc, char* argv[])
     // add unit tests
     // change structs into classes
     // add representative set of matrices
+    // change COO struct to SoA instead of AoS
+    // use enum in mtx reader?
+
+    //VIP:
+    //fix converting coo to class, fix sorting
+    //fix how reading from mtx to coo class
 
     if (argc != 2) 
     {
@@ -55,11 +61,11 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    std::vector<COO> entries;
+    COO entries(mtx.num_rows, mtx.num_cols);
     readMtxCoordinates(f, matcode, entries, mtx);
     sortCOO(entries);
 
-    CSR csr;
+    CSR csr(mtx.num_rows, mtx.num_cols);
     convertCOOToCSR(entries, csr, mtx.num_rows);
 
     std::cout << "mtx rows: " << mtx.num_rows << "\n";

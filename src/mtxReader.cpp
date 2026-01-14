@@ -1,10 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <tuple>
 
 #include "mtxReader.hpp"
 
-COO readMtxLine(FILE* f, MM_typecode matcode)
+std::tuple<int, int, double> readMtxLine(FILE* f, MM_typecode matcode)
 {
     int row, col;
     double val;
@@ -31,19 +32,23 @@ COO readMtxLine(FILE* f, MM_typecode matcode)
             exit(1);
         }
     }
-    return COO{row - 1, col - 1, val};
+    return {row - 1, col - 1, val};
 }
 
-void readMtxCoordinates(FILE* f, MM_typecode matcode, std::vector<COO>& entries, matrixStructure& mtx)
+void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& entries, matrixStructure& mtx)
 {
     for (int i = 0; i < mtx.entries; i++) 
     {
-        COO coordinate = readMtxLine(f, matcode);
-        entries.push_back(coordinate);
+        auto [row, col, val] = readMtxLine(f, matcode);
+        entries.row_indices.push_back(row);
+        entries.col_indices.push_back(col);
+        entries.values.push_back(val);
 
-        if (mm_is_symmetric(matcode) && coordinate.row != coordinate.col)
+        if (mm_is_symmetric(matcode) && row != col)
         {
-            entries.push_back({coordinate.col, coordinate.row, coordinate.val});
+            entries.row_indices.push_back(row);
+            entries.col_indices.push_back(col);
+            entries.values.push_back(val);
             mtx.nz++;
         }
         mtx.nz++;

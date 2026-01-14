@@ -4,15 +4,15 @@
 
 #include "csr.hpp"
 
-void convertCOOToCSR(const std::vector<COO>& coo, CSR& csr, const int nrows)
+void convertCOOToCSR(const COO& coo, CSR& csr, const int nrows)
 {
     csr.row_ptr.assign(nrows + 1, 0);
 
-    for (const auto& e : coo) 
+    for (int i=0; i<coo.values.size(); i++) 
     {
-        csr.col_idx.push_back(e.col);
-        csr.values.push_back(e.val);
-        csr.row_ptr[e.row + 1]++;
+        csr.col_indices.push_back(coo.col_indices[i]);
+        csr.values.push_back(coo.values[i]);
+        csr.row_ptr[coo.row_indices[i] + 1]++;
     }
 
     for (int i = 0; i < nrows; i++)
@@ -31,7 +31,7 @@ void printCSR(const CSR& csr)
     std::cout << "\n";
 
     std::cout << "col_idx: ";
-    for (int v : csr.col_idx) 
+    for (int v : csr.col_indices) 
     {
         std::cout << v << " ";
     }   
