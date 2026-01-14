@@ -32,5 +32,5 @@ public:
     }
 };
 
-void printCOO(const COO& entries);
-void sortCOO(COO& entries);
+void printCOO(const COO& coo);
+void sortCOO(COO& coo);

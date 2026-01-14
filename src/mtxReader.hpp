@@ -21,4 +21,4 @@ struct matrixStructure
 };
 
 std::tuple<int, int, double> readMtxLine(FILE* f, MM_typecode matcode);
-void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& entries, matrixStructure& mtx);
+void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& coo, matrixStructure& mtx);

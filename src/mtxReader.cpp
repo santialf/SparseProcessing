@@ -35,20 +35,20 @@ std::tuple<int, int, double> readMtxLine(FILE* f, MM_typecode matcode)
     return {row - 1, col - 1, val};
 }
 
-void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& entries, matrixStructure& mtx)
+void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& coo, matrixStructure& mtx)
 {
     for (int i = 0; i < mtx.entries; i++) 
     {
         auto [row, col, val] = readMtxLine(f, matcode);
-        entries.row_indices.push_back(row);
-        entries.col_indices.push_back(col);
-        entries.values.push_back(val);
+        coo.row_indices.push_back(row);
+        coo.col_indices.push_back(col);
+        coo.values.push_back(val);
 
         if (mm_is_symmetric(matcode) && row != col)
         {
-            entries.row_indices.push_back(row);
-            entries.col_indices.push_back(col);
-            entries.values.push_back(val);
+            coo.row_indices.push_back(row);
+            coo.col_indices.push_back(col);
+            coo.values.push_back(val);
             mtx.nz++;
         }
         mtx.nz++;

@@ -60,17 +60,17 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    COO entries(mtx.num_rows, mtx.num_cols);
-    readMtxCoordinates(f, matcode, entries, mtx);
-    sortCOO(entries);
+    COO coo(mtx.num_rows, mtx.num_cols);
+    readMtxCoordinates(f, matcode, coo, mtx);
+    sortCOO(coo);
 
     CSR csr(mtx.num_rows, mtx.num_cols);
-    convertCOOToCSR(entries, csr, mtx.num_rows);
+    convertCOOToCSR(coo, csr, mtx.num_rows);
 
     std::cout << "mtx rows: " << mtx.num_rows << "\n";
     std::cout << "mtx cols: " << mtx.num_cols << "\n";
     std::cout << "mtx nz: " << mtx.nz << "\n";
-    printCOO(entries);
+    printCOO(coo);
     printCSR(csr);
 
     return 0;

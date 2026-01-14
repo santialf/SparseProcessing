@@ -5,29 +5,29 @@
 
 #include "coo.hpp"
 
-void printCOO(const COO& entries)
+void printCOO(const COO& coo)
 {
-    for (int i=0; i<entries.values.size(); i++)
+    for (int i=0; i<coo.values.size(); i++)
     {
-        std::cout << entries.row_indices[i] << " "
-                  << entries.col_indices[i] << " "
-                  << entries.values[i]
+        std::cout << coo.row_indices[i] << " "
+                  << coo.col_indices[i] << " "
+                  << coo.values[i]
                   << "\n";
     }
 }
 
-void sortCOO(COO& entries)
+void sortCOO(COO& coo)
 {
-    const std::size_t n = entries.values.size();
+    const std::size_t n = coo.values.size();
 
     std::vector<std::size_t> perm(n);
     std::iota(perm.begin(), perm.end(), 0);
 
     std::sort(perm.begin(), perm.end(),
         [&](std::size_t a, std::size_t b) {
-            if (entries.row_indices[a] != entries.row_indices[b])
-                return entries.row_indices[a] < entries.row_indices[b];
-            return entries.col_indices[a] < entries.col_indices[b];
+            if (coo.row_indices[a] != coo.row_indices[b])
+                return coo.row_indices[a] < coo.row_indices[b];
+            return coo.col_indices[a] < coo.col_indices[b];
         });
 
     // Step 2: Apply permutation to all arrays
@@ -40,7 +40,7 @@ void sortCOO(COO& entries)
         v.swap(tmp);
     };
 
-    apply_perm(entries.row_indices);
-    apply_perm(entries.col_indices);
-    apply_perm(entries.values);
+    apply_perm(coo.row_indices);
+    apply_perm(coo.col_indices);
+    apply_perm(coo.values);
 }
