@@ -16,18 +16,36 @@ void COO::print()
     }
 }
 
-void sortCOO(COO& coo)
+void COO::add_entry(size_t row, size_t col, const double& value) 
 {
-    const std::size_t n = coo.values.size();
+    if (row >= num_rows || col >= num_cols) 
+    {
+        throw std::out_of_range("COO: index out of bounds");
+    }
+    row_indices.push_back(row);
+    col_indices.push_back(col);
+    values.push_back(value);
+}
+
+void COO::clear() 
+{
+    row_indices.clear();
+    col_indices.clear();
+    values.clear();
+}
+
+void COO::sort()
+{
+    const std::size_t n = values.size();
 
     std::vector<std::size_t> perm(n);
     std::iota(perm.begin(), perm.end(), 0);
 
     std::sort(perm.begin(), perm.end(),
         [&](std::size_t a, std::size_t b) {
-            if (coo.row_indices[a] != coo.row_indices[b])
-                return coo.row_indices[a] < coo.row_indices[b];
-            return coo.col_indices[a] < coo.col_indices[b];
+            if (row_indices[a] != row_indices[b])
+                return row_indices[a] < row_indices[b];
+            return col_indices[a] < col_indices[b];
         });
 
     // Step 2: Apply permutation to all arrays
@@ -40,7 +58,7 @@ void sortCOO(COO& coo)
         v.swap(tmp);
     };
 
-    apply_perm(coo.row_indices);
-    apply_perm(coo.col_indices);
-    apply_perm(coo.values);
+    apply_perm(row_indices);
+    apply_perm(col_indices);
+    apply_perm(values);
 }

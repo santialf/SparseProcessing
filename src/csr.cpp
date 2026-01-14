@@ -44,3 +44,10 @@ void CSR::print()
     }
     std::cout << "\n";
 }
+
+void CSR::clear() 
+{
+    row_ptr.clear();
+    col_indices.clear();
+    values.clear();
+}

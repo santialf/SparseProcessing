@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
     COO coo(mtx.num_rows, mtx.num_cols);
     readMtxCoordinates(f, matcode, coo, mtx);
-    sortCOO(coo);
+    coo.sort();
 
     CSR csr(mtx.num_rows, mtx.num_cols);
     convertCOOToCSR(coo, csr, mtx.num_rows);

@@ -16,25 +16,8 @@ public:
     COO(size_t rows_, size_t cols_)
     : num_rows(rows_), num_cols(cols_) {}
 
-    void add_entry(size_t row, size_t col, const double& value) 
-    {
-        if (row >= num_rows || col >= num_cols) 
-        {
-            throw std::out_of_range("COO: index out of bounds");
-        }
-        row_indices.push_back(row);
-        col_indices.push_back(col);
-        values.push_back(value);
-    }
-
-    void clear() 
-    {
-        row_indices.clear();
-        col_indices.clear();
-        values.clear();
-    }
-
+    void add_entry(size_t, size_t, const double&);
+    void sort();
+    void clear();
     void print();
 };
-
-void sortCOO(COO& coo);

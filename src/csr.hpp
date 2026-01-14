@@ -18,13 +18,7 @@ public:
     CSR(size_t rows_, size_t cols_)
     : num_rows(rows_), num_cols(cols_) {}
 
-    void clear() 
-    {
-        row_ptr.clear();
-        col_indices.clear();
-        values.clear();
-    }
-
+    void clear();
     void print();
 };
 
