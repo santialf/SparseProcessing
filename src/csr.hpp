@@ -18,12 +18,14 @@ public:
     CSR(size_t rows_, size_t cols_)
     : num_rows(rows_), num_cols(cols_) {}
 
-    void clear() {
+    void clear() 
+    {
         row_ptr.clear();
         col_indices.clear();
         values.clear();
     }
+
+    void print();
 };
 
 void convertCOOToCSR(const COO& coo, CSR& csr, const int nrows);
-void printCSR(const CSR& csr);

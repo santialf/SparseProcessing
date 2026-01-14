@@ -19,11 +19,7 @@ int main(int argc, char* argv[])
     // add unit tests
     // add representative set of matrices
     // use enum in mtx reader?
-    // add push back method to coo and csr class
-
-    //VIP:
-    //fix converting coo to class, fix sorting
-    //fix how reading from mtx to coo class
+    // add template to coo and csr classes
 
     if (argc != 2) 
     {
@@ -70,8 +66,8 @@ int main(int argc, char* argv[])
     std::cout << "mtx rows: " << mtx.num_rows << "\n";
     std::cout << "mtx cols: " << mtx.num_cols << "\n";
     std::cout << "mtx nz: " << mtx.nz << "\n";
-    printCOO(coo);
-    printCSR(csr);
+    coo.print();
+    csr.print();
 
     return 0;
 }

@@ -40,15 +40,11 @@ void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& coo, matrixStructure&
     for (int i = 0; i < mtx.entries; i++) 
     {
         auto [row, col, val] = readMtxLine(f, matcode);
-        coo.row_indices.push_back(row);
-        coo.col_indices.push_back(col);
-        coo.values.push_back(val);
+        coo.add_entry(row, col, val);
 
         if (mm_is_symmetric(matcode) && row != col)
         {
-            coo.row_indices.push_back(row);
-            coo.col_indices.push_back(col);
-            coo.values.push_back(val);
+            coo.add_entry(row, col, val);
             mtx.nz++;
         }
         mtx.nz++;

@@ -21,24 +21,24 @@ void convertCOOToCSR(const COO& coo, CSR& csr, const int nrows)
     }
 }
 
-void printCSR(const CSR& csr)
+void CSR::print()
 {
     std::cout << "row_ptr: ";
-    for (int v : csr.row_ptr) 
+    for (int v : row_ptr) 
     {
         std::cout << v << " ";
     }
     std::cout << "\n";
 
     std::cout << "col_idx: ";
-    for (int v : csr.col_indices) 
+    for (int v : col_indices) 
     {
         std::cout << v << " ";
     }   
     std::cout << "\n";
 
     std::cout << "values : ";
-    for (double v : csr.values) 
+    for (double v : values) 
     {
         std::cout << v << " ";
     }

@@ -5,13 +5,13 @@
 
 #include "coo.hpp"
 
-void printCOO(const COO& coo)
+void COO::print()
 {
-    for (int i=0; i<coo.values.size(); i++)
+    for (int i=0; i<values.size(); i++)
     {
-        std::cout << coo.row_indices[i] << " "
-                  << coo.col_indices[i] << " "
-                  << coo.values[i]
+        std::cout << row_indices[i] << " "
+                  << col_indices[i] << " "
+                  << values[i]
                   << "\n";
     }
 }
