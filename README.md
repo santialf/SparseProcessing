@@ -10,7 +10,7 @@ make
 
 
 # Run:
-./build/src/executable <mtx file>
+./build/src/executable matrices/< mtx file >
 
 # Repository objective:
 - read sparse matrix in .mtx format

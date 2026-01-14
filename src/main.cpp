@@ -17,10 +17,9 @@ int main(int argc, char* argv[])
     // confirm if its being properly read
     // implement reading of complex values
     // add unit tests
-    // change structs into classes
     // add representative set of matrices
-    // change COO struct to SoA instead of AoS
     // use enum in mtx reader?
+    // add push back method to coo and csr class
 
     //VIP:
     //fix converting coo to class, fix sorting
