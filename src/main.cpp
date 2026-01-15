@@ -47,23 +47,22 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    matrixStructure mtx;
-    if (mm_read_mtx_crd_size(f, &mtx.num_rows, &mtx.num_cols, &mtx.entries))
+    int num_rows, num_cols, num_entries;
+    if (mm_read_mtx_crd_size(f, &num_rows, &num_cols, &num_entries))
     {
         std::cerr << "Could not read matrix dimensions.\n";
         exit(1);
     }
 
-    COO coo(mtx.num_rows, mtx.num_cols);
+    COO coo(num_rows, num_cols);
     readMtxCoordinates(f, matcode, coo);
     coo.sort();
 
-    CSR csr(mtx.num_rows, mtx.num_cols);
+    CSR csr(num_rows, num_cols);
     convertCOOToCSR(coo, csr);
 
-    std::cout << "mtx rows: " << mtx.num_rows << "\n";
-    std::cout << "mtx cols: " << mtx.num_cols << "\n";
-    std::cout << "mtx nz: " << mtx.nz << "\n";
+    std::cout << "mtx rows: " << num_rows << "\n";
+    std::cout << "mtx cols: " << num_cols << "\n";
     coo.print();
     csr.print();
 
