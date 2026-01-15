@@ -4,9 +4,9 @@
 
 #include "csr.hpp"
 
-void convertCOOToCSR(const COO& coo, CSR& csr, const int nrows)
+void convertCOOToCSR(const COO& coo, CSR& csr)
 {
-    csr.row_ptr.assign(nrows + 1, 0);
+    csr.row_ptr.assign(csr.num_rows + 1, 0);
 
     for (int i=0; i<coo.values.size(); i++) 
     {
@@ -15,7 +15,7 @@ void convertCOOToCSR(const COO& coo, CSR& csr, const int nrows)
         csr.row_ptr[coo.row_indices[i] + 1]++;
     }
 
-    for (int i = 0; i < nrows; i++)
+    for (int i = 0; i < csr.num_rows; i++)
     {
         csr.row_ptr[i + 1] += csr.row_ptr[i];
     }

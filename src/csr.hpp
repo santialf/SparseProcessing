@@ -22,4 +22,4 @@ public:
     void print();
 };
 
-void convertCOOToCSR(const COO& coo, CSR& csr, const int nrows);
+void convertCOOToCSR(const COO&, CSR&);

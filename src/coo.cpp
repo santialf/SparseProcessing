@@ -48,7 +48,6 @@ void COO::sort()
             return col_indices[a] < col_indices[b];
         });
 
-    // Step 2: Apply permutation to all arrays
     auto apply_perm = [&](auto& v) {
         using V = typename std::decay<decltype(v)>::type::value_type;
         std::vector<V> tmp;

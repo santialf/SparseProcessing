@@ -42,13 +42,11 @@ int main(int argc, char* argv[])
         std::cerr << "Could not process Matrix Market banner.\n";
         exit(1);
     }
-
     if (!mm_is_matrix(matcode) || !mm_is_coordinate(matcode)) {
         std::cerr << "Input must be a sparse Matrix Market matrix (coordinate format).\n";
         exit(1);
     }
 
-    // Read mtx dimensions
     matrixStructure mtx;
     if (mm_read_mtx_crd_size(f, &mtx.num_rows, &mtx.num_cols, &mtx.entries))
     {
@@ -57,11 +55,11 @@ int main(int argc, char* argv[])
     }
 
     COO coo(mtx.num_rows, mtx.num_cols);
-    readMtxCoordinates(f, matcode, coo, mtx);
+    readMtxCoordinates(f, matcode, coo);
     coo.sort();
 
     CSR csr(mtx.num_rows, mtx.num_cols);
-    convertCOOToCSR(coo, csr, mtx.num_rows);
+    convertCOOToCSR(coo, csr);
 
     std::cout << "mtx rows: " << mtx.num_rows << "\n";
     std::cout << "mtx cols: " << mtx.num_cols << "\n";

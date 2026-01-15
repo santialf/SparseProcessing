@@ -5,18 +5,12 @@
 
 #include "mtxReader.hpp"
 
-std::tuple<int, int, double> readMtxLine(FILE* f, MM_typecode matcode)
+bool readMtxLine(FILE* f, MM_typecode matcode, size_t& row, size_t& col, double& val)
 {
-    int row, col;
-    double val;
+    bool success = false;
     if (mm_is_pattern(matcode)) 
     {
-        if (fscanf(f, "%d %d", &row, &col) != 2) 
-        {
-            std::cerr << "Error reading MTX entry at index\n";
-            exit(1);
-        }
-        val = 1;
+        success = fscanf(f, "%zu %zu", &row, &col) == 2;
     } 
     else if (mm_is_complex(matcode)) 
     {
@@ -26,27 +20,22 @@ std::tuple<int, int, double> readMtxLine(FILE* f, MM_typecode matcode)
     }
     else 
     {
-        if (fscanf(f, "%d %d %lf", &row, &col, &val) != 3) 
-        {
-            std::cerr << "Error reading MTX entry at index\n";
-            exit(1);
-        }
+        success = fscanf(f, "%zu %zu %lf", &row, &col, &val) == 3;
     }
-    return {row - 1, col - 1, val};
+    return success;
 }
 
-void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& coo, matrixStructure& mtx)
+void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& coo)
 {
-    for (int i = 0; i < mtx.entries; i++) 
+    size_t row, col;
+    double val = 1.0;
+    while (readMtxLine(f, matcode, row, col, val))
     {
-        auto [row, col, val] = readMtxLine(f, matcode);
-        coo.add_entry(row, col, val);
+        coo.add_entry(row - 1, col - 1, val);
 
         if (mm_is_symmetric(matcode) && row != col)
         {
-            coo.add_entry(row, col, val);
-            mtx.nz++;
+            coo.add_entry(col - 1, row - 1, val);
         }
-        mtx.nz++;
     }
 }
