@@ -4,8 +4,10 @@
 
 #include "convertFormats.hpp"
 
-void convertCOOToCSR(const COO& coo, CSR& csr)
+CSR convertCOOToCSR(const COO& coo)
 {
+    CSR csr(coo.num_rows, coo.num_cols);
+
     csr.row_ptr.assign(csr.num_rows + 1, 0);
 
     for (int i=0; i<coo.values.size(); i++) 
@@ -19,4 +21,6 @@ void convertCOOToCSR(const COO& coo, CSR& csr)
     {
         csr.row_ptr[i + 1] += csr.row_ptr[i];
     }
+
+    return csr;
 }

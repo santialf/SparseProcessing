@@ -25,8 +25,17 @@ bool readMtxLine(FILE* f, MM_typecode matcode, size_t& row, size_t& col, double&
     return success;
 }
 
-void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& coo)
+COO readMtxCoordinates(FILE* f, MM_typecode matcode)
 {
+    int num_rows, num_cols, num_entries;
+    if (mm_read_mtx_crd_size(f, &num_rows, &num_cols, &num_entries))
+    {
+        std::cerr << "Could not read matrix dimensions.\n";
+        exit(1);
+    }
+
+    COO coo(num_rows, num_cols);
+
     size_t row, col;
     double val = 1.0;
     while (readMtxLine(f, matcode, row, col, val))
@@ -38,4 +47,6 @@ void readMtxCoordinates(FILE* f, MM_typecode matcode, COO& coo)
             coo.add_entry(col - 1, row - 1, val);
         }
     }
+
+    return coo;
 }

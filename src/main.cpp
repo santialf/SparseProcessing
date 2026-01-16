@@ -48,22 +48,13 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    int num_rows, num_cols, num_entries;
-    if (mm_read_mtx_crd_size(f, &num_rows, &num_cols, &num_entries))
-    {
-        std::cerr << "Could not read matrix dimensions.\n";
-        exit(1);
-    }
-
-    COO coo(num_rows, num_cols);
-    readMtxCoordinates(f, matcode, coo);
+    COO coo = readMtxCoordinates(f, matcode);
     coo.sort();
 
-    CSR csr(num_rows, num_cols);
-    convertCOOToCSR(coo, csr);
+    CSR csr = convertCOOToCSR(coo);
 
-    std::cout << "mtx rows: " << num_rows << "\n";
-    std::cout << "mtx cols: " << num_cols << "\n";
+    std::cout << "mtx rows: " << coo.num_rows << "\n";
+    std::cout << "mtx cols: " << coo.num_cols << "\n";
     coo.print();
     csr.print();
 

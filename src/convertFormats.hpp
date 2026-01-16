@@ -7,4 +7,4 @@
 #include <coo.hpp>
 #include <csr.hpp>
 
-void convertCOOToCSR(const COO&, CSR&);
+CSR convertCOOToCSR(const COO&);
