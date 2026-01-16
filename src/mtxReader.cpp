@@ -25,15 +25,32 @@ bool readMtxLine(FILE* f, MM_typecode matcode, size_t& row, size_t& col, double&
     return success;
 }
 
-COO readMtxCoordinates(FILE* f, MM_typecode matcode)
-{
+std::tuple<int, int> validateMtx(FILE* f, MM_typecode matcode) {
+    
+    if (!mm_is_matrix(matcode) || !mm_is_coordinate(matcode)) {
+        std::cerr << "Input must be a sparse Matrix Market matrix (coordinate format).\n";
+        exit(1);
+    }
+
     int num_rows, num_cols, num_entries;
     if (mm_read_mtx_crd_size(f, &num_rows, &num_cols, &num_entries))
     {
         std::cerr << "Could not read matrix dimensions.\n";
         exit(1);
     }
+    return {num_rows, num_cols};
+}
 
+COO readMtxCoordinates(FILE* f)
+{
+    MM_typecode matcode;
+    if (mm_read_banner(f, &matcode))
+    {
+        std::cerr << "Could not process Matrix Market banner.\n";
+        exit(1);
+    }
+    
+    auto [num_rows, num_cols] = validateMtx(f, matcode);
     COO coo(num_rows, num_cols);
 
     size_t row, col;

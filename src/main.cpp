@@ -36,19 +36,7 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    // Read mtx header
-    MM_typecode matcode;
-    if (mm_read_banner(f, &matcode))
-    {
-        std::cerr << "Could not process Matrix Market banner.\n";
-        exit(1);
-    }
-    if (!mm_is_matrix(matcode) || !mm_is_coordinate(matcode)) {
-        std::cerr << "Input must be a sparse Matrix Market matrix (coordinate format).\n";
-        exit(1);
-    }
-
-    COO coo = readMtxCoordinates(f, matcode);
+    COO coo = readMtxCoordinates(f);
     coo.sort();
 
     CSR csr = convertCOOToCSR(coo);

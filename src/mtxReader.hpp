@@ -13,4 +13,4 @@ extern "C"
 }
 
 bool readMtxLine(FILE*, MM_typecode, size_t&, size_t&, double&);
-COO readMtxCoordinates(FILE*, MM_typecode);
+COO readMtxCoordinates(FILE*);
