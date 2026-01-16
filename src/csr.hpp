@@ -18,9 +18,6 @@ public:
     CSR(size_t rows_, size_t cols_)
     : num_rows(rows_), num_cols(cols_) {}
 
-    void convertCOOToCSR(const COO&);
     void clear();
     void print();
 };
-
-//void convertCOOToCSR(const COO&, CSR&);

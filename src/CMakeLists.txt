@@ -3,6 +3,7 @@ project(executable LANGUAGES C CXX)
 add_library(my_lib
     coo.cpp
     csr.cpp
+    convertFormats.cpp
     mtxReader.cpp
     mmio.c
 )

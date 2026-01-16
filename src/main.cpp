@@ -5,6 +5,7 @@
 #include "csr.hpp"
 #include "coo.hpp"
 #include "mtxReader.hpp"
+#include "convertFormats.hpp"
 
 extern "C" 
 {
