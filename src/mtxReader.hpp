@@ -4,6 +4,8 @@
 #include <vector>
 #include <algorithm>
 #include <tuple>
+#include <variant>
+#include <complex>
 
 #include "coo.hpp"
 
@@ -12,13 +14,32 @@ extern "C"
 #include "mmio.h"
 }
 
+enum class MtxValueType 
+{
+    Pattern,
+    Real,
+    Integer,
+    Complex
+};
+
+enum class MtxSymmetry
+{
+    symmetric,
+    unsymmetric
+};
+
+struct MtxStructure {
+    MtxValueType valueType;
+    MtxSymmetry symmetryType;
+};
+
 template<typename valueType>
-bool readMtxLine(FILE*, MM_typecode, size_t&, size_t&, valueType&);
+bool readMtxLine(FILE*, MtxValueType, size_t&, size_t&, valueType&);
 
 std::tuple<int, int> validateMtx(FILE*, MM_typecode); 
 
 template<typename valueType>
-COO<valueType> readMtx(FILE*, MM_typecode, int, int);
+COO<valueType> readMtx(FILE*, MtxStructure, int, int);
 
 template<typename valueType>
 COO<valueType> readCoo(FILE*);

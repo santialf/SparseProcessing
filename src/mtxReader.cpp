@@ -2,24 +2,33 @@
 #include <vector>
 #include <algorithm>
 #include <tuple>
+#include <type_traits>
 
 #include "mtxReader.hpp"
 
 template<typename valueType>
-bool readMtxLine(FILE* f, MM_typecode matcode, size_t& row, size_t& col, valueType& val)
+bool readMtxLine(FILE* f, MtxValueType mtx_type, size_t& row, size_t& col, valueType& val)
 {
     bool success = false;
-    if (mm_is_pattern(matcode)) 
+    if (mtx_type == MtxValueType::Pattern) 
     {
         success = fscanf(f, "%zu %zu", &row, &col) == 2;
     } 
-    else if (mm_is_complex(matcode)) 
+    else if (mtx_type == MtxValueType::Complex) 
     {
         // TO BE IMPLEMENTED
-        std::cerr << "Matrix with complex numbers to be implemented...\n";
-        exit(1);
+        //double real, imag;
+        //success = fscanf(f, "%zu %zu %lf %lf", &row, &col, &real, &imag) == 4;
+        //if constexpr (is_complex<valueType>::value)
+        //{
+          //  val = valueType(real, imag);
+        //}
     }
-    else 
+    else if (mtx_type == MtxValueType::Integer)
+    {
+        success = fscanf(f, "%zu %zu %d", &row, &col, &val) == 3;
+    }
+    else if (mtx_type == MtxValueType::Real)
     {
         success = fscanf(f, "%zu %zu %lf", &row, &col, &val) == 3;
     }
@@ -43,17 +52,17 @@ std::tuple<int, int> validateMtx(FILE* f, MM_typecode matcode) {
 }
 
 template<typename valueType>
-COO<valueType> readMtx(FILE* f, MM_typecode matcode, int num_rows, int num_cols) 
+COO<valueType> readMtx(FILE* f, MtxStructure mtx, int num_rows, int num_cols) 
 {
     COO<valueType> coo(num_rows, num_cols);
     size_t row, col;
-    valueType val = 1.0;
+    valueType val;
 
-    while (readMtxLine(f, matcode, row, col, val))
+    while (readMtxLine(f, mtx.valueType, row, col, val))
     {
         coo.add_entry(row - 1, col - 1, val);
 
-        if (mm_is_symmetric(matcode) && row != col)
+        if (mtx.symmetryType == MtxSymmetry::symmetric && row != col)
         {
             coo.add_entry(col - 1, row - 1, val);
         }
@@ -73,6 +82,29 @@ COO<valueType> readCoo(FILE* f)
     }
 
     auto [num_rows, num_cols] = validateMtx(f, matcode);
-    
-    return readMtx<valueType>(f, matcode, num_rows, num_cols);
+
+    MtxStructure mtx;
+    if (mm_is_symmetric(matcode))
+    {
+        mtx.symmetryType = MtxSymmetry::symmetric;
+    }
+
+    if (mm_is_pattern(matcode)) 
+    {
+        mtx.valueType = MtxValueType::Pattern;
+    } 
+    else if (mm_is_complex(matcode)) 
+    {
+        mtx.valueType = MtxValueType::Complex;
+    }
+    else if (mm_is_integer(matcode))
+    {
+        mtx.valueType = MtxValueType::Integer;
+    }
+    else if (mm_is_real(matcode)) 
+    {
+        mtx.valueType = MtxValueType::Real;
+    }
+
+    return readMtx<valueType>(f, mtx, num_rows, num_cols);
 }
