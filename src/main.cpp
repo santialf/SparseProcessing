@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    COO coo = readMtxCoordinates(f);
+    COO coo = readCoo(f);
     coo.sort();
 
     CSR csr = convertCOOToCSR(coo);

@@ -13,4 +13,6 @@ extern "C"
 }
 
 bool readMtxLine(FILE*, MM_typecode, size_t&, size_t&, double&);
-COO readMtxCoordinates(FILE*);
+std::tuple<int, int> validateMtx(FILE*, MM_typecode); 
+COO readMtx(FILE*, MM_typecode, int, int);
+COO readCoo(FILE*);

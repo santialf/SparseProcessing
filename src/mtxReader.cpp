@@ -41,20 +41,12 @@ std::tuple<int, int> validateMtx(FILE* f, MM_typecode matcode) {
     return {num_rows, num_cols};
 }
 
-COO readMtxCoordinates(FILE* f)
+COO readMtx(FILE* f, MM_typecode matcode, int num_rows, int num_cols) 
 {
-    MM_typecode matcode;
-    if (mm_read_banner(f, &matcode))
-    {
-        std::cerr << "Could not process Matrix Market banner.\n";
-        exit(1);
-    }
-    
-    auto [num_rows, num_cols] = validateMtx(f, matcode);
     COO coo(num_rows, num_cols);
-
     size_t row, col;
     double val = 1.0;
+
     while (readMtxLine(f, matcode, row, col, val))
     {
         coo.add_entry(row - 1, col - 1, val);
@@ -66,4 +58,18 @@ COO readMtxCoordinates(FILE* f)
     }
 
     return coo;
+}
+
+COO readCoo(FILE* f)
+{
+    MM_typecode matcode;
+    if (mm_read_banner(f, &matcode))
+    {
+        std::cerr << "Could not process Matrix Market banner.\n";
+        exit(1);
+    }
+
+    auto [num_rows, num_cols] = validateMtx(f, matcode);
+    
+    return readMtx(f, matcode, num_rows, num_cols);
 }
