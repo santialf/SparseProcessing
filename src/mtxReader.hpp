@@ -14,5 +14,14 @@ extern "C"
 
 bool readMtxLine(FILE*, MM_typecode, size_t&, size_t&, double&);
 std::tuple<int, int> validateMtx(FILE*, MM_typecode); 
-COO readMtx(FILE*, MM_typecode, int, int);
-COO readCoo(FILE*);
+
+template<typename valueType>
+COO<valueType> readMtx(FILE*, MM_typecode, int, int);
+
+template<typename valueType>
+COO<valueType> readCoo(FILE*);
+
+#ifdef _HEADER_ONLY
+#include "mtxReader.cpp"
+#endif
+

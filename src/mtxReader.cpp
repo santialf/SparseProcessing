@@ -41,9 +41,10 @@ std::tuple<int, int> validateMtx(FILE* f, MM_typecode matcode) {
     return {num_rows, num_cols};
 }
 
-COO readMtx(FILE* f, MM_typecode matcode, int num_rows, int num_cols) 
+template<typename valueType>
+COO<valueType> readMtx(FILE* f, MM_typecode matcode, int num_rows, int num_cols) 
 {
-    COO coo(num_rows, num_cols);
+    COO<valueType> coo(num_rows, num_cols);
     size_t row, col;
     double val = 1.0;
 
@@ -60,7 +61,8 @@ COO readMtx(FILE* f, MM_typecode matcode, int num_rows, int num_cols)
     return coo;
 }
 
-COO readCoo(FILE* f)
+template<typename valueType>
+COO<valueType> readCoo(FILE* f)
 {
     MM_typecode matcode;
     if (mm_read_banner(f, &matcode))
@@ -71,5 +73,5 @@ COO readCoo(FILE* f)
 
     auto [num_rows, num_cols] = validateMtx(f, matcode);
     
-    return readMtx(f, matcode, num_rows, num_cols);
+    return readMtx<valueType>(f, matcode, num_rows, num_cols);
 }

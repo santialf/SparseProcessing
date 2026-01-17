@@ -8,7 +8,7 @@
 #include <csr.hpp>
 
 template<typename valueType>
-CSR<valueType> convertCOOToCSR(const COO&);
+CSR<valueType> convertCOOToCSR(const COO<valueType>&);
 
 #ifdef _HEADER_ONLY
 #include "convertFormats.cpp"

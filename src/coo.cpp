@@ -5,7 +5,8 @@
 
 #include "coo.hpp"
 
-void COO::print()
+template<typename valueType>
+void COO<valueType>::print()
 {
     for (int i=0; i<values.size(); i++)
     {
@@ -16,7 +17,8 @@ void COO::print()
     }
 }
 
-void COO::add_entry(size_t row, size_t col, const double& value) 
+template<typename valueType>
+void COO<valueType>::add_entry(size_t row, size_t col, const valueType& value) 
 {
     if (row >= num_rows || col >= num_cols) 
     {
@@ -27,14 +29,16 @@ void COO::add_entry(size_t row, size_t col, const double& value)
     values.push_back(value);
 }
 
-void COO::clear() 
+template<typename valueType>
+void COO<valueType>::clear() 
 {
     row_indices.clear();
     col_indices.clear();
     values.clear();
 }
 
-void COO::sort()
+template<typename valueType>
+void COO<valueType>::sort()
 {
     const std::size_t n = values.size();
 
