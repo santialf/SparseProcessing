@@ -38,8 +38,7 @@ int main(int argc, char* argv[])
 
     COO coo = readCoo(f);
     coo.sort();
-
-    CSR csr = convertCOOToCSR(coo);
+    CSR<int> csr = convertCOOToCSR<int>(coo);
 
     std::cout << "mtx rows: " << coo.num_rows << "\n";
     std::cout << "mtx cols: " << coo.num_cols << "\n";

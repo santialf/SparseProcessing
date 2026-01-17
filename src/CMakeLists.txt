@@ -2,8 +2,8 @@ project(executable LANGUAGES C CXX)
 
 add_library(my_lib
     coo.cpp
-    csr.cpp
-    convertFormats.cpp
+    #csr.cpp
+    #convertFormats.cpp
     mtxReader.cpp
     mmio.c
 )
@@ -11,6 +11,10 @@ add_library(my_lib
 target_include_directories(my_lib
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_compile_definitions(my_lib
+    PUBLIC _HEADER_ONLY
 )
 
 add_executable(executable

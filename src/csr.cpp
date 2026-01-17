@@ -4,7 +4,8 @@
 
 #include "csr.hpp"
 
-void CSR::print()
+template<typename valueType>
+void CSR<valueType>::print()
 {
     std::cout << "row_ptr: ";
     for (int v : row_ptr) 
@@ -28,7 +29,8 @@ void CSR::print()
     std::cout << "\n";
 }
 
-void CSR::clear() 
+template<typename valueType>
+void CSR<valueType>::clear() 
 {
     row_ptr.clear();
     col_indices.clear();

@@ -4,13 +4,14 @@
 
 #include "convertFormats.hpp"
 
-CSR convertCOOToCSR(const COO& coo)
+template<typename valueType>
+CSR<valueType> convertCOOToCSR(const COO& coo)
 {
-    CSR csr(coo.num_rows, coo.num_cols);
+    CSR<valueType> csr(coo.num_rows, coo.num_cols);
 
     csr.row_ptr.assign(csr.num_rows + 1, 0);
 
-    for (int i=0; i<coo.values.size(); i++) 
+    for (int i=0; i<coo.values.size(); i++)
     {
         csr.col_indices.push_back(coo.col_indices[i]);
         csr.values.push_back(coo.values[i]);
