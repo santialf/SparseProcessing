@@ -20,7 +20,6 @@ int main(int argc, char* argv[])
     // add unit tests
     // add representative set of matrices
     // use enum in mtx reader?
-    // add template to coo and csr classes
 
     if (argc != 2) 
     {

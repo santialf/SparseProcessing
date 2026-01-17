@@ -12,7 +12,9 @@ extern "C"
 #include "mmio.h"
 }
 
-bool readMtxLine(FILE*, MM_typecode, size_t&, size_t&, double&);
+template<typename valueType>
+bool readMtxLine(FILE*, MM_typecode, size_t&, size_t&, valueType&);
+
 std::tuple<int, int> validateMtx(FILE*, MM_typecode); 
 
 template<typename valueType>

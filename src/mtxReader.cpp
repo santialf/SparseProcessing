@@ -5,7 +5,8 @@
 
 #include "mtxReader.hpp"
 
-bool readMtxLine(FILE* f, MM_typecode matcode, size_t& row, size_t& col, double& val)
+template<typename valueType>
+bool readMtxLine(FILE* f, MM_typecode matcode, size_t& row, size_t& col, valueType& val)
 {
     bool success = false;
     if (mm_is_pattern(matcode)) 
@@ -46,7 +47,7 @@ COO<valueType> readMtx(FILE* f, MM_typecode matcode, int num_rows, int num_cols)
 {
     COO<valueType> coo(num_rows, num_cols);
     size_t row, col;
-    double val = 1.0;
+    valueType val = 1.0;
 
     while (readMtxLine(f, matcode, row, col, val))
     {
