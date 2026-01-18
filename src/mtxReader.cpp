@@ -1,6 +1,6 @@
 #include "mtxReader.hpp"
 
-std::tuple<int, int, MtxSymmetry> validateMtx(FILE* f) {
+std::tuple<int, int, MtxStructure> parseMtx(FILE* f) {
    
     MM_typecode matcode;
     if (mm_read_banner(f, &matcode))
@@ -21,17 +21,51 @@ std::tuple<int, int, MtxSymmetry> validateMtx(FILE* f) {
         exit(1);
     }
 
-    MtxSymmetry symmetryType;
-    if (mm_is_symmetric(matcode))
+    MtxStructure mtx;
+    if (mm_is_coordinate(matcode))
     {
-        symmetryType = MtxSymmetry::symmetric;
-    } 
-    else 
+        mtx.storage = MtxStorage::sparse;
+    }
+    else if (mm_is_array(matcode))
     {
-        symmetryType = MtxSymmetry::unsymmetric;
+        mtx.storage = MtxStorage::dense;
     }
 
-    return {num_rows, num_cols, symmetryType};
+    if (mm_is_general(matcode))
+    {
+        mtx.symmetry = MtxSymmetry::general;
+    } 
+    else if (mm_is_symmetric(matcode))
+    {
+        mtx.symmetry = MtxSymmetry::symmetric;
+    }
+    else if (mm_is_skew(matcode))
+    {
+        mtx.symmetry = MtxSymmetry::skewed;
+    }
+    else if (mm_is_hermitian(matcode))
+    {
+        mtx.symmetry = MtxSymmetry::hermitian;
+    }
+
+    if (mm_is_real(matcode))
+    {
+        mtx.mtx_type = MtxValueType::real;
+    }
+    else if (mm_is_integer(matcode))
+    {
+        mtx.mtx_type = MtxValueType::integer;
+    }
+    else if (mm_is_pattern(matcode))
+    {
+        mtx.mtx_type = MtxValueType::pattern;
+    }
+    else if (mm_is_complex(matcode))
+    {
+        mtx.mtx_type = MtxValueType::complex;
+    }
+
+    return {num_rows, num_cols, mtx};
 }
 
 bool readMtxLine(FILE* f, size_t& row, size_t& col, std::monostate& val)
@@ -60,7 +94,7 @@ bool readMtxLine(FILE* f, size_t& row, size_t& col, double& val)
 }
 
 template<typename valueType>
-COO<valueType> readMtx(FILE* f, MtxSymmetry symmetry, int num_rows, int num_cols)
+COO<valueType> readMtx(FILE* f, MtxStructure mtxStruct, int num_rows, int num_cols)
 {
     COO<valueType> coo(num_rows, num_cols);
     size_t row, col;
@@ -70,7 +104,7 @@ COO<valueType> readMtx(FILE* f, MtxSymmetry symmetry, int num_rows, int num_cols
     {
         coo.add_entry(row - 1, col - 1, val);
 
-        if (symmetry == MtxSymmetry::symmetric && row != col)
+        if (mtxStruct.symmetry == MtxSymmetry::symmetric && row != col)
         {
             coo.add_entry(col - 1, row - 1, val);
         }
@@ -82,7 +116,7 @@ COO<valueType> readMtx(FILE* f, MtxSymmetry symmetry, int num_rows, int num_cols
 template<typename valueType>
 COO<valueType> readCoo(FILE* f)
 {
-    auto [num_rows, num_cols, symmetryType] = validateMtx(f);
+    auto [num_rows, num_cols, mtxStruct] = parseMtx(f);
 
-    return readMtx<valueType>(f, symmetryType, num_rows, num_cols);
+    return readMtx<valueType>(f, mtxStruct, num_rows, num_cols);
 }

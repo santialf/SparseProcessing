@@ -1,5 +1,4 @@
 #include <numeric> 
-
 #include "coo.hpp"
 
 template<typename valueType>
@@ -9,7 +8,7 @@ void COO<valueType>::print()
     {
         std::cout << row_indices[i] << " "
                   << col_indices[i] << " "
-                  << values[i]
+                  //<< values[i]
                   << "\n";
     }
 }

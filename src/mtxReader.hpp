@@ -16,8 +16,30 @@ extern "C"
 
 enum class MtxSymmetry
 {
+    general,
     symmetric,
-    unsymmetric
+    skewed,
+    hermitian
+};
+
+enum class MtxValueType
+{
+    pattern,
+    integer,
+    real,
+    complex
+};
+
+enum class MtxStorage {
+    sparse,
+    dense
+};
+
+struct MtxStructure
+{
+    MtxSymmetry symmetry;
+    MtxValueType mtx_type;
+    MtxStorage storage;
 };
 
 bool readMtxLine(FILE*, size_t&, size_t&, std::monostate&);

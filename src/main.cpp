@@ -21,6 +21,9 @@ int main(int argc, char* argv[])
     // add unit tests
     // add representative set of matrices
     // convert FILE to streams
+    // add csc
+    // add blocked ell
+    // add converts to other formats (ex: csr to coo, csr to csc, coo to csc, ...)
 
     if (argc != 2) 
     {
@@ -36,9 +39,9 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    COO<valueType> coo = readCoo<valueType>(f);
+    auto coo = readCoo<valueType>(f);
     coo.sort();
-    CSR<valueType> csr = convertCOOToCSR(coo);
+    auto csr = convertCOOToCSR(coo);
 
     std::cout << "mtx rows: " << coo.num_rows << "\n";
     std::cout << "mtx cols: " << coo.num_cols << "\n";
