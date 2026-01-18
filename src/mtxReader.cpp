@@ -6,33 +6,29 @@
 
 #include "mtxReader.hpp"
 
-template<typename valueType>
-bool readMtxLine(FILE* f, MtxValueType mtx_type, size_t& row, size_t& col, valueType& val)
+bool readMtxLine(FILE* f, const MtxValueType& mtx_type, size_t& row, size_t& col, std::monostate& val)
 {
-    bool success = false;
-    if (mtx_type == MtxValueType::Pattern) 
-    {
-        success = fscanf(f, "%zu %zu", &row, &col) == 2;
-    } 
-    else if (mtx_type == MtxValueType::Complex) 
-    {
-        // TO BE IMPLEMENTED
-        //double real, imag;
-        //success = fscanf(f, "%zu %zu %lf %lf", &row, &col, &real, &imag) == 4;
-        //if constexpr (is_complex<valueType>::value)
-        //{
-          //  val = valueType(real, imag);
-        //}
-    }
-    else if (mtx_type == MtxValueType::Integer)
-    {
-        success = fscanf(f, "%zu %zu %d", &row, &col, &val) == 3;
-    }
-    else if (mtx_type == MtxValueType::Real)
-    {
-        success = fscanf(f, "%zu %zu %lf", &row, &col, &val) == 3;
-    }
-    return success;
+    return fscanf(f, "%zu %zu", &row, &col) == 2;
+}
+
+bool readMtxLine(FILE* f, const MtxValueType& mtx_type, size_t& row, size_t& col, std::complex<double>& val)
+{
+    double real, imag;
+    if (fscanf(f, "%zu %zu %lf %lf", &row, &col, &real, &imag) == 4)
+        return false;
+
+    val = std::complex<double>(real, imag);
+    return true;
+}
+
+bool readMtxLine(FILE* f, const MtxValueType& mtx_type, size_t& row, size_t& col, int& val)
+{
+    return fscanf(f, "%zu %zu %d", &row, &col, &val) == 3;
+}
+
+bool readMtxLine(FILE* f, const MtxValueType& mtx_type, size_t& row, size_t& col, double& val)
+{
+    return fscanf(f, "%zu %zu %lf", &row, &col, &val) == 3;
 }
 
 std::tuple<int, int> validateMtx(FILE* f, MM_typecode matcode) {
@@ -52,7 +48,7 @@ std::tuple<int, int> validateMtx(FILE* f, MM_typecode matcode) {
 }
 
 template<typename valueType>
-COO<valueType> readMtx(FILE* f, MtxStructure mtx, int num_rows, int num_cols) 
+COO<valueType> readMtx(FILE* f, const MtxStructure& mtx, int num_rows, int num_cols) 
 {
     COO<valueType> coo(num_rows, num_cols);
     size_t row, col;

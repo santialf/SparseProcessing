@@ -12,6 +12,8 @@ extern "C"
 #include "mmio.h"
 }
 
+using valueType = double;
+
 int main(int argc, char* argv[]) 
 {
     // TODO:
@@ -36,9 +38,9 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    COO<double> coo = readCoo<double>(f);
+    COO<valueType> coo = readCoo<valueType>(f);
     coo.sort();
-    CSR<double> csr = convertCOOToCSR(coo);
+    CSR<valueType> csr = convertCOOToCSR(coo);
 
     std::cout << "mtx rows: " << coo.num_rows << "\n";
     std::cout << "mtx cols: " << coo.num_cols << "\n";

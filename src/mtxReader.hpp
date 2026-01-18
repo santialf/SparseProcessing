@@ -34,12 +34,12 @@ struct MtxStructure {
 };
 
 template<typename valueType>
-bool readMtxLine(FILE*, MtxValueType, size_t&, size_t&, valueType&);
+bool readMtxLine(FILE*, const MtxStructure&, size_t&, size_t&, valueType&);
 
 std::tuple<int, int> validateMtx(FILE*, MM_typecode); 
 
 template<typename valueType>
-COO<valueType> readMtx(FILE*, MtxStructure, int, int);
+COO<valueType> readMtx(FILE*, const MtxStructure&, int, int);
 
 template<typename valueType>
 COO<valueType> readCoo(FILE*);
