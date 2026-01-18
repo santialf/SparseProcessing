@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    auto coo = readMtxToCoo<valueType>(f);
+    auto coo = readMtxToCOO<valueType>(f);
     coo.sort();
     auto csr = convertCOOToCSR(coo);
 

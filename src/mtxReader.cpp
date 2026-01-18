@@ -86,12 +86,12 @@ MtxStructure parseMtx(FILE* f)
     return mtx;
 }
 
-bool readCooLine(FILE* f, size_t& row, size_t& col)
+bool readCOOLine(FILE* f, size_t& row, size_t& col)
 {
     return fscanf(f, "%zu %zu", &row, &col) == 2;
 }
 
-bool readCooLine(FILE* f, size_t& row, size_t& col, std::complex<double>& val)
+bool readCOOLine(FILE* f, size_t& row, size_t& col, std::complex<double>& val)
 {
     double real, imag;
     if (fscanf(f, "%zu %zu %lf %lf", &row, &col, &real, &imag) != 4)
@@ -102,7 +102,7 @@ bool readCooLine(FILE* f, size_t& row, size_t& col, std::complex<double>& val)
 }
 
 template<typename valueType>
-bool readCooLine(FILE* f, size_t& row, size_t& col, valueType& val)
+bool readCOOLine(FILE* f, size_t& row, size_t& col, valueType& val)
 {
     double tmp;
     if (fscanf(f, "%zu %zu %lf", &row, &col, &tmp) != 3)
@@ -113,15 +113,15 @@ bool readCooLine(FILE* f, size_t& row, size_t& col, valueType& val)
 }
 
 template<typename valueType>
-COO<valueType> readCoo(FILE* f, const MtxStructure& mtx)
+COO<valueType> readCOO(FILE* f, const MtxStructure& mtx)
 {
     COO<valueType> coo(mtx.num_rows, mtx.num_cols);
     size_t row, col;
-    valueType val;
+    valueType val = static_cast<valueType>(1);
 
     if (mtx.type == MtxValueType::pattern)
     {
-        while (readCooLine(f, row, col))
+        while (readCOOLine(f, row, col))
         {
             coo.add_entry(row - 1, col - 1, val);
 
@@ -133,7 +133,7 @@ COO<valueType> readCoo(FILE* f, const MtxStructure& mtx)
     }
     else
     {
-        while (readCooLine(f, row, col, val))
+        while (readCOOLine(f, row, col, val))
         {
             coo.add_entry(row - 1, col - 1, val);
 
@@ -148,9 +148,9 @@ COO<valueType> readCoo(FILE* f, const MtxStructure& mtx)
 }
 
 template<typename valueType>
-COO<valueType> readMtxToCoo(FILE* f)
+COO<valueType> readMtxToCOO(FILE* f)
 {
     auto mtx = parseMtx(f);
 
-    return readCoo<valueType>(f, mtx);
+    return readCOO<valueType>(f, mtx);
 }

@@ -50,16 +50,16 @@ void parseMtxSymmetry(MtxStructure&, MM_typecode);
 void parseMtxType(MtxStructure&, MM_typecode);
 MtxStructure parseMtx(FILE*); 
 
-bool readCooLine(FILE*, size_t&, size_t&);
-bool readCooLine(FILE*, size_t&, size_t&, std::complex<double>&);
+bool readCOOLine(FILE*, size_t&, size_t&);
+bool readCOOLine(FILE*, size_t&, size_t&, std::complex<double>&);
 template<typename valueType>
-bool readCooLine(FILE*, size_t&, size_t&, valueType&);
+bool readCOOLine(FILE*, size_t&, size_t&, valueType&);
 
 template<typename valueType>
-COO<valueType> readCoo(FILE*, const MtxStructure&);
+COO<valueType> readCOO(FILE*, const MtxStructure&);
 
 template<typename valueType>
-COO<valueType> readMtxToCoo(FILE*);
+COO<valueType> readMtxToCOO(FILE*);
 
 #ifdef _HEADER_ONLY
 #include "mtxReader.cpp"
