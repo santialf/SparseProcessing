@@ -1,7 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
 #include "convertFormats.hpp"
 
 template<typename valueType>

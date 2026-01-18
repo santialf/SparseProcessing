@@ -1,9 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <tuple>
-#include <type_traits>
-
 #include "mtxReader.hpp"
 
 std::tuple<int, int, MtxSymmetry> validateMtx(FILE* f) {
@@ -89,5 +83,6 @@ template<typename valueType>
 COO<valueType> readCoo(FILE* f)
 {
     auto [num_rows, num_cols, symmetryType] = validateMtx(f);
+
     return readMtx<valueType>(f, symmetryType, num_rows, num_cols);
 }

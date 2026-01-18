@@ -20,8 +20,10 @@ enum class MtxSymmetry
     unsymmetric
 };
 
-template<typename valueType>
-bool readMtxLine(FILE*, size_t&, size_t&, valueType&);
+bool readMtxLine(FILE*, size_t&, size_t&, std::monostate&);
+bool readMtxLine(FILE*, size_t&, size_t&, std::complex<double>&);
+bool readMtxLine(FILE*, size_t&, size_t&, int&);
+bool readMtxLine(FILE*, size_t&, size_t&, double&);
 
 std::tuple<int, int, MtxSymmetry> validateMtx(FILE*); 
 

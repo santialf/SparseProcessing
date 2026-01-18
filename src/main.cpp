@@ -18,10 +18,8 @@ int main(int argc, char* argv[])
 {
     // TODO:
     // confirm if its being properly read
-    // implement reading of complex values
     // add unit tests
     // add representative set of matrices
-    // use enum in mtx reader?
     // convert FILE to streams
 
     if (argc != 2) 
