@@ -1,6 +1,58 @@
 #include "mtxReader.hpp"
 
-std::tuple<int, int, MtxStructure> parseMtx(FILE* f) {
+void parseMtxStorage(MtxStructure& mtx, MM_typecode matcode) 
+{
+    if (mm_is_coordinate(matcode))
+    {
+        mtx.storage = MtxStorage::sparse;
+    }
+    else if (mm_is_array(matcode))
+    {
+        mtx.storage = MtxStorage::dense;
+    }
+}
+
+void parseMtxSymmetry(MtxStructure& mtx, MM_typecode matcode) 
+{
+    if (mm_is_general(matcode))
+    {
+        mtx.symmetry = MtxSymmetry::general;
+    } 
+    else if (mm_is_symmetric(matcode))
+    {
+        mtx.symmetry = MtxSymmetry::symmetric;
+    }
+    else if (mm_is_skew(matcode))
+    {
+        mtx.symmetry = MtxSymmetry::skewed;
+    }
+    else if (mm_is_hermitian(matcode))
+    {
+        mtx.symmetry = MtxSymmetry::hermitian;
+    }
+}
+
+void parseMtxType(MtxStructure& mtx, MM_typecode matcode) 
+{
+    if (mm_is_real(matcode))
+    {
+        mtx.type = MtxValueType::real;
+    }
+    else if (mm_is_integer(matcode))
+    {
+        mtx.type = MtxValueType::integer;
+    }
+    else if (mm_is_pattern(matcode))
+    {
+        mtx.type = MtxValueType::pattern;
+    }
+    else if (mm_is_complex(matcode))
+    {
+        mtx.type = MtxValueType::complex;
+    }
+}
+
+MtxStructure parseMtx(FILE* f) {
    
     MM_typecode matcode;
     if (mm_read_banner(f, &matcode))
@@ -22,50 +74,15 @@ std::tuple<int, int, MtxStructure> parseMtx(FILE* f) {
     }
 
     MtxStructure mtx;
-    if (mm_is_coordinate(matcode))
-    {
-        mtx.storage = MtxStorage::sparse;
-    }
-    else if (mm_is_array(matcode))
-    {
-        mtx.storage = MtxStorage::dense;
-    }
+    mtx.num_rows = static_cast<size_t>(num_rows);
+    mtx.num_cols = static_cast<size_t>(num_cols);
+    mtx.num_entries = static_cast<size_t>(num_entries);
+    
+    parseMtxStorage(mtx, matcode);
+    parseMtxSymmetry(mtx, matcode);
+    parseMtxType(mtx, matcode);
 
-    if (mm_is_general(matcode))
-    {
-        mtx.symmetry = MtxSymmetry::general;
-    } 
-    else if (mm_is_symmetric(matcode))
-    {
-        mtx.symmetry = MtxSymmetry::symmetric;
-    }
-    else if (mm_is_skew(matcode))
-    {
-        mtx.symmetry = MtxSymmetry::skewed;
-    }
-    else if (mm_is_hermitian(matcode))
-    {
-        mtx.symmetry = MtxSymmetry::hermitian;
-    }
-
-    if (mm_is_real(matcode))
-    {
-        mtx.mtx_type = MtxValueType::real;
-    }
-    else if (mm_is_integer(matcode))
-    {
-        mtx.mtx_type = MtxValueType::integer;
-    }
-    else if (mm_is_pattern(matcode))
-    {
-        mtx.mtx_type = MtxValueType::pattern;
-    }
-    else if (mm_is_complex(matcode))
-    {
-        mtx.mtx_type = MtxValueType::complex;
-    }
-
-    return {num_rows, num_cols, mtx};
+    return mtx;
 }
 
 bool readMtxLine(FILE* f, size_t& row, size_t& col, std::monostate& val)
@@ -94,9 +111,9 @@ bool readMtxLine(FILE* f, size_t& row, size_t& col, double& val)
 }
 
 template<typename valueType>
-COO<valueType> readMtx(FILE* f, const MtxStructure& mtxStruct, int num_rows, int num_cols)
+COO<valueType> readMtx(FILE* f, const MtxStructure& mtxStruct)
 {
-    COO<valueType> coo(num_rows, num_cols);
+    COO<valueType> coo(mtxStruct.num_rows, mtxStruct.num_cols);
     size_t row, col;
     valueType val;
 
@@ -116,7 +133,7 @@ COO<valueType> readMtx(FILE* f, const MtxStructure& mtxStruct, int num_rows, int
 template<typename valueType>
 COO<valueType> readCoo(FILE* f)
 {
-    auto [num_rows, num_cols, mtxStruct] = parseMtx(f);
+    auto mtxStruct = parseMtx(f);
 
-    return readMtx<valueType>(f, mtxStruct, num_rows, num_cols);
+    return readMtx<valueType>(f, mtxStruct);
 }
