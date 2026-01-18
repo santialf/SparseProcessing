@@ -52,7 +52,8 @@ void parseMtxType(MtxStructure& mtx, MM_typecode matcode)
     }
 }
 
-MtxStructure parseMtx(FILE* f) {
+MtxStructure parseMtx(FILE* f) 
+{
    
     MM_typecode matcode;
     if (mm_read_banner(f, &matcode))
@@ -85,55 +86,71 @@ MtxStructure parseMtx(FILE* f) {
     return mtx;
 }
 
-bool readMtxLine(FILE* f, size_t& row, size_t& col, std::monostate& val)
+bool readCooLine(FILE* f, size_t& row, size_t& col)
 {
     return fscanf(f, "%zu %zu", &row, &col) == 2;
 }
 
-bool readMtxLine(FILE* f, size_t& row, size_t& col, std::complex<double>& val)
+bool readCooLine(FILE* f, size_t& row, size_t& col, std::complex<double>& val)
 {
     double real, imag;
-    if (fscanf(f, "%zu %zu %lf %lf", &row, &col, &real, &imag) == 4)
+    if (fscanf(f, "%zu %zu %lf %lf", &row, &col, &real, &imag) != 4)
         return false;
 
     val = std::complex<double>(real, imag);
     return true;
 }
 
-bool readMtxLine(FILE* f, size_t& row, size_t& col, int& val)
+template<typename valueType>
+bool readCooLine(FILE* f, size_t& row, size_t& col, valueType& val)
 {
-    return fscanf(f, "%zu %zu %d", &row, &col, &val) == 3;
-}
+    double tmp;
+    if (fscanf(f, "%zu %zu %lf", &row, &col, &tmp) != 3)
+        return false;
 
-bool readMtxLine(FILE* f, size_t& row, size_t& col, double& val)
-{
-    return fscanf(f, "%zu %zu %lf", &row, &col, &val) == 3;
+    val = static_cast<valueType>(tmp);
+    return true;
 }
 
 template<typename valueType>
-COO<valueType> readMtx(FILE* f, const MtxStructure& mtxStruct)
+COO<valueType> readCoo(FILE* f, const MtxStructure& mtx)
 {
-    COO<valueType> coo(mtxStruct.num_rows, mtxStruct.num_cols);
+    COO<valueType> coo(mtx.num_rows, mtx.num_cols);
     size_t row, col;
     valueType val;
 
-    while (readMtxLine(f, row, col, val))
+    if (mtx.type == MtxValueType::pattern)
     {
-        coo.add_entry(row - 1, col - 1, val);
-
-        if (mtxStruct.symmetry == MtxSymmetry::symmetric && row != col)
+        while (readCooLine(f, row, col))
         {
-            coo.add_entry(col - 1, row - 1, val);
+            coo.add_entry(row - 1, col - 1, val);
+
+            if (mtx.symmetry == MtxSymmetry::symmetric && row != col)
+            {
+                coo.add_entry(col - 1, row - 1, val);
+            }
         }
     }
+    else
+    {
+        while (readCooLine(f, row, col, val))
+        {
+            coo.add_entry(row - 1, col - 1, val);
 
+            if (mtx.symmetry == MtxSymmetry::symmetric && row != col)
+            {
+                coo.add_entry(col - 1, row - 1, val);
+            }
+        }
+    }
+    
     return coo;
 }
 
 template<typename valueType>
-COO<valueType> readCoo(FILE* f)
+COO<valueType> readMtxToCoo(FILE* f)
 {
-    auto mtxStruct = parseMtx(f);
+    auto mtx = parseMtx(f);
 
-    return readMtx<valueType>(f, mtxStruct);
+    return readCoo<valueType>(f, mtx);
 }

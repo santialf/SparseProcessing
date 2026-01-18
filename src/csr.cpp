@@ -4,21 +4,21 @@ template<typename valueType>
 void CSR<valueType>::print()
 {
     std::cout << "row_ptr: ";
-    for (int v : row_ptr) 
+    for (size_t v : row_ptr) 
     {
         std::cout << v << " ";
     }
     std::cout << "\n";
 
     std::cout << "col_idx: ";
-    for (int v : col_indices) 
+    for (size_t v : col_indices) 
     {
         std::cout << v << " ";
     }   
     std::cout << "\n";
 
     std::cout << "values : ";
-    for (double v : values) 
+    for (valueType v : values) 
     {
         std::cout << v << " ";
     }

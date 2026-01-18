@@ -4,11 +4,11 @@
 template<typename valueType>
 void COO<valueType>::print()
 {
-    for (int i=0; i<values.size(); i++)
+    for (size_t i=0; i<values.size(); i++)
     {
         std::cout << row_indices[i] << " "
                   << col_indices[i] << " "
-                  //<< values[i]
+                  << values[i]
                   << "\n";
     }
 }
