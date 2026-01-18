@@ -14,32 +14,19 @@ extern "C"
 #include "mmio.h"
 }
 
-enum class MtxValueType 
-{
-    Pattern,
-    Real,
-    Integer,
-    Complex
-};
-
 enum class MtxSymmetry
 {
     symmetric,
     unsymmetric
 };
 
-struct MtxStructure {
-    MtxValueType valueType;
-    MtxSymmetry symmetryType;
-};
+template<typename valueType>
+bool readMtxLine(FILE*, size_t&, size_t&, valueType&);
+
+std::tuple<int, int, MtxSymmetry> validateMtx(FILE*); 
 
 template<typename valueType>
-bool readMtxLine(FILE*, const MtxStructure&, size_t&, size_t&, valueType&);
-
-std::tuple<int, int> validateMtx(FILE*, MM_typecode); 
-
-template<typename valueType>
-COO<valueType> readMtx(FILE*, const MtxStructure&, int, int);
+COO<valueType> readMtx(FILE*, MtxSymmetry symmetry, int, int);
 
 template<typename valueType>
 COO<valueType> readCoo(FILE*);
