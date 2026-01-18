@@ -94,7 +94,7 @@ bool readMtxLine(FILE* f, size_t& row, size_t& col, double& val)
 }
 
 template<typename valueType>
-COO<valueType> readMtx(FILE* f, MtxStructure mtxStruct, int num_rows, int num_cols)
+COO<valueType> readMtx(FILE* f, const MtxStructure& mtxStruct, int num_rows, int num_cols)
 {
     COO<valueType> coo(num_rows, num_cols);
     size_t row, col;

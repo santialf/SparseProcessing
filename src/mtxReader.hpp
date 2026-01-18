@@ -47,10 +47,10 @@ bool readMtxLine(FILE*, size_t&, size_t&, std::complex<double>&);
 bool readMtxLine(FILE*, size_t&, size_t&, int&);
 bool readMtxLine(FILE*, size_t&, size_t&, double&);
 
-std::tuple<int, int, MtxSymmetry> validateMtx(FILE*); 
+std::tuple<int, int, MtxStructure> parseMtx(FILE*); 
 
 template<typename valueType>
-COO<valueType> readMtx(FILE*, MtxSymmetry symmetry, int, int);
+COO<valueType> readMtx(FILE*, const MtxStructure&, int, int);
 
 template<typename valueType>
 COO<valueType> readCoo(FILE*);
