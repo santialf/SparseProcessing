@@ -37,8 +37,8 @@ int main(int argc, char* argv[])
     coo.sort();
     auto csr = COOToCSR(coo);
 
-    std::cout << "mtx rows: " << coo.num_rows << "\n";
-    std::cout << "mtx cols: " << coo.num_cols << "\n";
+    std::cout << "mtx rows: " << coo.getRows() << "\n";
+    std::cout << "mtx cols: " << coo.getCols() << "\n";
     coo.print();
     csr.print();
 

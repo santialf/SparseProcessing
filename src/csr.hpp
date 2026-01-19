@@ -9,18 +9,18 @@
 namespace mtx {
 
 template<typename valueType>
-class CSR {
+class CSR : public sparseFormat {
 public:
-    size_t num_rows;
-    size_t num_cols;
-
     std::vector<size_t> row_ptr;
     std::vector<size_t> col_indices;
     std::vector<valueType> values;
 
-    CSR(size_t rows_, size_t cols_)
-    : num_rows(rows_), num_cols(cols_) {}
+    CSR(size_t rows, size_t cols)
+    : sparseFormat(rows, cols) {}
 
+    size_t getNnz() const override {
+        return values.size();
+    }
     void clear();
     void print();
 };
