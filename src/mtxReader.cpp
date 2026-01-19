@@ -1,119 +1,140 @@
 #include "mtxReader.hpp"
 
-void parseMtxStorage(MtxStructure& mtx, MM_typecode matcode) 
+void parseMtxStorage(MtxStructure& mtx, const std::string storage) 
 {
-    if (mm_is_coordinate(matcode))
+    if (storage == "coordinate")
     {
         mtx.storage = MtxStorage::sparse;
     }
-    else if (mm_is_array(matcode))
+    else if (storage == "array")
     {
         mtx.storage = MtxStorage::dense;
     }
+    else 
+    {
+        throw std::runtime_error("Unsupported mtx storage");
+    }
 }
 
-void parseMtxSymmetry(MtxStructure& mtx, MM_typecode matcode) 
+void parseMtxSymmetry(MtxStructure& mtx, const std::string symmetry) 
 {
-    if (mm_is_general(matcode))
+    if (symmetry == "general")
     {
         mtx.symmetry = MtxSymmetry::general;
     } 
-    else if (mm_is_symmetric(matcode))
+    else if (symmetry == "symmetric")
     {
         mtx.symmetry = MtxSymmetry::symmetric;
     }
-    else if (mm_is_skew(matcode))
+    else if (symmetry == "skew-symmetric")
     {
         mtx.symmetry = MtxSymmetry::skewed;
     }
-    else if (mm_is_hermitian(matcode))
+    else if (symmetry == "hermitian")
     {
         mtx.symmetry = MtxSymmetry::hermitian;
     }
+    else 
+    {
+        throw std::runtime_error("Unsupported mtx symmetry");
+    }
 }
 
-void parseMtxType(MtxStructure& mtx, MM_typecode matcode) 
+void parseMtxType(MtxStructure& mtx, const std::string type) 
 {
-    if (mm_is_real(matcode))
+    if (type == "real")
     {
         mtx.type = MtxValueType::real;
     }
-    else if (mm_is_integer(matcode))
+    else if (type == "integer")
     {
         mtx.type = MtxValueType::integer;
     }
-    else if (mm_is_pattern(matcode))
+    else if (type == "pattern")
     {
         mtx.type = MtxValueType::pattern;
     }
-    else if (mm_is_complex(matcode))
+    else if (type == "complex")
     {
         mtx.type = MtxValueType::complex;
     }
+    else
+    {
+        throw std::runtime_error("Unsupported mtx type");
+    }
 }
 
-MtxStructure parseMtx(FILE* f) 
+void skipMtxCommentLines(std::ifstream& file)
 {
-   
-    MM_typecode matcode;
-    if (mm_read_banner(f, &matcode))
+    while (file.peek() == '%')
     {
-        std::cerr << "Could not process Matrix Market banner.\n";
-        exit(1);
+        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
-    
-    if (!mm_is_matrix(matcode) || !mm_is_coordinate(matcode)) {
-        std::cerr << "Input must be a sparse Matrix Market matrix (coordinate format).\n";
-        exit(1);
+}
+
+void parseMtxHeader(std::ifstream& file, MtxStructure& mtx)
+{
+    std::string banner, object, storage, type, symmetry;
+    file >> banner >> object >> storage >> type >> symmetry;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    if ((banner != "%%MatrixMarket") || (object != "matrix"))
+    {
+        throw std::runtime_error("Invalid MTX banner or unsupported mtx object");
     }
 
-    int num_rows, num_cols, num_entries;
-    if (mm_read_mtx_crd_size(f, &num_rows, &num_cols, &num_entries))
-    {
-        std::cerr << "Could not read matrix dimensions.\n";
-        exit(1);
-    }
+    parseMtxStorage(mtx, storage);
+    parseMtxType(mtx, type);
+    parseMtxSymmetry(mtx, symmetry);
+}
 
+void parseMtxSize(std::ifstream& file, MtxStructure& mtx)
+{
+    file >> mtx.num_rows >> mtx.num_cols >> mtx.num_entries;
+}
+
+MtxStructure parseMtx(std::ifstream& file) 
+{
     MtxStructure mtx;
-    mtx.num_rows = static_cast<size_t>(num_rows);
-    mtx.num_cols = static_cast<size_t>(num_cols);
-    mtx.num_entries = static_cast<size_t>(num_entries);
-    
-    parseMtxStorage(mtx, matcode);
-    parseMtxSymmetry(mtx, matcode);
-    parseMtxType(mtx, matcode);
+    parseMtxHeader(file, mtx);
+    skipMtxCommentLines(file);
+    parseMtxSize(file, mtx);
 
     return mtx;
 }
 
-bool readCOOLine(FILE* f, size_t& row, size_t& col)
+bool readCOOLine(std::ifstream& file, size_t& row, size_t& col)
 {
-    return fscanf(f, "%zu %zu", &row, &col) == 2;
+    if (!(file >> row >> col))
+    {
+        return false;
+    }
+    return true;
 }
 
-bool readCOOLine(FILE* f, size_t& row, size_t& col, std::complex<double>& val)
+bool readCOOLine(std::ifstream& file, size_t& row, size_t& col, std::complex<double>& val)
 {
     double real, imag;
-    if (fscanf(f, "%zu %zu %lf %lf", &row, &col, &real, &imag) != 4)
+    if (!(file >> row >> col >> real >> imag))
+    {
         return false;
-
-    val = std::complex<double>(real, imag);
+    }
+    val = {real, imag};
     return true;
 }
 
 template<typename valueType>
-bool readCOOLine(FILE* f, size_t& row, size_t& col, valueType& val)
+bool readCOOLine(std::ifstream& file, size_t& row, size_t& col, valueType& val)
 {
-    double tmp;
-    if (fscanf(f, "%zu %zu %lf", &row, &col, &tmp) != 3)
+    if (!(file >> row >> col >> val))
+    {
         return false;
-
-    val = static_cast<valueType>(tmp);
+    }
     return true;
 }
 
 template<typename valueType>
-COO<valueType> readCOO(FILE* f, const MtxStructure& mtx)
+COO<valueType> readCOO(std::ifstream& file, const MtxStructure& mtx)
 {
     COO<valueType> coo(mtx.num_rows, mtx.num_cols);
     size_t row, col;
@@ -121,7 +142,7 @@ COO<valueType> readCOO(FILE* f, const MtxStructure& mtx)
 
     if (mtx.type == MtxValueType::pattern)
     {
-        while (readCOOLine(f, row, col))
+        while (readCOOLine(file, row, col))
         {
             coo.add_entry(row - 1, col - 1, val);
 
@@ -133,7 +154,7 @@ COO<valueType> readCOO(FILE* f, const MtxStructure& mtx)
     }
     else
     {
-        while (readCOOLine(f, row, col, val))
+        while (readCOOLine(file, row, col, val))
         {
             coo.add_entry(row - 1, col - 1, val);
 
@@ -148,9 +169,15 @@ COO<valueType> readCOO(FILE* f, const MtxStructure& mtx)
 }
 
 template<typename valueType>
-COO<valueType> readMtxToCOO(FILE* f)
+COO<valueType> readMtxToCOO(const std::filesystem::path path)
 {
-    auto mtx = parseMtx(f);
+    std::ifstream file {path};
+    if (!file) 
+    {
+        throw std::runtime_error("Bad matrix file name or path: " + path.string());
+    }
 
-    return readCOO<valueType>(f, mtx);
+    auto mtx = parseMtx(file);
+
+    return readCOO<valueType>(file, mtx);
 }

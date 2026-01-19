@@ -6,13 +6,10 @@
 #include <tuple>
 #include <variant>
 #include <complex>
+#include <filesystem>
+#include <fstream>
 
 #include "coo.hpp"
-
-extern "C" 
-{
-#include "mmio.h"
-}
 
 enum class MtxSymmetry
 {
@@ -45,21 +42,19 @@ struct MtxStructure
     MtxStorage storage;
 };
 
-void parseMtxStorage(MtxStructure&, MM_typecode);
-void parseMtxSymmetry(MtxStructure&, MM_typecode); 
-void parseMtxType(MtxStructure&, MM_typecode);
-MtxStructure parseMtx(FILE*); 
+void parseMtxStorage(MtxStructure&, const std::string);
+void parseMtxSymmetry(MtxStructure&, const std::string); 
+void parseMtxType(MtxStructure&, const std::string);
+MtxStructure parseMtx(std::ifstream&); 
 
-bool readCOOLine(FILE*, size_t&, size_t&);
-bool readCOOLine(FILE*, size_t&, size_t&, std::complex<double>&);
+bool readCOOLine(std::ifstream&, size_t&, size_t&);
+bool readCOOLine(std::ifstream&, size_t&, size_t&, std::complex<double>&);
 template<typename valueType>
-bool readCOOLine(FILE*, size_t&, size_t&, valueType&);
-
+bool readCOOLine(std::ifstream&, size_t&, size_t&, valueType&);
 template<typename valueType>
-COO<valueType> readCOO(FILE*, const MtxStructure&);
-
+COO<valueType> readCOO(std::ifstream&, const MtxStructure&);
 template<typename valueType>
-COO<valueType> readMtxToCOO(FILE*);
+COO<valueType> readMtxToCOO(const std::filesystem::path);
 
 #ifdef _HEADER_ONLY
 #include "mtxReader.cpp"

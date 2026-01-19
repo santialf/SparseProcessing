@@ -1,16 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <fstream>
 
 #include "csr.hpp"
 #include "coo.hpp"
 #include "mtxReader.hpp"
 #include "convertFormats.hpp"
-
-extern "C" 
-{
-#include "mmio.h"
-}
 
 using valueType = double;
 
@@ -19,11 +15,12 @@ int main(int argc, char* argv[])
     // TODO:
     // confirm if its being properly read
     // add unit tests
-    // add representative set of matrices
-    // convert FILE to streams
     // add csc
     // add blocked ell
     // add converts to other formats (ex: csr to coo, csr to csc, coo to csc, ...)
+    // add logs
+    // create new file for matrix features
+    // build proper error handling
 
     if (argc != 2) 
     {
@@ -31,15 +28,8 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    // Open mtx file
-    FILE *f;
-    if ((f = fopen(argv[1], "r")) == NULL)
-    {
-        std::cerr << "Could not locate the matrix file. Please make sure the pathname is valid.\n";
-        exit(1);
-    }
-
-    auto coo = readMtxToCOO<valueType>(f);
+    std::filesystem::path path{argv[1]};
+    auto coo = readMtxToCOO<valueType>(path);
     coo.sort();
     auto csr = convertCOOToCSR(coo);
 
