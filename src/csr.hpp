@@ -21,7 +21,6 @@ public:
     size_t getNnz() const override {
         return values.size();
     }
-    void clear();
     void print();
 };
 

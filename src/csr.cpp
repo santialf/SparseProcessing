@@ -27,12 +27,4 @@ void CSR<valueType>::print()
     std::cout << "\n";
 }
 
-template<typename valueType>
-void CSR<valueType>::clear() 
-{
-    row_ptr.clear();
-    col_indices.clear();
-    values.clear();
-}
-
 } // namespace mtx

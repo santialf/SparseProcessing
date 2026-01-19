@@ -23,7 +23,6 @@ public:
     }
     void add_entry(size_t, size_t, const valueType&);
     void sort();
-    void clear();
     void print();
 };
 

@@ -28,14 +28,6 @@ void COO<valueType>::add_entry(size_t row, size_t col, const valueType& value)
 }
 
 template<typename valueType>
-void COO<valueType>::clear() 
-{
-    row_indices.clear();
-    col_indices.clear();
-    values.clear();
-}
-
-template<typename valueType>
 void COO<valueType>::sort()
 {
     const std::size_t n = values.size();
