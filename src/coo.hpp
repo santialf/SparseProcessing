@@ -4,6 +4,8 @@
 #include <vector>
 #include <algorithm>
 
+namespace mtx {
+
 template<typename valueType>
 class COO {
 public:
@@ -22,6 +24,8 @@ public:
     void clear();
     void print();
 };
+
+} // namespace mtx
 
 #ifdef _HEADER_ONLY
 #include "coo.cpp"

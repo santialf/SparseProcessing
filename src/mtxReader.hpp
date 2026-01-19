@@ -11,6 +11,8 @@
 
 #include "coo.hpp"
 
+namespace mtx::io {
+
 enum class MtxSymmetry
 {
     general,
@@ -55,6 +57,8 @@ template<typename valueType>
 COO<valueType> readCOO(std::ifstream&, const MtxStructure&);
 template<typename valueType>
 COO<valueType> readMtxToCOO(const std::filesystem::path);
+
+} //namespace mtx::io
 
 #ifdef _HEADER_ONLY
 #include "mtxReader.cpp"

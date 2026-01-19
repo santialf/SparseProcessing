@@ -1,5 +1,7 @@
 #include "mtxReader.hpp"
 
+namespace mtx::io {
+
 void parseMtxStorage(MtxStructure& mtx, const std::string storage) 
 {
     if (storage == "coordinate")
@@ -181,3 +183,5 @@ COO<valueType> readMtxToCOO(const std::filesystem::path path)
 
     return readCOO<valueType>(file, mtx);
 }
+
+} //namespace mtx::io

@@ -1,6 +1,8 @@
 #include <numeric> 
 #include "coo.hpp"
 
+namespace mtx {
+
 template<typename valueType>
 void COO<valueType>::print()
 {
@@ -61,3 +63,5 @@ void COO<valueType>::sort()
     apply_perm(col_indices);
     apply_perm(values);
 }
+
+} // namespace mtx

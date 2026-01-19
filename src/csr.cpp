@@ -1,5 +1,7 @@
 #include "csr.hpp"
 
+namespace mtx {
+
 template<typename valueType>
 void CSR<valueType>::print()
 {
@@ -32,3 +34,5 @@ void CSR<valueType>::clear()
     col_indices.clear();
     values.clear();
 }
+
+} // namespace mtx

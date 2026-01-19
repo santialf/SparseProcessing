@@ -1,7 +1,9 @@
 #include "convertFormats.hpp"
 
+namespace mtx::convert {
+
 template<typename valueType>
-CSR<valueType> convertCOOToCSR(const COO<valueType>& coo)
+CSR<valueType> COOToCSR(const COO<valueType>& coo)
 {
     CSR<valueType> csr(coo.num_rows, coo.num_cols);
 
@@ -21,3 +23,5 @@ CSR<valueType> convertCOOToCSR(const COO<valueType>& coo)
 
     return csr;
 }
+
+} // namespace mtx::convert

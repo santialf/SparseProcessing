@@ -10,6 +10,10 @@
 
 using valueType = double;
 
+using namespace mtx;
+using namespace mtx::convert;
+using namespace mtx::io;
+
 int main(int argc, char* argv[]) 
 {
     // TODO:
@@ -31,7 +35,7 @@ int main(int argc, char* argv[])
     std::filesystem::path path{argv[1]};
     auto coo = readMtxToCOO<valueType>(path);
     coo.sort();
-    auto csr = convertCOOToCSR(coo);
+    auto csr = COOToCSR(coo);
 
     std::cout << "mtx rows: " << coo.num_rows << "\n";
     std::cout << "mtx cols: " << coo.num_cols << "\n";
