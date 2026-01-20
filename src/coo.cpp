@@ -18,7 +18,7 @@ void COO<valueType>::print()
 template<typename valueType>
 void COO<valueType>::add_entry(size_t row, size_t col, const valueType& value) 
 {
-    if (row >= num_rows || col >= num_cols) 
+    if (row >= num_rows || col >= num_cols || row < 0 || col < 0)
     {
         throw std::out_of_range("COO: index out of bounds");
     }
