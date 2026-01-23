@@ -34,13 +34,14 @@ int main(int argc, char* argv[])
 
     std::filesystem::path path{argv[1]};
     auto coo = readMtxToCOO<valueType>(path);
-    coo.sort();
-    auto csr = COOToCSR(coo);
+    //coo.sort();
+    //auto csr = COOToCSR(coo);
 
-    std::cout << "mtx rows: " << coo.getRows() << "\n";
-    std::cout << "mtx cols: " << coo.getCols() << "\n";
+    std::cout << "mtx rows: " << coo.nrows() << "\n";
+    std::cout << "mtx cols: " << coo.ncols() << "\n";
+    std::cout << "mtx cols: " << coo.nnz() << "\n";
     coo.print();
-    csr.print();
+    //csr.print();
 
     return 0;
 }

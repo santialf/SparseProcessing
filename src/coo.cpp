@@ -6,27 +6,15 @@ namespace mtx {
 template<typename valueType>
 void COO<valueType>::print()
 {
-    for (size_t i=0; i<values.size(); i++)
+    for (size_t i=0; i<nnz(); i++)
     {
-        std::cout << row_indices[i] << " "
-                  << col_indices[i] << " "
-                  << values[i]
+        std::cout << row()[i] << " "
+                  << col()[i] << " "
+                  << val()[i]
                   << "\n";
     }
 }
-
-template<typename valueType>
-void COO<valueType>::add_entry(size_t row, size_t col, const valueType& value) 
-{
-    if (row >= num_rows || col >= num_cols || row < 0 || col < 0)
-    {
-        throw std::out_of_range("COO: index out of bounds");
-    }
-    row_indices.push_back(row);
-    col_indices.push_back(col);
-    values.push_back(value);
-}
-
+/*
 template<typename valueType>
 void COO<valueType>::sort()
 {
@@ -54,6 +42,6 @@ void COO<valueType>::sort()
     apply_perm(row_indices);
     apply_perm(col_indices);
     apply_perm(values);
-}
+} */
 
 } // namespace mtx

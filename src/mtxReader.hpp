@@ -39,6 +39,7 @@ struct MtxStructure
     size_t num_rows;
     size_t num_cols;
     size_t num_entries;
+    size_t num_nnzs;
     MtxSymmetry symmetry;
     MtxValueType type;
     MtxStorage storage;
@@ -57,6 +58,11 @@ template<typename valueType>
 COO<valueType> readCOO(std::ifstream&, const MtxStructure&);
 template<typename valueType>
 COO<valueType> readMtxToCOO(const std::filesystem::path);
+
+template<typename valueType>
+size_t countNnzs(std::ifstream&, const MtxStructure&);
+
+std::ifstream openFile(const std::filesystem::path);
 
 } //namespace mtx::io
 

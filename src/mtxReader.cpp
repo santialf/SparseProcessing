@@ -138,49 +138,96 @@ bool readCOOLine(std::ifstream& file, size_t& row, size_t& col, valueType& val)
 template<typename valueType>
 COO<valueType> readCOO(std::ifstream& file, const MtxStructure& mtx)
 {
-    COO<valueType> coo(mtx.num_rows, mtx.num_cols);
     size_t row, col;
-    valueType val = static_cast<valueType>(1);
+    valueType val {static_cast<valueType>(1)};
 
-    if (mtx.type == MtxValueType::pattern)
+    auto rowIdx = std::make_unique<size_t[]>(mtx.num_nnzs);
+    auto colIdx = std::make_unique<size_t[]>(mtx.num_nnzs);
+    auto vals   = std::make_unique<valueType[]>(mtx.num_nnzs);
+
+    for (size_t i = 0; i < mtx.num_nnzs; i++)
     {
-        while (readCOOLine(file, row, col))
+        if (mtx.type == MtxValueType::pattern)
         {
-            coo.add_entry(row - 1, col - 1, val);
-
-            if (mtx.symmetry == MtxSymmetry::symmetric && row != col)
-            {
-                coo.add_entry(col - 1, row - 1, val);
-            }
+            readCOOLine(file, row, col);
+        }
+        else 
+        {
+            readCOOLine(file, row, col, val);
+        }
+            
+        rowIdx[i] = row - 1;
+        colIdx[i] = col - 1;
+        vals[i] = val;
+        if (mtx.symmetry == MtxSymmetry::symmetric && row != col)
+        {
+            i++;
+            rowIdx[i] = col - 1;
+            colIdx[i] = row - 1;
+            vals[i] = val;
         }
     }
-    else
-    {
-        while (readCOOLine(file, row, col, val))
-        {
-            coo.add_entry(row - 1, col - 1, val);
 
-            if (mtx.symmetry == MtxSymmetry::symmetric && row != col)
-            {
-                coo.add_entry(col - 1, row - 1, val);
-            }
-        }
-    }
-    
-    return coo;
+    return COO<valueType>(COO<valueType>::adopt, rowIdx.release(), colIdx.release(), vals.release(),
+        mtx.num_rows, mtx.num_cols, mtx.num_nnzs);
 }
 
 template<typename valueType>
-COO<valueType> readMtxToCOO(const std::filesystem::path path)
+size_t countNnzs(std::ifstream& file, const MtxStructure& mtx)
+{
+    size_t nnzs{0};
+    size_t row, col;
+    valueType val {static_cast<valueType>(1)};
+
+    for (size_t i = 0; i < mtx.num_entries; i++)
+    {
+        if (mtx.type == MtxValueType::pattern)
+        {
+            readCOOLine(file, row, col);
+        }
+        else 
+        {
+            readCOOLine(file, row, col, val);
+        }
+            
+        nnzs++;
+        if (row != col)
+        {
+            nnzs++;
+        }
+    }
+    
+    return nnzs;
+}
+
+std::ifstream openFile(const std::filesystem::path path)
 {
     std::ifstream file {path};
     if (!file) 
     {
         throw std::runtime_error("Bad matrix file name or path: " + path.string());
     }
+    return file;
+}
+
+template<typename valueType>
+COO<valueType> readMtxToCOO(const std::filesystem::path path)
+{
+    std::ifstream file = openFile(path);
 
     auto mtx = parseMtx(file);
+    std::streampos data_pos = file.tellg(); 
 
+    if (mtx.symmetry == MtxSymmetry::symmetric)
+    {
+        mtx.num_nnzs = countNnzs<valueType>(file, mtx);
+    }
+    else
+    {
+        mtx.num_nnzs = mtx.num_entries;
+    }
+
+    file.seekg(data_pos);  
     return readCOO<valueType>(file, mtx);
 }
 
