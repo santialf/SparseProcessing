@@ -6,8 +6,6 @@
 #include <memory>
 #include <cstring>
 
-#include "format.hpp"
-
 namespace mtx {
 
 template<typename Value>
