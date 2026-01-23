@@ -5,23 +5,24 @@ namespace mtx::convert {
 template<typename valueType>
 CSR<valueType> COOToCSR(const COO<valueType>& coo)
 {
-    CSR<valueType> csr(coo.getRows(), coo.getCols());
+    auto rowPtr = std::make_unique<size_t[]>(coo.nrows() + 1);
+    auto colIdx = std::make_unique<size_t[]>(coo.nnz());
+    auto vals   = std::make_unique<valueType[]>(coo.nnz());
 
-    csr.row_ptr.assign(csr.getRows() + 1, 0);
-
-    for (int i=0; i<coo.getNnz(); i++)
+    for (int i = 0; i < coo.nnz(); i++)
     {
-        csr.col_indices.push_back(coo.colsIdx()[i]);
-        csr.values.push_back(coo.vals()[i]);
-        csr.row_ptr[coo.rowsIdx()[i] + 1]++;
+        colIdx[i] = coo.col()[i];
+        vals[i] = coo.val()[i];
+        rowPtr[coo.row()[i] + 1]++;
     }
 
-    for (int i = 0; i < csr.getRows(); i++)
+    for (int i = 0; i < coo.nrows(); i++)
     {
-        csr.row_ptr[i + 1] += csr.row_ptr[i];
+        rowPtr[i + 1] += rowPtr[i];
     }
 
-    return csr;
+    return CSR<valueType>(CSR<valueType>::adopt, rowPtr.release(), colIdx.release(), vals.release(),
+        coo.nrows(), coo.ncols(), coo.nnz());
 }
 
 } // namespace mtx::convert
