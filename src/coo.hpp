@@ -62,9 +62,7 @@ public:
     ~COO() = default;
 
 private:
-    static void coo_deleter(void* p) noexcept {
-        std::free(p);
-    }
+    static void coo_deleter(void* p) noexcept { std::free(p); }
 
     size_t* row_ = nullptr;
     size_t* col_ = nullptr;

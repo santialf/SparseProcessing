@@ -6,6 +6,9 @@ namespace mtx {
 template<typename valueType>
 void COO<valueType>::print()
 {
+    std::cout << "rows: " << nrows_ << " " 
+              << "cols: " << ncols_ << " " 
+              << "nnzs: " << nnz_ << "\n";
     for (size_t i=0; i<nnz(); i++)
     {
         std::cout << row()[i] << " "

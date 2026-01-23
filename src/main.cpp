@@ -37,9 +37,6 @@ int main(int argc, char* argv[])
     //coo.sort();
     //auto csr = COOToCSR(coo);
 
-    std::cout << "mtx rows: " << coo.nrows() << "\n";
-    std::cout << "mtx cols: " << coo.ncols() << "\n";
-    std::cout << "mtx cols: " << coo.nnz() << "\n";
     coo.print();
     //csr.print();
 
