@@ -34,7 +34,9 @@ int main(int argc, char* argv[])
 
     std::filesystem::path path{argv[1]};
     auto coo = readMtxToCOO<valueType>(path);
-    //coo.sort();
+    
+    coo.sortByCol();
+    coo.sortByRow();
     //auto csr = COOToCSR(coo);
 
     coo.print();

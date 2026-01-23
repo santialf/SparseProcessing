@@ -17,34 +17,62 @@ void COO<valueType>::print()
                   << "\n";
     }
 }
-/*
-template<typename valueType>
-void COO<valueType>::sort()
-{
-    const std::size_t n = values.size();
 
-    std::vector<std::size_t> perm(n);
+template<typename valueType>
+void COO<valueType>::sort(Order order)
+{
+    if (nnz_ <= 1) return;
+
+    std::vector<size_t> perm(nnz_);
     std::iota(perm.begin(), perm.end(), 0);
 
-    std::sort(perm.begin(), perm.end(),
-        [&](std::size_t a, std::size_t b) {
-            if (row_indices[a] != row_indices[b])
-                return row_indices[a] < row_indices[b];
-            return col_indices[a] < col_indices[b];
-        });
-
-    auto apply_perm = [&](auto& v) {
-        using V = typename std::decay<decltype(v)>::type::value_type;
-        std::vector<V> tmp;
-        tmp.reserve(n);
-        for (auto i : perm)
-            tmp.push_back(v[i]);
-        v.swap(tmp);
+    auto cmp = [&](size_t a, size_t b) {
+        if (order == Order::RowMajor) {
+            if (row_[a] != row_[b]) return row_[a] < row_[b];
+            return col_[a] < col_[b];
+        } else {
+            if (col_[a] != col_[b]) return col_[a] < col_[b];
+            return row_[a] < row_[b];
+        }
     };
 
-    apply_perm(row_indices);
-    apply_perm(col_indices);
-    apply_perm(values);
-} */
+    std::sort(perm.begin(), perm.end(), cmp);
+
+    auto tmp_row = std::make_unique<size_t[]>(nnz_);
+    auto tmp_col = std::make_unique<size_t[]>(nnz_);
+    auto tmp_val = std::make_unique<valueType[]>(nnz_);
+
+    for (size_t i = 0; i < nnz_; ++i) {
+        size_t j = perm[i];
+        tmp_row[i] = row()[j];
+        tmp_col[i] = col()[j];
+        tmp_val[i] = val()[j];
+    }
+
+    std::memcpy(row_, tmp_row.get(), nnz_ * sizeof(size_t));
+    std::memcpy(col_, tmp_col.get(), nnz_ * sizeof(size_t));
+    std::memcpy(val_, tmp_val.get(), nnz_ * sizeof(valueType));
+
+    // Better than memcpy: swap ownership
+    /* row_.swap(tmp_row);
+    col_.swap(tmp_col);
+    val_.swap(tmp_val); */
+}
+
+template<typename valueType>
+void COO<valueType>::sortByRow()
+{
+    if (order_ == Order::RowMajor) return;
+    sort(Order::RowMajor);
+    order_ = Order::RowMajor;
+}
+
+template<typename valueType>
+void COO<valueType>::sortByCol()
+{
+    if (order_ == Order::ColMajor) return;
+    sort(Order::ColMajor);
+    order_ = Order::ColMajor;
+}
 
 } // namespace mtx

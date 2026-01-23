@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <cstring>
 
 #include "format.hpp"
 
@@ -35,6 +36,8 @@ public:
           val_owner_(val, coo_deleter)
     {}
 
+    void sortByRow();
+    void sortByCol();
     void print();
 
     size_t* row() noexcept { return row_; }
@@ -49,9 +52,7 @@ public:
     size_t ncols() const noexcept { return ncols_; }
     size_t nnz()   const noexcept { return nnz_; }
 
-    bool owns_data() const noexcept {
-        return row_owner_ != nullptr;
-    }
+    bool owns_data() const noexcept { return row_owner_ != nullptr; }
 
     COO(const COO&) = delete;
     COO& operator=(const COO&) = delete;
@@ -63,14 +64,22 @@ public:
 
 private:
     static void coo_deleter(void* p) noexcept { std::free(p); }
-
-    size_t* row_ = nullptr;
-    size_t* col_ = nullptr;
-    Value* val_ = nullptr;
+    
+    enum class Order {
+        Unsorted,
+        RowMajor,
+        ColMajor
+    };
+    Order order_ = Order::Unsorted;
+    void sort(Order);
 
     size_t nrows_ = 0;
     size_t ncols_ = 0;
     size_t nnz_   = 0;
+
+    size_t* row_ = nullptr;
+    size_t* col_ = nullptr;
+    Value* val_ = nullptr;
 
     std::unique_ptr<void, deleter_t> row_owner_{nullptr, nullptr};
     std::unique_ptr<void, deleter_t> col_owner_{nullptr, nullptr};
