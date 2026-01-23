@@ -14,41 +14,41 @@ public:
     using deleter_t = void(*)(void*) noexcept;
 
     // 1) Caller retains ownership of row/col/val
-    CSR(size_t* rowPtr, size_t* colIdx, Value* vals,
+    CSR(size_t* row_ptr, size_t* col_idx, Value* vals,
         size_t nrows, size_t ncols, size_t nnz) noexcept
-        : rowPtr_(rowPtr), colIdx_(colIdx), vals_(vals),
+        : row_ptr_(row_ptr), col_idx_(col_idx), vals_(vals),
           nrows_(nrows), ncols_(ncols), nnz_(nnz)
     {}
 
-    // 3) Adopt ownership of externally allocated buffers
+    // 2) Adopt ownership of externally allocated buffers
     struct adopt_t {};
     static constexpr adopt_t adopt{};
 
     CSR(adopt_t,
-        size_t* rowPtr, size_t* colIdx, Value* vals,
+        size_t* row_ptr, size_t* col_idx, Value* vals,
         size_t nrows, size_t ncols, size_t nnz) noexcept
-        : rowPtr_(rowPtr), colIdx_(colIdx), vals_(vals),
+        : row_ptr_(row_ptr), col_idx_(col_idx), vals_(vals),
           nrows_(nrows), ncols_(ncols), nnz_(nnz),
-          rowPtr_owner_(rowPtr, csr_deleter),
-          colIdx_owner_(colIdx, csr_deleter),
+          row_ptr_owner_(row_ptr, csr_deleter),
+          col_idx_owner_(col_idx, csr_deleter),
           vals_owner_(vals, csr_deleter)
     {}
 
     void print();
 
-    size_t* rowPtr() noexcept { return rowPtr_; }
-    size_t* colIdx() noexcept { return colIdx_; }
+    size_t* rowPtr() noexcept { return row_ptr_; }
+    size_t* colIdx() noexcept { return col_idx_; }
     Value* vals() noexcept { return vals_; }
 
-    const size_t* rowPtr() const noexcept { return rowPtr_; }
-    const size_t* colIdx() const noexcept { return colIdx_; }
+    const size_t* rowPtr() const noexcept { return row_ptr_; }
+    const size_t* colIdx() const noexcept { return col_idx_; }
     const Value* vals() const noexcept { return vals_; }
 
     size_t nrows() const noexcept { return nrows_; }
     size_t ncols() const noexcept { return ncols_; }
     size_t nnz()   const noexcept { return nnz_; }
 
-    bool owns_data() const noexcept { return rowPtr_owner_ != nullptr; }
+    bool owns_data() const noexcept { return row_ptr_owner_ != nullptr; }
 
     CSR(const CSR&) = delete;
     CSR& operator=(const CSR&) = delete;
@@ -65,12 +65,12 @@ private:
     size_t ncols_ = 0;
     size_t nnz_   = 0;
 
-    size_t* rowPtr_ = nullptr;
-    size_t* colIdx_ = nullptr;
+    size_t* row_ptr_ = nullptr;
+    size_t* col_idx_ = nullptr;
     Value* vals_ = nullptr;
 
-    std::unique_ptr<void, deleter_t> rowPtr_owner_{nullptr, nullptr};
-    std::unique_ptr<void, deleter_t> colIdx_owner_{nullptr, nullptr};
+    std::unique_ptr<void, deleter_t> row_ptr_owner_{nullptr, nullptr};
+    std::unique_ptr<void, deleter_t> col_idx_owner_{nullptr, nullptr};
     std::unique_ptr<void, deleter_t> vals_owner_{nullptr, nullptr};
 };
 

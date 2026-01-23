@@ -9,11 +9,12 @@ void COO<valueType>::print()
     std::cout << "rows: " << nrows_ << " " 
               << "cols: " << ncols_ << " " 
               << "nnzs: " << nnz_ << "\n";
-    for (size_t i=0; i<nnz(); i++)
+
+    for (size_t i=0; i<nnz_; i++)
     {
-        std::cout << row()[i] << " "
-                  << col()[i] << " "
-                  << val()[i]
+        std::cout << row_idx_[i] << " "
+                  << col_idx_[i] << " "
+                  << vals_[i]
                   << "\n";
     }
 }
@@ -26,13 +27,16 @@ void COO<valueType>::sort(Order order)
     std::vector<size_t> perm(nnz_);
     std::iota(perm.begin(), perm.end(), 0);
 
-    auto cmp = [&](size_t a, size_t b) {
-        if (order == Order::RowMajor) {
-            if (row_[a] != row_[b]) return row_[a] < row_[b];
-            return col_[a] < col_[b];
-        } else {
-            if (col_[a] != col_[b]) return col_[a] < col_[b];
-            return row_[a] < row_[b];
+    auto cmp = [&](size_t a, size_t b) 
+    {
+        if (order == Order::RowMajor) 
+        {
+            if (row_idx_[a] != row_idx_[b]) return row_idx_[a] < row_idx_[b];
+            return col_idx_[a] < col_idx_[b];
+        } else 
+        {
+            if (col_idx_[a] != col_idx_[b]) return col_idx_[a] < col_idx_[b];
+            return row_idx_[a] < row_idx_[b];
         }
     };
 
@@ -42,16 +46,17 @@ void COO<valueType>::sort(Order order)
     auto tmp_col = std::make_unique<size_t[]>(nnz_);
     auto tmp_val = std::make_unique<valueType[]>(nnz_);
 
-    for (size_t i = 0; i < nnz_; ++i) {
+    for (size_t i = 0; i < nnz_; ++i) 
+    {
         size_t j = perm[i];
-        tmp_row[i] = row()[j];
-        tmp_col[i] = col()[j];
-        tmp_val[i] = val()[j];
+        tmp_row[i] = row_idx_[j];
+        tmp_col[i] = col_idx_[j];
+        tmp_val[i] = vals_[j];
     }
 
-    std::memcpy(row_, tmp_row.get(), nnz_ * sizeof(size_t));
-    std::memcpy(col_, tmp_col.get(), nnz_ * sizeof(size_t));
-    std::memcpy(val_, tmp_val.get(), nnz_ * sizeof(valueType));
+    std::memcpy(row_idx_, tmp_row.get(), nnz_ * sizeof(size_t));
+    std::memcpy(col_idx_, tmp_col.get(), nnz_ * sizeof(size_t));
+    std::memcpy(vals_, tmp_val.get(), nnz_ * sizeof(valueType));
 
     // Better than memcpy: swap ownership
     /* row_.swap(tmp_row);

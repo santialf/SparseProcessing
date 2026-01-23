@@ -16,9 +16,9 @@ public:
     using deleter_t = void(*)(void*) noexcept;
 
     // 1) Caller retains ownership of row/col/val
-    COO(size_t* row, size_t* col, Value* val,
+    COO(size_t* row_idx, size_t* col_idx, Value* vals,
         size_t nrows, size_t ncols, size_t nnz) noexcept
-        : row_(row), col_(col), val_(val),
+        : row_idx_(row_idx), col_idx_(col_idx), vals_(vals),
           nrows_(nrows), ncols_(ncols), nnz_(nnz)
     {}
 
@@ -27,32 +27,32 @@ public:
     static constexpr adopt_t adopt{};
 
     COO(adopt_t,
-        size_t* row, size_t* col, Value* val,
+        size_t* row_idx, size_t* col_idx, Value* vals,
         size_t nrows, size_t ncols, size_t nnz) noexcept
-        : row_(row), col_(col), val_(val),
+        : row_idx_(row_idx), col_idx_(col_idx), vals_(vals),
           nrows_(nrows), ncols_(ncols), nnz_(nnz),
-          row_owner_(row, coo_deleter),
-          col_owner_(col, coo_deleter),
-          val_owner_(val, coo_deleter)
+          row_idx_owner_(row_idx, coo_deleter),
+          col_idx_owner_(col_idx, coo_deleter),
+          vals_owner_(vals, coo_deleter)
     {}
 
     void sortByRow();
     void sortByCol();
     void print();
 
-    size_t* row() noexcept { return row_; }
-    size_t* col() noexcept { return col_; }
-    Value* val() noexcept { return val_; }
+    size_t* rowIdx() noexcept { return row_idx_; }
+    size_t* colIdx() noexcept { return col_idx_; }
+    Value* vals() noexcept { return vals_; }
 
-    const size_t* row() const noexcept { return row_; }
-    const size_t* col() const noexcept { return col_; }
-    const Value* val() const noexcept { return val_; }
+    const size_t* rowIdx() const noexcept { return row_idx_; }
+    const size_t* colIdx() const noexcept { return col_idx_; }
+    const Value* vals() const noexcept { return vals_; }
 
     size_t nrows() const noexcept { return nrows_; }
     size_t ncols() const noexcept { return ncols_; }
     size_t nnz()   const noexcept { return nnz_; }
 
-    bool owns_data() const noexcept { return row_owner_ != nullptr; }
+    bool owns_data() const noexcept { return row_idx_owner_ != nullptr; }
 
     COO(const COO&) = delete;
     COO& operator=(const COO&) = delete;
@@ -77,13 +77,13 @@ private:
     size_t ncols_ = 0;
     size_t nnz_   = 0;
 
-    size_t* row_ = nullptr;
-    size_t* col_ = nullptr;
-    Value* val_ = nullptr;
+    size_t* row_idx_ = nullptr;
+    size_t* col_idx_ = nullptr;
+    Value* vals_ = nullptr;
 
-    std::unique_ptr<void, deleter_t> row_owner_{nullptr, nullptr};
-    std::unique_ptr<void, deleter_t> col_owner_{nullptr, nullptr};
-    std::unique_ptr<void, deleter_t> val_owner_{nullptr, nullptr};
+    std::unique_ptr<void, deleter_t> row_idx_owner_{nullptr, nullptr};
+    std::unique_ptr<void, deleter_t> col_idx_owner_{nullptr, nullptr};
+    std::unique_ptr<void, deleter_t> vals_owner_{nullptr, nullptr};
 };
 
 } // namespace mtx
