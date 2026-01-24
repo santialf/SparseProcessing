@@ -80,7 +80,7 @@ COO<valueType> CSRToCOO(const CSR<valueType>& csr)
     }
 
     return COO<valueType>(COO<valueType>::adopt, row_idx.release(), col_idx.release(), vals.release(),
-        csr.nrows(), csr.ncols(), csr.nnz());
+        csr.nrows(), csr.ncols(), csr.nnz(), COO<valueType>::Order::RowMajor);
 }
 
 template<typename valueType>
@@ -103,7 +103,7 @@ COO<valueType> CSCToCOO(const CSC<valueType>& csc)
     }
 
     return COO<valueType>(COO<valueType>::adopt, row_idx.release(), col_idx.release(), vals.release(),
-        csc.nrows(), csc.ncols(), csc.nnz());
+        csc.nrows(), csc.ncols(), csc.nnz(), COO<valueType>::Order::ColMajor);
 }
 
 } // namespace mtx::convert

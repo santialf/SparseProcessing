@@ -17,7 +17,7 @@ using namespace mtx::io;
 int main(int argc, char* argv[]) 
 {
     // TODO:
-    // add unit tests
+    // add sorting variable to constructor
     // move functions to outside of user scope?
     // add blocked ell (feb?)
     // add matrix features (feb)

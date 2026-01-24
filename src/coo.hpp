@@ -11,13 +11,19 @@ namespace mtx {
 template<typename Value>
 class COO {
 public:
+    enum class Order {
+        Unsorted,
+        RowMajor,
+        ColMajor
+    };
     using deleter_t = void(*)(void*) noexcept;
 
     // 1) Caller retains ownership of row/col/val
     COO(size_t* row_idx, size_t* col_idx, Value* vals,
-        size_t nrows, size_t ncols, size_t nnz) noexcept
+        size_t nrows, size_t ncols, size_t nnz, 
+        Order order = Order::Unsorted) noexcept
         : row_idx_(row_idx), col_idx_(col_idx), vals_(vals),
-          nrows_(nrows), ncols_(ncols), nnz_(nnz)
+          nrows_(nrows), ncols_(ncols), nnz_(nnz), order_(order)
     {}
 
     // 2) Adopt ownership of externally allocated buffers
@@ -26,9 +32,10 @@ public:
 
     COO(adopt_t,
         size_t* row_idx, size_t* col_idx, Value* vals,
-        size_t nrows, size_t ncols, size_t nnz) noexcept
+        size_t nrows, size_t ncols, size_t nnz, 
+        Order order = Order::Unsorted) noexcept
         : row_idx_(row_idx), col_idx_(col_idx), vals_(vals),
-          nrows_(nrows), ncols_(ncols), nnz_(nnz),
+          nrows_(nrows), ncols_(ncols), nnz_(nnz), order_(order),
           row_idx_owner_(row_idx, coo_deleter),
           col_idx_owner_(col_idx, coo_deleter),
           vals_owner_(vals, coo_deleter)
@@ -66,11 +73,6 @@ public:
 private:
     static void coo_deleter(void* p) noexcept { std::free(p); }
     
-    enum class Order {
-        Unsorted,
-        RowMajor,
-        ColMajor
-    };
     Order order_ = Order::Unsorted;
     void sort(Order);
 

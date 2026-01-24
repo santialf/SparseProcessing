@@ -48,8 +48,7 @@ TEST(ConvertTest, COOToCSRProducesCorrectRowPtr)
     size_t cols[] = {0, 0, 1};
     double vals[] = {1, 2, 3};
 
-    mtx::COO<double> coo(rows, cols, vals, 2, 2, 3);
-    coo.sortByRow();
+    mtx::COO<double> coo(rows, cols, vals, 2, 2, 3, mtx::COO<double>::Order::RowMajor);
     auto csr = mtx::convert::COOToCSR(coo);
 
     EXPECT_EQ(csr.rowPtr()[0], 0);
