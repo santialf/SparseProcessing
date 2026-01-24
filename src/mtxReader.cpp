@@ -2,8 +2,17 @@
 
 namespace mtx::io {
 
-void parseMtxStorage(MtxStructure& mtx, const std::string storage) 
+std::string toLower(std::string s)
 {
+    std::transform(s.begin(), s.end(), s.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return s;
+}
+
+void parseMtxStorage(MtxStructure& mtx, std::string storage) 
+{
+    storage = toLower(storage);
+
     if (storage == "coordinate")
     {
         mtx.storage = MtxStorage::sparse;
@@ -21,8 +30,10 @@ void parseMtxStorage(MtxStructure& mtx, const std::string storage)
     }
 }
 
-void parseMtxSymmetry(MtxStructure& mtx, const std::string symmetry) 
+void parseMtxSymmetry(MtxStructure& mtx, std::string symmetry) 
 {
+    symmetry = toLower(symmetry);
+
     if (symmetry == "general")
     {
         mtx.symmetry = MtxSymmetry::general;
@@ -48,8 +59,10 @@ void parseMtxSymmetry(MtxStructure& mtx, const std::string symmetry)
     }
 }
 
-void parseMtxType(MtxStructure& mtx, const std::string type) 
+void parseMtxType(MtxStructure& mtx, std::string type) 
 {
+    type = toLower(type);
+
     if (type == "real")
     {
         mtx.type = MtxValueType::real;

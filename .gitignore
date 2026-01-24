@@ -3,4 +3,6 @@
 *.o
 *.gz
 *.mtx
+*.sh
+*.log
 build/

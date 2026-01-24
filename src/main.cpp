@@ -17,9 +17,8 @@ using namespace mtx::io;
 int main(int argc, char* argv[]) 
 {
     // TODO:
-    // add logging system
-    // confirm if its being properly read
     // add unit tests
+    // move functions to outside of user scope?
     // add blocked ell (feb?)
     // add matrix features (feb)
     
@@ -40,11 +39,12 @@ int main(int argc, char* argv[])
     auto coo_from_csr = CSRToCOO(csr);
     auto coo_from_csc = CSCToCOO(csc);
 
+    std::cout << "COO:\n"; 
     coo.print();
+    std::cout << "CSR:\n"; 
     csr.print();
+    std::cout << "CSC:\n"; 
     csc.print();
-    coo_from_csr.print();
-    coo_from_csc.print();
 
     return 0;
 }

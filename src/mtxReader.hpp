@@ -46,9 +46,10 @@ struct MtxStructure
     MtxStorage storage;
 };
 
-void parseMtxStorage(MtxStructure&, const std::string);
-void parseMtxSymmetry(MtxStructure&, const std::string); 
-void parseMtxType(MtxStructure&, const std::string);
+std::string toLower(std::string s);
+void parseMtxStorage(MtxStructure&, std::string);
+void parseMtxSymmetry(MtxStructure&, std::string); 
+void parseMtxType(MtxStructure&, std::string);
 MtxStructure parseMtx(std::ifstream&); 
 
 bool readCOOLine(std::ifstream&, size_t&, size_t&);
