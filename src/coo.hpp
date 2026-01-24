@@ -38,6 +38,11 @@ public:
     void sortByCol();
     void print() const;
 
+    bool ownsData() const noexcept { return row_idx_owner_ != nullptr; }
+    bool isCooUnsorted() const noexcept { return order_ == Order::Unsorted; }
+    bool isCooRowMajor() const noexcept { return order_ == Order::RowMajor; }
+    bool isCooColMajor() const noexcept { return order_ == Order::ColMajor; }
+
     size_t* rowIdx() noexcept { return row_idx_; }
     size_t* colIdx() noexcept { return col_idx_; }
     Value* vals() noexcept { return vals_; }
@@ -49,8 +54,6 @@ public:
     size_t nrows() const noexcept { return nrows_; }
     size_t ncols() const noexcept { return ncols_; }
     size_t nnz()   const noexcept { return nnz_; }
-
-    bool owns_data() const noexcept { return row_idx_owner_ != nullptr; }
 
     COO(const COO&) = delete;
     COO& operator=(const COO&) = delete;

@@ -17,13 +17,13 @@ using namespace mtx::io;
 int main(int argc, char* argv[]) 
 {
     // TODO:
+    // build proper error handling
+    // add logging system
     // confirm if its being properly read
     // add unit tests
-    // add blocked ell (future)
-    // add converts to other formats (ex: COOtCSC, CSRtoCOO, CSRtoCSC)
-    // add logging system
-    // add matrix features
-    // build proper error handling
+    // add blocked ell (feb?)
+    // add matrix features (feb)
+    
 
     if (argc != 2) 
     {
@@ -38,10 +38,14 @@ int main(int argc, char* argv[])
     auto csc = COOToCSC(coo);
     coo.sortByRow();
     auto csr = COOToCSR(coo);
+    auto coo_from_csr = CSRToCOO(csr);
+    auto coo_from_csc = CSCToCOO(csc);
 
     coo.print();
     csr.print();
     csc.print();
+    coo_from_csr.print();
+    coo_from_csc.print();
 
     return 0;
 }

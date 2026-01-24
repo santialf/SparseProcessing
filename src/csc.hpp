@@ -48,7 +48,7 @@ public:
     size_t ncols() const noexcept { return ncols_; }
     size_t nnz()   const noexcept { return nnz_; }
 
-    bool owns_data() const noexcept { return col_ptr_owner_ != nullptr; }
+    bool ownsData() const noexcept { return col_ptr_owner_ != nullptr; }
 
     CSC(const CSC&) = delete;
     CSC& operator=(const CSC&) = delete;
