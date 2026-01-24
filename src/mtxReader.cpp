@@ -14,7 +14,10 @@ void parseMtxStorage(MtxStructure& mtx, const std::string storage)
     }
     else 
     {
-        throw std::runtime_error("Unsupported mtx storage");
+        throw std::runtime_error(
+            "Unsupported mtx storage '" + storage +
+            "'. Expected: coordinate | array"
+        );
     }
 }
 
@@ -38,7 +41,10 @@ void parseMtxSymmetry(MtxStructure& mtx, const std::string symmetry)
     }
     else 
     {
-        throw std::runtime_error("Unsupported mtx symmetry");
+        throw std::runtime_error(
+            "Unsupported mtx symmetry '" + symmetry +
+            "'. Expected: general | symmetric | skew-symmetric | hermitian"
+        );
     }
 }
 
@@ -62,13 +68,16 @@ void parseMtxType(MtxStructure& mtx, const std::string type)
     }
     else
     {
-        throw std::runtime_error("Unsupported mtx type");
+        throw std::runtime_error(
+            "Unsupported mtx value type '" + type +
+            "'. Expected: real | integer | pattern | complex"
+        );
     }
 }
 
 void skipMtxCommentLines(std::ifstream& file)
 {
-    while (file.peek() == '%')
+    while (file && file.peek() == '%')
     {
         file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
@@ -77,12 +86,19 @@ void skipMtxCommentLines(std::ifstream& file)
 void parseMtxHeader(std::ifstream& file, MtxStructure& mtx)
 {
     std::string banner, object, storage, type, symmetry;
-    file >> banner >> object >> storage >> type >> symmetry;
+    if (!(file >> banner >> object >> storage >> type >> symmetry))
+    {
+        throw std::runtime_error("Failed to read mtx header");
+    }
     file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    if ((banner != "%%MatrixMarket") || (object != "matrix"))
+    if (banner != "%%MatrixMarket" || object != "matrix")
     {
-        throw std::runtime_error("Invalid MTX banner or unsupported mtx object");
+        throw std::runtime_error(
+            "Invalid Matrix Market header. "
+            "Expected banner '%%MatrixMarket matrix', but got '" +
+            banner + " " + object + "'"
+        );
     }
 
     parseMtxStorage(mtx, storage);
@@ -92,7 +108,14 @@ void parseMtxHeader(std::ifstream& file, MtxStructure& mtx)
 
 void parseMtxSize(std::ifstream& file, MtxStructure& mtx)
 {
-    file >> mtx.num_rows >> mtx.num_cols >> mtx.num_entries;
+    if (!(file >> mtx.num_rows >> mtx.num_cols >> mtx.num_entries)) 
+    {
+        throw std::runtime_error("Failed to read matrix dimensions");
+    }
+    if (mtx.num_rows <= 0 || mtx.num_cols <= 0 || mtx.num_entries <= 0) 
+    {
+        throw std::runtime_error("Matrix dimensions must be positive");
+    }
 }
 
 MtxStructure parseMtx(std::ifstream& file) 
@@ -145,28 +168,42 @@ COO<valueType> readCOO(std::ifstream& file, const MtxStructure& mtx)
     auto colIdx = std::make_unique<size_t[]>(mtx.num_nnzs);
     auto vals   = std::make_unique<valueType[]>(mtx.num_nnzs);
 
-    for (size_t i = 0; i < mtx.num_nnzs; i++)
+    size_t ctr{0};
+    for (size_t i = 0; i < mtx.num_entries; i++)
     {
-        if (mtx.type == MtxValueType::pattern)
+        bool ok = (mtx.type == MtxValueType::pattern)
+                  ? readCOOLine(file, row, col)
+                  : readCOOLine(file, row, col, val);
+
+        if (!ok)
         {
-            readCOOLine(file, row, col);
+            throw std::runtime_error(
+                "Failed to read mtx entry at data line "
+                + std::to_string(i + 1)
+            );
         }
-        else 
+
+        if (row == 0 || row > mtx.num_rows || col == 0 || col > mtx.num_cols)
         {
-            readCOOLine(file, row, col, val);
+            throw std::runtime_error(
+                "Out of bounds entry at data line "
+                + std::to_string(i + 1)
+            );
         }
             
-        rowIdx[i] = row - 1;
-        colIdx[i] = col - 1;
-        vals[i] = val;
-        if (mtx.symmetry == MtxSymmetry::symmetric && row != col)
+        rowIdx[ctr] = row - 1;
+        colIdx[ctr] = col - 1;
+        vals[ctr] = val;
+        ctr++;
+        if (mtx.symmetry != MtxSymmetry::general && row != col)
         {
-            i++;
-            rowIdx[i] = col - 1;
-            colIdx[i] = row - 1;
-            vals[i] = val;
+            rowIdx[ctr] = col - 1;
+            colIdx[ctr] = row - 1;
+            vals[ctr] = val;
+            ctr++;
         }
     }
+    assert(ctr == mtx.num_nnzs);
 
     return COO<valueType>(COO<valueType>::adopt, rowIdx.release(), colIdx.release(), vals.release(),
         mtx.num_rows, mtx.num_cols, mtx.num_nnzs);
@@ -181,13 +218,16 @@ size_t countNnzs(std::ifstream& file, const MtxStructure& mtx)
 
     for (size_t i = 0; i < mtx.num_entries; i++)
     {
-        if (mtx.type == MtxValueType::pattern)
+        bool ok = (mtx.type == MtxValueType::pattern)
+                  ? readCOOLine(file, row, col)
+                  : readCOOLine(file, row, col, val);
+
+        if (!ok)
         {
-            readCOOLine(file, row, col);
-        }
-        else 
-        {
-            readCOOLine(file, row, col, val);
+            throw std::runtime_error(
+                "Failed to read mtx entry at data line "
+                + std::to_string(i + 1)
+            );
         }
             
         nnzs++;
@@ -200,31 +240,31 @@ size_t countNnzs(std::ifstream& file, const MtxStructure& mtx)
     return nnzs;
 }
 
-std::ifstream openFile(const std::filesystem::path path)
+std::ifstream openFile(const std::filesystem::path& path)
 {
     std::ifstream file {path};
     if (!file) 
     {
-        throw std::runtime_error("Bad matrix file name or path: " + path.string());
+        throw std::runtime_error("Failed to open Matrix Market file: " + path.string());
     }
     return file;
 }
 
 template<typename valueType>
-COO<valueType> readMtxToCOO(const std::filesystem::path path)
+COO<valueType> readMtxToCOO(const std::filesystem::path& path)
 {
     std::ifstream file = openFile(path);
 
     auto mtx = parseMtx(file);
     std::streampos data_pos = file.tellg(); 
 
-    if (mtx.symmetry == MtxSymmetry::symmetric)
+    if (mtx.symmetry == MtxSymmetry::general)
     {
-        mtx.num_nnzs = countNnzs<valueType>(file, mtx);
+        mtx.num_nnzs = mtx.num_entries;
     }
     else
     {
-        mtx.num_nnzs = mtx.num_entries;
+        mtx.num_nnzs = countNnzs<valueType>(file, mtx);
     }
 
     file.seekg(data_pos);  

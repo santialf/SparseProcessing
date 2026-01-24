@@ -11,6 +11,7 @@ CSR<valueType> COOToCSR(const COO<valueType>& coo)
     }
 
     auto row_ptr = std::make_unique<size_t[]>(coo.nrows() + 1);
+    std::fill(row_ptr.get(), row_ptr.get() + coo.nrows() + 1, 0);
     auto col_idx = std::make_unique<size_t[]>(coo.nnz());
     auto vals   = std::make_unique<valueType[]>(coo.nnz());
 
@@ -41,6 +42,7 @@ CSC<valueType> COOToCSC(const COO<valueType>& coo)
     auto row_idx = std::make_unique<size_t[]>(coo.nnz());
     auto col_ptr = std::make_unique<size_t[]>(coo.ncols() + 1);
     auto vals   = std::make_unique<valueType[]>(coo.nnz());
+    std::fill(col_ptr.get(), col_ptr.get() + coo.ncols() + 1, 0);
 
     for (size_t i = 0; i < coo.nnz(); i++)
     {

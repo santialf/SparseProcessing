@@ -8,6 +8,7 @@
 #include <complex>
 #include <filesystem>
 #include <fstream>
+#include <cassert>
 
 #include "coo.hpp"
 
@@ -57,12 +58,12 @@ bool readCOOLine(std::ifstream&, size_t&, size_t&, valueType&);
 template<typename valueType>
 COO<valueType> readCOO(std::ifstream&, const MtxStructure&);
 template<typename valueType>
-COO<valueType> readMtxToCOO(const std::filesystem::path);
+COO<valueType> readMtxToCOO(const std::filesystem::path&);
 
 template<typename valueType>
 size_t countNnzs(std::ifstream&, const MtxStructure&);
 
-std::ifstream openFile(const std::filesystem::path);
+std::ifstream openFile(const std::filesystem::path&);
 
 } //namespace mtx::io
 

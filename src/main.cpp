@@ -17,18 +17,17 @@ using namespace mtx::io;
 int main(int argc, char* argv[]) 
 {
     // TODO:
-    // build proper error handling
     // add logging system
     // confirm if its being properly read
     // add unit tests
     // add blocked ell (feb?)
     // add matrix features (feb)
     
-
     if (argc != 2) 
     {
-        std::cerr << "Usage: " << argv[0] << " <mtx file>\n";
-        return 1;
+        std::cerr << "Error: expected 1 argument\n"
+          << "Usage: " << argv[0] << " <mtx file>\n";
+        return EXIT_FAILURE;
     }
 
     std::filesystem::path path{argv[1]};
