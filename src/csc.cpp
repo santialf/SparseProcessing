@@ -3,14 +3,14 @@
 namespace mtx {
 
 template<typename valueType>
-void CSR<valueType>::print() const
+void CSC<valueType>::print() const
 {
     std::cout << "rows: " << nrows_ << " " 
               << "cols: " << ncols_ << " " 
               << "nnzs: " << nnz_ << "\n";
 
     std::cout << "rowIdx: ";
-    for (size_t i=0; i<nnz_ + 1; i++)
+    for (size_t i=0; i<nnz_; i++)
     {
         std::cout << row_idx_[i] << " ";
     }
@@ -26,6 +26,7 @@ void CSR<valueType>::print() const
     {
         std::cout << vals_[i] << " ";
     }
+    std::cout << "\n";
 }
 
 } // namespace mtx

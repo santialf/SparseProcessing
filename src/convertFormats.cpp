@@ -25,4 +25,27 @@ CSR<valueType> COOToCSR(const COO<valueType>& coo)
         coo.nrows(), coo.ncols(), coo.nnz());
 }
 
+template<typename valueType>
+CSC<valueType> COOToCSC(const COO<valueType>& coo)
+{
+    auto row_idx = std::make_unique<size_t[]>(coo.nnz());
+    auto col_ptr = std::make_unique<size_t[]>(coo.ncols() + 1);
+    auto vals   = std::make_unique<valueType[]>(coo.nnz());
+
+    for (int i = 0; i < coo.nnz(); i++)
+    {
+        row_idx[i] = coo.rowIdx()[i];
+        vals[i] = coo.vals()[i];
+        col_ptr[coo.colIdx()[i] + 1]++;
+    }
+
+    for (int i = 0; i < coo.ncols(); i++)
+    {
+        col_ptr[i + 1] += col_ptr[i];
+    }
+
+    return CSC<valueType>(CSC<valueType>::adopt, row_idx.release(), col_ptr.release(), vals.release(),
+        coo.nrows(), coo.ncols(), coo.nnz());
+}
+
 } // namespace mtx::convert

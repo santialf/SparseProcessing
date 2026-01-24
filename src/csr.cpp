@@ -26,6 +26,7 @@ void CSR<valueType>::print() const
     {
         std::cout << vals_[i] << " ";
     }
+    std::cout << "\n";
 }
 
 } // namespace mtx

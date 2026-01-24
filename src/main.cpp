@@ -19,7 +19,6 @@ int main(int argc, char* argv[])
     // TODO:
     // confirm if its being properly read
     // add unit tests
-    // add csc
     // add blocked ell (future)
     // add converts to other formats (ex: COOtCSC, CSRtoCOO, CSRtoCSC)
     // add logging system
@@ -36,11 +35,13 @@ int main(int argc, char* argv[])
     auto coo = readMtxToCOO<valueType>(path);
 
     coo.sortByCol();
+    auto csc = COOToCSC(coo);
     coo.sortByRow();
     auto csr = COOToCSR(coo);
 
     coo.print();
     csr.print();
+    csc.print();
 
     return 0;
 }
