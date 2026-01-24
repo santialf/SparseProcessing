@@ -3,20 +3,20 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <memory>
-#include <cstring>
+
+#include "coo.hpp"
 
 namespace mtx {
 
 template<typename Value>
-class COO {
+class CSR {
 public:
     using deleter_t = void(*)(void*) noexcept;
 
     // 1) Caller retains ownership of row/col/val
-    COO(size_t* row_idx, size_t* col_idx, Value* vals,
+    CSR(size_t* row_idx, size_t* col_ptr, Value* vals,
         size_t nrows, size_t ncols, size_t nnz) noexcept
-        : row_idx_(row_idx), col_idx_(col_idx), vals_(vals),
+        : row_idx_(row_idx), col_ptr_(col_ptr), vals_(vals),
           nrows_(nrows), ncols_(ncols), nnz_(nnz)
     {}
 
@@ -24,68 +24,58 @@ public:
     struct adopt_t {};
     static constexpr adopt_t adopt{};
 
-    COO(adopt_t,
-        size_t* row_idx, size_t* col_idx, Value* vals,
+    CSR(adopt_t,
+        size_t* row_idx, size_t* col_ptr, Value* vals,
         size_t nrows, size_t ncols, size_t nnz) noexcept
-        : row_idx_(row_idx), col_idx_(col_idx), vals_(vals),
+        : row_idx_(row_idx), col_ptr_(col_ptr), vals_(vals),
           nrows_(nrows), ncols_(ncols), nnz_(nnz),
-          row_idx_owner_(row_idx, coo_deleter),
-          col_idx_owner_(col_idx, coo_deleter),
-          vals_owner_(vals, coo_deleter)
+          row_idx_owner_(row_idx, csr_deleter),
+          col_ptr_owner_(col_ptr, csr_deleter),
+          vals_owner_(vals, csr_deleter)
     {}
 
-    void sortByRow();
-    void sortByCol();
     void print() const;
 
     size_t* rowIdx() noexcept { return row_idx_; }
-    size_t* colIdx() noexcept { return col_idx_; }
+    size_t* colPtr() noexcept { return col_ptr_; }
     Value* vals() noexcept { return vals_; }
 
     const size_t* rowIdx() const noexcept { return row_idx_; }
-    const size_t* colIdx() const noexcept { return col_idx_; }
+    const size_t* colPtr() const noexcept { return col_ptr_; }
     const Value* vals() const noexcept { return vals_; }
 
     size_t nrows() const noexcept { return nrows_; }
     size_t ncols() const noexcept { return ncols_; }
     size_t nnz()   const noexcept { return nnz_; }
 
-    bool owns_data() const noexcept { return row_idx_owner_ != nullptr; }
+    bool owns_data() const noexcept { return col_ptr_owner_ != nullptr; }
 
-    COO(const COO&) = delete;
-    COO& operator=(const COO&) = delete;
+    CSR(const CSR&) = delete;
+    CSR& operator=(const CSR&) = delete;
 
-    COO(COO&&) = default;
-    COO& operator=(COO&&) = default;
+    CSR(CSR&&) = default;
+    CSR& operator=(CSR&&) = default;
 
-    ~COO() = default;
+    ~CSR() = default;
 
 private:
-    static void coo_deleter(void* p) noexcept { std::free(p); }
-    
-    enum class Order {
-        Unsorted,
-        RowMajor,
-        ColMajor
-    };
-    Order order_ = Order::Unsorted;
-    void sort(Order);
+    static void csr_deleter(void* p) noexcept { std::free(p); }
 
     size_t nrows_ = 0;
     size_t ncols_ = 0;
     size_t nnz_   = 0;
 
     size_t* row_idx_ = nullptr;
-    size_t* col_idx_ = nullptr;
+    size_t* col_ptr_ = nullptr;
     Value* vals_ = nullptr;
 
     std::unique_ptr<void, deleter_t> row_idx_owner_{nullptr, nullptr};
-    std::unique_ptr<void, deleter_t> col_idx_owner_{nullptr, nullptr};
+    std::unique_ptr<void, deleter_t> col_ptr_owner_{nullptr, nullptr};
     std::unique_ptr<void, deleter_t> vals_owner_{nullptr, nullptr};
 };
 
 } // namespace mtx
 
 #ifdef _HEADER_ONLY
-#include "coo.cpp"
+#include "csr.cpp"
 #endif

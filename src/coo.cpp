@@ -4,7 +4,7 @@
 namespace mtx {
 
 template<typename valueType>
-void COO<valueType>::print()
+void COO<valueType>::print() const
 {
     std::cout << "rows: " << nrows_ << " " 
               << "cols: " << ncols_ << " " 

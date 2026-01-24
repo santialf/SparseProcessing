@@ -34,7 +34,7 @@ public:
           vals_owner_(vals, csr_deleter)
     {}
 
-    void print();
+    void print() const;
 
     size_t* rowPtr() noexcept { return row_ptr_; }
     size_t* colIdx() noexcept { return col_idx_; }

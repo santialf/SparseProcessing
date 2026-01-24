@@ -1,4 +1,4 @@
-#include "csr.hpp"
+#include "csc.hpp"
 
 namespace mtx {
 
@@ -9,16 +9,16 @@ void CSR<valueType>::print() const
               << "cols: " << ncols_ << " " 
               << "nnzs: " << nnz_ << "\n";
 
-    std::cout << "rowPtr: ";
-    for (size_t i=0; i<nrows_ + 1; i++)
+    std::cout << "rowIdx: ";
+    for (size_t i=0; i<nnz_ + 1; i++)
     {
-        std::cout << row_ptr_[i] << " ";
+        std::cout << row_idx_[i] << " ";
     }
     std::cout << "\n";
-    std::cout << "colIdx: ";
-    for (size_t i=0; i<nnz_; i++)
+    std::cout << "colPtr: ";
+    for (size_t i=0; i<ncols_ + 1; i++)
     {
-        std::cout << col_idx_[i] << " ";
+        std::cout << col_ptr_[i] << " ";
     }
     std::cout << "\n";
     std::cout << "vals: ";

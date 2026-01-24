@@ -20,10 +20,10 @@ int main(int argc, char* argv[])
     // confirm if its being properly read
     // add unit tests
     // add csc
-    // add blocked ell
-    // add converts to other formats (ex: csr to coo, csr to csc, coo to csc, ...)
-    // add logs
-    // create new file for matrix features
+    // add blocked ell (future)
+    // add converts to other formats (ex: COOtCSC, CSRtoCOO, CSRtoCSC)
+    // add logging system
+    // add matrix features
     // build proper error handling
 
     if (argc != 2) 
