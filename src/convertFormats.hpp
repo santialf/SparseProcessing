@@ -1,25 +1,18 @@
 #pragma once
 
-#include <vector>
-#include <algorithm>
-
-#include <coo.hpp>
-#include <csr.hpp>
-#include <csc.hpp>
+#include "coo.hpp"
+#include "csc.hpp"
+#include "csr.hpp"
 
 namespace mtx::convert {
 
-template<typename valueType>
-CSR<valueType> COOToCSR(const COO<valueType>&);
+template <typename valueType> CSR<valueType> COOToCSR(const COO<valueType> &);
 
-template<typename valueType>
-CSC<valueType> COOToCSC(const COO<valueType>&);
+template <typename valueType> CSC<valueType> COOToCSC(const COO<valueType> &);
 
-template<typename valueType>
-COO<valueType> CSRToCOO(const CSR<valueType>&);
+template <typename valueType> COO<valueType> CSRToCOO(const CSR<valueType> &);
 
-template<typename valueType>
-COO<valueType> CSCToCOO(const CSC<valueType>&);
+template <typename valueType> COO<valueType> CSCToCOO(const CSC<valueType> &);
 
 } // namespace mtx::convert
 
