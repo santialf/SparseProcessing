@@ -7,8 +7,8 @@
 
 namespace mtx {
 
-template <typename valueType>
-void COO<valueType>::print() const {
+template <typename ValueType>
+void COO<ValueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << " "
             << "nnzs: " << nnz_ << "\n";
@@ -18,8 +18,8 @@ void COO<valueType>::print() const {
   }
 }
 
-template <typename valueType>
-void COO<valueType>::sort(Order order) {
+template <typename ValueType>
+void COO<ValueType>::sort(Order order) {
   if (nnz_ <= 1) return;
 
   std::vector<size_t> perm(nnz_);
@@ -39,7 +39,7 @@ void COO<valueType>::sort(Order order) {
 
   auto tmp_row = std::make_unique<size_t[]>(nnz_);
   auto tmp_col = std::make_unique<size_t[]>(nnz_);
-  auto tmp_val = std::make_unique<valueType[]>(nnz_);
+  auto tmp_val = std::make_unique<ValueType[]>(nnz_);
 
   for (size_t i = 0; i < nnz_; ++i) {
     size_t j = perm[i];
@@ -50,7 +50,7 @@ void COO<valueType>::sort(Order order) {
 
   std::memcpy(row_idx_, tmp_row.get(), nnz_ * sizeof(size_t));
   std::memcpy(col_idx_, tmp_col.get(), nnz_ * sizeof(size_t));
-  std::memcpy(vals_, tmp_val.get(), nnz_ * sizeof(valueType));
+  std::memcpy(vals_, tmp_val.get(), nnz_ * sizeof(ValueType));
 
   // Better than memcpy: swap ownership
   /* row_.swap(tmp_row);
@@ -58,15 +58,15 @@ void COO<valueType>::sort(Order order) {
   val_.swap(tmp_val); */
 }
 
-template <typename valueType>
-void COO<valueType>::sortByRow() {
+template <typename ValueType>
+void COO<ValueType>::sortByRow() {
   if (order_ == Order::RowMajor) return;
   sort(Order::RowMajor);
   order_ = Order::RowMajor;
 }
 
-template <typename valueType>
-void COO<valueType>::sortByCol() {
+template <typename ValueType>
+void COO<ValueType>::sortByCol() {
   if (order_ == Order::ColMajor) return;
   sort(Order::ColMajor);
   order_ = Order::ColMajor;

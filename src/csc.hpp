@@ -6,14 +6,14 @@
 
 namespace mtx {
 
-template <typename Value>
+template <typename ValueType>
 class CSC {
  public:
   using deleter_t = void (*)(void *) noexcept;
 
   // 1) Caller retains ownership of row/col/val
-  CSC(size_t *row_idx, size_t *col_ptr, Value *vals, size_t nrows, size_t ncols,
-      size_t nnz)
+  CSC(size_t *row_idx, size_t *col_ptr, ValueType *vals, size_t nrows,
+      size_t ncols, size_t nnz)
   noexcept
       : row_idx_(row_idx),
         col_ptr_(col_ptr),
@@ -26,7 +26,7 @@ class CSC {
   struct adopt_t {};
   static constexpr adopt_t adopt{};
 
-  CSC(adopt_t, size_t *row_idx, size_t *col_ptr, Value *vals, size_t nrows,
+  CSC(adopt_t, size_t *row_idx, size_t *col_ptr, ValueType *vals, size_t nrows,
       size_t ncols, size_t nnz)
   noexcept
       : row_idx_(row_idx),
@@ -43,11 +43,11 @@ class CSC {
 
   size_t *rowIdx() noexcept { return row_idx_; }
   size_t *colPtr() noexcept { return col_ptr_; }
-  Value *vals() noexcept { return vals_; }
+  ValueType *vals() noexcept { return vals_; }
 
   const size_t *rowIdx() const noexcept { return row_idx_; }
   const size_t *colPtr() const noexcept { return col_ptr_; }
-  const Value *vals() const noexcept { return vals_; }
+  const ValueType *vals() const noexcept { return vals_; }
 
   size_t nrows() const noexcept { return nrows_; }
   size_t ncols() const noexcept { return ncols_; }
@@ -72,7 +72,7 @@ class CSC {
 
   size_t *row_idx_ = nullptr;
   size_t *col_ptr_ = nullptr;
-  Value *vals_ = nullptr;
+  ValueType *vals_ = nullptr;
 
   std::unique_ptr<void, deleter_t> row_idx_owner_{nullptr, nullptr};
   std::unique_ptr<void, deleter_t> col_ptr_owner_{nullptr, nullptr};

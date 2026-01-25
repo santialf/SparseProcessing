@@ -6,17 +6,17 @@
 
 namespace mtx::convert {
 
-template <typename valueType>
-CSR<valueType> COOToCSR(const COO<valueType> &);
+template <typename ValueType>
+CSR<ValueType> COOToCSR(const COO<ValueType> &);
 
-template <typename valueType>
-CSC<valueType> COOToCSC(const COO<valueType> &);
+template <typename ValueType>
+CSC<ValueType> COOToCSC(const COO<ValueType> &);
 
-template <typename valueType>
-COO<valueType> CSRToCOO(const CSR<valueType> &);
+template <typename ValueType>
+COO<ValueType> CSRToCOO(const CSR<ValueType> &);
 
-template <typename valueType>
-COO<valueType> CSCToCOO(const CSC<valueType> &);
+template <typename ValueType>
+COO<ValueType> CSCToCOO(const CSC<ValueType> &);
 
 }  // namespace mtx::convert
 

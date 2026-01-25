@@ -4,8 +4,8 @@
 
 namespace mtx {
 
-template <typename valueType>
-void CSR<valueType>::print() const {
+template <typename ValueType>
+void CSR<ValueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << " "
             << "nnzs: " << nnz_ << "\n";

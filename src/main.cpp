@@ -5,7 +5,7 @@
 #include "csr.hpp"
 #include "mtxReader.hpp"
 
-using valueType = double;
+using ValueType = double;
 
 using namespace mtx;
 using namespace mtx::convert;
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   }
 
   std::filesystem::path path{argv[1]};
-  auto coo = readMtxToCOO<valueType>(path);
+  auto coo = readMtxToCOO<ValueType>(path);
 
   coo.sortByCol();
   auto csc = COOToCSC(coo);

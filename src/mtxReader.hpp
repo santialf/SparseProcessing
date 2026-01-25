@@ -33,14 +33,14 @@ MtxStructure parseMtx(std::ifstream &);
 
 bool readCOOLine(std::ifstream &, size_t &, size_t &);
 bool readCOOLine(std::ifstream &, size_t &, size_t &, std::complex<double> &);
-template <typename valueType>
-bool readCOOLine(std::ifstream &, size_t &, size_t &, valueType &);
-template <typename valueType>
-COO<valueType> readCOO(std::ifstream &, const MtxStructure &);
-template <typename valueType>
-COO<valueType> readMtxToCOO(const std::filesystem::path &);
+template <typename ValueType>
+bool readCOOLine(std::ifstream &, size_t &, size_t &, ValueType &);
+template <typename ValueType>
+COO<ValueType> readCOO(std::ifstream &, const MtxStructure &);
+template <typename ValueType>
+COO<ValueType> readMtxToCOO(const std::filesystem::path &);
 
-template <typename valueType>
+template <typename ValueType>
 size_t countNnzs(std::ifstream &, const MtxStructure &);
 
 std::ifstream openFile(const std::filesystem::path &);

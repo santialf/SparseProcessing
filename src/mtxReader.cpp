@@ -118,23 +118,23 @@ bool readCOOLine(std::ifstream &file, size_t &row, size_t &col,
   return true;
 }
 
-template <typename valueType>
+template <typename ValueType>
 bool readCOOLine(std::ifstream &file, size_t &row, size_t &col,
-                 valueType &val) {
+                 ValueType &val) {
   if (!(file >> row >> col >> val)) {
     return false;
   }
   return true;
 }
 
-template <typename valueType>
-COO<valueType> readCOO(std::ifstream &file, const MtxStructure &mtx) {
+template <typename ValueType>
+COO<ValueType> readCOO(std::ifstream &file, const MtxStructure &mtx) {
   size_t row, col;
-  valueType val{static_cast<valueType>(1)};
+  ValueType val{static_cast<ValueType>(1)};
 
   auto rowIdx = std::make_unique<size_t[]>(mtx.num_nnzs);
   auto colIdx = std::make_unique<size_t[]>(mtx.num_nnzs);
-  auto vals = std::make_unique<valueType[]>(mtx.num_nnzs);
+  auto vals = std::make_unique<ValueType[]>(mtx.num_nnzs);
 
   size_t ctr{0};
   for (size_t i = 0; i < mtx.num_entries; i++) {
@@ -165,16 +165,16 @@ COO<valueType> readCOO(std::ifstream &file, const MtxStructure &mtx) {
   }
   assert(ctr == mtx.num_nnzs);
 
-  return COO<valueType>(COO<valueType>::adopt, rowIdx.release(),
+  return COO<ValueType>(COO<ValueType>::adopt, rowIdx.release(),
                         colIdx.release(), vals.release(), mtx.num_rows,
                         mtx.num_cols, mtx.num_nnzs);
 }
 
-template <typename valueType>
+template <typename ValueType>
 size_t countNnzs(std::ifstream &file, const MtxStructure &mtx) {
   size_t nnzs{0};
   size_t row, col;
-  valueType val{static_cast<valueType>(1)};
+  ValueType val{static_cast<ValueType>(1)};
 
   for (size_t i = 0; i < mtx.num_entries; i++) {
     bool ok = (mtx.type == MtxValueType::pattern)
@@ -204,8 +204,8 @@ std::ifstream openFile(const std::filesystem::path &path) {
   return file;
 }
 
-template <typename valueType>
-COO<valueType> readMtxToCOO(const std::filesystem::path &path) {
+template <typename ValueType>
+COO<ValueType> readMtxToCOO(const std::filesystem::path &path) {
   std::ifstream file = openFile(path);
 
   auto mtx = parseMtx(file);
@@ -214,11 +214,11 @@ COO<valueType> readMtxToCOO(const std::filesystem::path &path) {
   if (mtx.symmetry == MtxSymmetry::general) {
     mtx.num_nnzs = mtx.num_entries;
   } else {
-    mtx.num_nnzs = countNnzs<valueType>(file, mtx);
+    mtx.num_nnzs = countNnzs<ValueType>(file, mtx);
   }
 
   file.seekg(data_pos);
-  return readCOO<valueType>(file, mtx);
+  return readCOO<ValueType>(file, mtx);
 }
 
 }  // namespace mtx::io
