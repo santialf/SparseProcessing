@@ -6,16 +6,21 @@
 
 namespace mtx {
 
-template <typename Value> class CSC {
-public:
+template <typename Value>
+class CSC {
+ public:
   using deleter_t = void (*)(void *) noexcept;
 
   // 1) Caller retains ownership of row/col/val
   CSC(size_t *row_idx, size_t *col_ptr, Value *vals, size_t nrows, size_t ncols,
       size_t nnz)
   noexcept
-      : row_idx_(row_idx), col_ptr_(col_ptr), vals_(vals), nrows_(nrows),
-        ncols_(ncols), nnz_(nnz) {}
+      : row_idx_(row_idx),
+        col_ptr_(col_ptr),
+        vals_(vals),
+        nrows_(nrows),
+        ncols_(ncols),
+        nnz_(nnz) {}
 
   // 2) Adopt ownership of externally allocated buffers
   struct adopt_t {};
@@ -24,9 +29,15 @@ public:
   CSC(adopt_t, size_t *row_idx, size_t *col_ptr, Value *vals, size_t nrows,
       size_t ncols, size_t nnz)
   noexcept
-      : row_idx_(row_idx), col_ptr_(col_ptr), vals_(vals), nrows_(nrows),
-        ncols_(ncols), nnz_(nnz), row_idx_owner_(row_idx, csc_deleter),
-        col_ptr_owner_(col_ptr, csc_deleter), vals_owner_(vals, csc_deleter) {}
+      : row_idx_(row_idx),
+        col_ptr_(col_ptr),
+        vals_(vals),
+        nrows_(nrows),
+        ncols_(ncols),
+        nnz_(nnz),
+        row_idx_owner_(row_idx, csc_deleter),
+        col_ptr_owner_(col_ptr, csc_deleter),
+        vals_owner_(vals, csc_deleter) {}
 
   void print() const;
 
@@ -52,7 +63,7 @@ public:
 
   ~CSC() = default;
 
-private:
+ private:
   static void csc_deleter(void *p) noexcept { std::free(p); }
 
   size_t nrows_ = 0;
@@ -68,7 +79,7 @@ private:
   std::unique_ptr<void, deleter_t> vals_owner_{nullptr, nullptr};
 };
 
-} // namespace mtx
+}  // namespace mtx
 
 #ifdef _HEADER_ONLY
 #include "csc.cpp"

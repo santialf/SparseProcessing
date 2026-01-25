@@ -6,16 +6,21 @@
 
 namespace mtx {
 
-template <typename Value> class CSR {
-public:
+template <typename Value>
+class CSR {
+ public:
   using deleter_t = void (*)(void *) noexcept;
 
   // 1) Caller retains ownership of row/col/val
   CSR(size_t *row_ptr, size_t *col_idx, Value *vals, size_t nrows, size_t ncols,
       size_t nnz)
   noexcept
-      : row_ptr_(row_ptr), col_idx_(col_idx), vals_(vals), nrows_(nrows),
-        ncols_(ncols), nnz_(nnz) {}
+      : row_ptr_(row_ptr),
+        col_idx_(col_idx),
+        vals_(vals),
+        nrows_(nrows),
+        ncols_(ncols),
+        nnz_(nnz) {}
 
   // 2) Adopt ownership of externally allocated buffers
   struct adopt_t {};
@@ -24,9 +29,15 @@ public:
   CSR(adopt_t, size_t *row_ptr, size_t *col_idx, Value *vals, size_t nrows,
       size_t ncols, size_t nnz)
   noexcept
-      : row_ptr_(row_ptr), col_idx_(col_idx), vals_(vals), nrows_(nrows),
-        ncols_(ncols), nnz_(nnz), row_ptr_owner_(row_ptr, csr_deleter),
-        col_idx_owner_(col_idx, csr_deleter), vals_owner_(vals, csr_deleter) {}
+      : row_ptr_(row_ptr),
+        col_idx_(col_idx),
+        vals_(vals),
+        nrows_(nrows),
+        ncols_(ncols),
+        nnz_(nnz),
+        row_ptr_owner_(row_ptr, csr_deleter),
+        col_idx_owner_(col_idx, csr_deleter),
+        vals_owner_(vals, csr_deleter) {}
 
   void print() const;
 
@@ -52,7 +63,7 @@ public:
 
   ~CSR() = default;
 
-private:
+ private:
   static void csr_deleter(void *p) noexcept { std::free(p); }
 
   size_t nrows_ = 0;
@@ -68,7 +79,7 @@ private:
   std::unique_ptr<void, deleter_t> vals_owner_{nullptr, nullptr};
 };
 
-} // namespace mtx
+}  // namespace mtx
 
 #ifdef _HEADER_ONLY
 #include "csr.cpp"

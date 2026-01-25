@@ -1,6 +1,6 @@
-#include <stdexcept>
-
 #include "convertFormats.hpp"
+
+#include <stdexcept>
 
 namespace mtx::convert {
 
@@ -100,4 +100,4 @@ COO<valueType> CSCToCOO(const CSC<valueType> &csc) {
                         COO<valueType>::Order::ColMajor);
 }
 
-} // namespace mtx::convert
+}  // namespace mtx::convert

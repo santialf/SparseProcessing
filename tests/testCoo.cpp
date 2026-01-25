@@ -1,7 +1,8 @@
+#include <gtest/gtest.h>
+
 #include "convertFormats.hpp"
 #include "coo.hpp"
 #include "mtxReader.hpp"
-#include <gtest/gtest.h>
 
 using namespace mtx;
 using namespace mtx::convert;
@@ -55,10 +56,11 @@ TEST(ConvertTest, COOToCSRProducesCorrectRowPtr) {
 }
 
 TEST(MtxReaderTest, ReadsRealGeneralMatrix) {
-  const std::string mtx = "%%MatrixMarket matrix coordinate real general\n"
-                          "2 2 2\n"
-                          "1 1 1.0\n"
-                          "2 2 2.0\n";
+  const std::string mtx =
+      "%%MatrixMarket matrix coordinate real general\n"
+      "2 2 2\n"
+      "1 1 1.0\n"
+      "2 2 2.0\n";
 
   auto path = writeTempMtx(mtx);
   auto coo = readMtxToCOO<double>(path);

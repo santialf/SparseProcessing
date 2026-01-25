@@ -45,7 +45,7 @@ size_t countNnzs(std::ifstream &, const MtxStructure &);
 
 std::ifstream openFile(const std::filesystem::path &);
 
-} // namespace mtx::io
+}  // namespace mtx::io
 
 #ifdef _HEADER_ONLY
 #include "mtxReader.cpp"

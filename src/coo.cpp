@@ -1,13 +1,14 @@
+#include "coo.hpp"
+
 #include <algorithm>
 #include <iostream>
 #include <numeric>
 #include <vector>
 
-#include "coo.hpp"
-
 namespace mtx {
 
-template <typename valueType> void COO<valueType>::print() const {
+template <typename valueType>
+void COO<valueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << " "
             << "nnzs: " << nnz_ << "\n";
@@ -17,21 +18,19 @@ template <typename valueType> void COO<valueType>::print() const {
   }
 }
 
-template <typename valueType> void COO<valueType>::sort(Order order) {
-  if (nnz_ <= 1)
-    return;
+template <typename valueType>
+void COO<valueType>::sort(Order order) {
+  if (nnz_ <= 1) return;
 
   std::vector<size_t> perm(nnz_);
   std::iota(perm.begin(), perm.end(), 0);
 
   auto cmp = [&](size_t a, size_t b) {
     if (order == Order::RowMajor) {
-      if (row_idx_[a] != row_idx_[b])
-        return row_idx_[a] < row_idx_[b];
+      if (row_idx_[a] != row_idx_[b]) return row_idx_[a] < row_idx_[b];
       return col_idx_[a] < col_idx_[b];
     } else {
-      if (col_idx_[a] != col_idx_[b])
-        return col_idx_[a] < col_idx_[b];
+      if (col_idx_[a] != col_idx_[b]) return col_idx_[a] < col_idx_[b];
       return row_idx_[a] < row_idx_[b];
     }
   };
@@ -59,18 +58,18 @@ template <typename valueType> void COO<valueType>::sort(Order order) {
   val_.swap(tmp_val); */
 }
 
-template <typename valueType> void COO<valueType>::sortByRow() {
-  if (order_ == Order::RowMajor)
-    return;
+template <typename valueType>
+void COO<valueType>::sortByRow() {
+  if (order_ == Order::RowMajor) return;
   sort(Order::RowMajor);
   order_ = Order::RowMajor;
 }
 
-template <typename valueType> void COO<valueType>::sortByCol() {
-  if (order_ == Order::ColMajor)
-    return;
+template <typename valueType>
+void COO<valueType>::sortByCol() {
+  if (order_ == Order::ColMajor) return;
   sort(Order::ColMajor);
   order_ = Order::ColMajor;
 }
 
-} // namespace mtx
+}  // namespace mtx
