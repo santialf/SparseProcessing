@@ -11,7 +11,7 @@ class CSR {
  public:
   using deleter_t = void (*)(void *) noexcept;
 
-  // 1) Caller retains ownership of row/col/val
+  // 1) Caller retains ownership of externally allocated buffers
   CSR(size_t *row_ptr, size_t *col_idx, ValueType *vals, size_t nrows,
       size_t ncols, size_t nnz)
   noexcept

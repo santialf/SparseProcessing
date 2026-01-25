@@ -11,7 +11,7 @@ class CSC {
  public:
   using deleter_t = void (*)(void *) noexcept;
 
-  // 1) Caller retains ownership of row/col/val
+  // 1) Caller retains ownership of externally allocated buffers
   CSC(size_t *row_idx, size_t *col_ptr, ValueType *vals, size_t nrows,
       size_t ncols, size_t nnz)
   noexcept
