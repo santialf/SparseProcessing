@@ -2,6 +2,7 @@
 
 #include "convertFormats.hpp"
 #include "coo.hpp"
+#include "csc.hpp"
 #include "csr.hpp"
 #include "mtxReader.hpp"
 
@@ -14,7 +15,8 @@ using namespace mtx::io;
 int main(int argc, char *argv[]) {
   // TODO:
   // move functions to outside of user scope?
-  // add blocked ell (feb?)
+  // add convert coo to bell and bell to coo
+  // add meaningful coments
   // add matrix features (feb)
   // add reordering functions (march)
 
@@ -33,6 +35,7 @@ int main(int argc, char *argv[]) {
   auto csr = COOToCSR(coo);
   auto coo_from_csr = CSRToCOO(csr);
   auto coo_from_csc = CSCToCOO(csc);
+  auto bell = COOToBELL(coo, 2);
 
   std::cout << "COO:\n";
   coo.print();
