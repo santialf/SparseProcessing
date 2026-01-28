@@ -14,11 +14,11 @@ using namespace mtx::io;
 
 int main(int argc, char *argv[]) {
   // TODO:
-  // move functions to outside of user scope?
-  // add convert coo to bell and bell to coo
+  // add bell to coo
   // add meaningful coments
   // add matrix features (feb)
   // add reordering functions (march)
+  // move functions to outside of user scope?
 
   if (argc != 2) {
     std::cerr << "Error: expected 1 argument\n"
@@ -43,6 +43,8 @@ int main(int argc, char *argv[]) {
   csr.print();
   std::cout << "CSC:\n";
   csc.print();
+  std::cout << "BELL:\n";
+  bell.print();
 
   return 0;
 }
