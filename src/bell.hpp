@@ -50,6 +50,10 @@ class BELL {
   size_t ellCols() const noexcept { return ell_cols_; }
   size_t nrows() const noexcept { return nrows_; }
   size_t ncols() const noexcept { return ncols_; }
+  size_t nblocks() const {
+    return ell_cols_ / block_size_ * nrows_ / block_size_;
+  }
+  size_t nvals() const { return ell_cols_ * nrows_; }
 
   bool ownsData() const noexcept { return col_block_idx_owner_ != nullptr; }
 

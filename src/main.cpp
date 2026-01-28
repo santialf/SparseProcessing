@@ -14,8 +14,8 @@ using namespace mtx::io;
 
 int main(int argc, char *argv[]) {
   // TODO:
-  // add bell to coo
   // add meaningful coments
+  // organize files and functions
   // add matrix features (feb)
   // add reordering functions (march)
   // move functions to outside of user scope?
