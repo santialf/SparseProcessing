@@ -178,17 +178,17 @@ std::unique_ptr<ValueType[]> findVals(
 }
 
 template <typename ValueType>
-BELL<ValueType> COOToBELL(const COO<ValueType> &coo, size_t block_size) {
+BELL<ValueType> COOToBELL(const COO<ValueType> &coo, const size_t block_size) {
   if (!coo.isCooRowMajor()) {
     throw std::invalid_argument("COO must be row-major to convert to BELL");
   }
 
-  size_t padded_rows =
+  const size_t padded_rows =
       ((coo.nrows() + block_size - 1) / block_size) * block_size;
-  size_t padded_cols =
+  const size_t padded_cols =
       ((coo.ncols() + block_size - 1) / block_size) * block_size;
 
-  size_t ell_cols = findEllCols(coo, block_size);
+  const size_t ell_cols = findEllCols(coo, block_size);
   auto col_block_idx = findColBlockIdx(coo, block_size, ell_cols, padded_rows);
   auto vals = findVals(coo, block_size, ell_cols, padded_rows, col_block_idx);
 
