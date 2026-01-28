@@ -17,10 +17,10 @@ template <typename ValueType>
 size_t findEllCols(const COO<ValueType> &, const size_t);
 template <typename ValueType>
 std::unique_ptr<size_t[]> findColBlockIdx(const COO<ValueType> &, const size_t,
-                                          const size_t);
+                                          const size_t, const size_t);
 template <typename ValueType>
 std::unique_ptr<ValueType[]> findVals(const COO<ValueType> &, const size_t,
-                                      const size_t,
+                                      const size_t, const size_t,
                                       const std::unique_ptr<size_t[]> &);
 template <typename ValueType>
 BELL<ValueType> COOToBELL(const COO<ValueType> &, size_t);

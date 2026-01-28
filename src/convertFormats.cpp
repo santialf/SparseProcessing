@@ -91,8 +91,9 @@ size_t findEllCols(const COO<ValueType> &coo, const size_t block_size) {
 template <typename ValueType>
 std::unique_ptr<size_t[]> findColBlockIdx(const COO<ValueType> &coo,
                                           const size_t block_size,
-                                          const size_t ell_cols) {
-  const size_t nblock_rows = ceil(coo.nrows() / block_size);
+                                          const size_t ell_cols,
+                                          const size_t padded_rows) {
+  const size_t nblock_rows = padded_rows / block_size;
   const size_t nblock_cols = ell_cols / block_size;
   const size_t nblocks = nblock_rows * nblock_cols;
 
@@ -145,10 +146,10 @@ std::unique_ptr<size_t[]> findColBlockIdx(const COO<ValueType> &coo,
 template <typename ValueType>
 std::unique_ptr<ValueType[]> findVals(
     const COO<ValueType> &coo, const size_t block_size, const size_t ell_cols,
-    const std::unique_ptr<size_t[]> &col_block_idx) {
+    const size_t padded_rows, const std::unique_ptr<size_t[]> &col_block_idx) {
   const size_t nblock_cols = ell_cols / block_size;
-  auto vals = std::make_unique<ValueType[]>(coo.nrows() * ell_cols);
-  std::fill(vals.get(), vals.get() + coo.nrows() * ell_cols, 0);
+  auto vals = std::make_unique<ValueType[]>(padded_rows * ell_cols);
+  std::fill(vals.get(), vals.get() + padded_rows * ell_cols, 0);
 
   // Goes through all the non-zero elements
   for (size_t i = 0; i < coo.nnz(); i++) {
@@ -182,13 +183,18 @@ BELL<ValueType> COOToBELL(const COO<ValueType> &coo, size_t block_size) {
     throw std::invalid_argument("COO must be row-major to convert to BELL");
   }
 
+  size_t padded_rows =
+      ((coo.nrows() + block_size - 1) / block_size) * block_size;
+  size_t padded_cols =
+      ((coo.ncols() + block_size - 1) / block_size) * block_size;
+
   size_t ell_cols = findEllCols(coo, block_size);
-  auto col_block_idx = findColBlockIdx(coo, block_size, ell_cols);
-  auto vals = findVals(coo, block_size, ell_cols, col_block_idx);
+  auto col_block_idx = findColBlockIdx(coo, block_size, ell_cols, padded_rows);
+  auto vals = findVals(coo, block_size, ell_cols, padded_rows, col_block_idx);
 
   return BELL<ValueType>(BELL<ValueType>::adopt, col_block_idx.release(),
-                         vals.release(), block_size, ell_cols, coo.nrows(),
-                         coo.ncols(), coo.nnz());
+                         vals.release(), block_size, ell_cols, padded_rows,
+                         padded_cols, coo.nnz());
 }
 
 template <typename ValueType>
