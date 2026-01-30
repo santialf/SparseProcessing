@@ -11,7 +11,18 @@ add_executable(TEST_coo
     testCoo.cpp
 )
 
+add_executable(TEST_bell
+    testBell.cpp
+)
+
 target_link_libraries(TEST_coo
+    PRIVATE
+        my_lib
+        GTest::gtest
+        GTest::gtest_main
+)
+
+target_link_libraries(TEST_bell
     PRIVATE
         my_lib
         GTest::gtest

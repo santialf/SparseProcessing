@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   auto csr = COOToCSR(coo);
   auto coo_from_csr = CSRToCOO(csr);
   auto coo_from_csc = CSCToCOO(csc);
-  auto bell = COOToBELL(coo, 4);
+  auto bell = COOToBELL(coo, 2);
 
   std::cout << "COO:\n";
   coo.print();

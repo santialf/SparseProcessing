@@ -18,13 +18,16 @@ static std::filesystem::path writeTempMtx(const std::string &content) {
 }
 
 TEST(BELLTest, ConstructionKeepsDimensions) {
-  size_t rows[] = {0, 1};
-  size_t cols[] = {1, 0};
-  double vals[] = {3.0, 4.0};
+  size_t rows[] = {1, 3, 2, 4, 4, 0, 0, 1, 2, 3};
+  size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
+  double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 2, 2, 2);
+  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  coo.sortByRow();
+  auto bell = COOToBELL(coo, 2);
 
-  EXPECT_EQ(coo.nrows(), 2);
-  EXPECT_EQ(coo.ncols(), 2);
-  EXPECT_EQ(coo.nnz(), 2);
+  EXPECT_EQ(bell.nrows(), 6);
+  EXPECT_EQ(bell.ncols(), 6);
+  EXPECT_EQ(bell.ellCols(), 4);
+  EXPECT_EQ(bell.blockSize(), 2);
 }
