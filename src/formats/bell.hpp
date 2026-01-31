@@ -10,6 +10,7 @@ template <typename ValueType>
 class BELL {
  public:
   using deleter_t = void (*)(void *) noexcept;
+  static constexpr size_t MAX_BLOCK_SIZE = 64;
 
   // 1) Caller retains ownership of externally allocated buffers
   BELL(int *col_block_idx, ValueType *vals, size_t block_size, size_t ell_cols,

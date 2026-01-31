@@ -74,9 +74,7 @@ size_t findEllCols(const COO<ValueType> &coo, const size_t block_size) {
 
     // If nz belongs to a different block row, reset the count
     if (block_row != current_block_row) {
-      if (current_block_row != static_cast<size_t>(-1)) {
-        ell_col_blocks = std::max(ell_col_blocks, seen_block_cols.size());
-      }
+      ell_col_blocks = std::max(ell_col_blocks, seen_block_cols.size());
       seen_block_cols.clear();
       current_block_row = block_row;
     }
@@ -84,6 +82,7 @@ size_t findEllCols(const COO<ValueType> &coo, const size_t block_size) {
     // Add distinct block column to the count
     seen_block_cols.insert(block_col);
   }
+  ell_col_blocks = std::max(ell_col_blocks, seen_block_cols.size());
 
   return ell_col_blocks * block_size;
 }
@@ -179,6 +178,9 @@ std::unique_ptr<ValueType[]> findVals(
 
 template <typename ValueType>
 BELL<ValueType> COOToBELL(const COO<ValueType> &coo, const size_t block_size) {
+  if ((block_size <= 0) || (block_size > BELL<ValueType>::MAX_BLOCK_SIZE)) {
+    throw std::invalid_argument("Block size must be > 0");
+  }
   if (!coo.isCooRowMajor()) {
     throw std::invalid_argument("COO must be row-major to convert to BELL");
   }
