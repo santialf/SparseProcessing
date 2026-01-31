@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "convertFormats.hpp"
-#include "coo.hpp"
-#include "csc.hpp"
-#include "csr.hpp"
-#include "mtxReader.hpp"
+#include "converter/convertFormats.hpp"
+#include "formats/coo.hpp"
+#include "formats/csc.hpp"
+#include "formats/csr.hpp"
+#include "reader/mtxReader.hpp"
 
 using ValueType = double;
 

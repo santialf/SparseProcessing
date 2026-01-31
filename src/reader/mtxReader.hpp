@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "coo.hpp"
+#include "formats/coo.hpp"
 
 namespace mtx::io {
 

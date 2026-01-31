@@ -1,9 +1,9 @@
 #pragma once
 
-#include "bell.hpp"
-#include "coo.hpp"
-#include "csc.hpp"
-#include "csr.hpp"
+#include "formats/bell.hpp"
+#include "formats/coo.hpp"
+#include "formats/csc.hpp"
+#include "formats/csr.hpp"
 
 namespace mtx::convert {
 

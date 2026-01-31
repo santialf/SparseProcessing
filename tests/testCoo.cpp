@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "convertFormats.hpp"
-#include "coo.hpp"
-#include "mtxReader.hpp"
+#include "converter/convertFormats.hpp"
+#include "formats/coo.hpp"
+#include "reader/mtxReader.hpp"
 
 using namespace mtx;
 using namespace mtx::convert;

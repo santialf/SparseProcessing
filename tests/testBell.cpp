@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "bell.hpp"
-#include "convertFormats.hpp"
-#include "coo.hpp"
-#include "mtxReader.hpp"
+#include "converter/convertFormats.hpp"
+#include "formats/bell.hpp"
+#include "formats/coo.hpp"
+#include "reader/mtxReader.hpp"
 
 using namespace mtx;
 using namespace mtx::convert;
@@ -43,7 +43,6 @@ TEST(BELLTest, ConstructionCreatesBellPointers) {
 
   // expected BELL data
   const std::vector<int> expectedColBlockIdx = {0, 1, 0, 2, 1, -1};
-
   const std::vector<double> expectedVals = {0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0,
                                             1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0};
 
