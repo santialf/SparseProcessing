@@ -12,8 +12,8 @@ class BELL {
   using deleter_t = void (*)(void *) noexcept;
 
   // 1) Caller retains ownership of externally allocated buffers
-  BELL(size_t *col_block_idx, ValueType *vals, size_t block_size,
-       size_t ell_cols, size_t nrows, size_t ncols, size_t nnz)
+  BELL(int *col_block_idx, ValueType *vals, size_t block_size, size_t ell_cols,
+       size_t nrows, size_t ncols, size_t nnz)
   noexcept
       : block_size_(block_size),
         ell_cols_(ell_cols),
@@ -26,7 +26,7 @@ class BELL {
   struct adopt_t {};
   static constexpr adopt_t adopt{};
 
-  BELL(adopt_t, size_t *col_block_idx, ValueType *vals, size_t block_size,
+  BELL(adopt_t, int *col_block_idx, ValueType *vals, size_t block_size,
        size_t ell_cols, size_t nrows, size_t ncols, size_t nnz)
   noexcept
       : block_size_(block_size),
@@ -40,10 +40,10 @@ class BELL {
 
   void print() const;
 
-  size_t *colBlockIdx() noexcept { return col_block_idx_; }
+  int *colBlockIdx() noexcept { return col_block_idx_; }
   ValueType *vals() noexcept { return vals_; }
 
-  const size_t *colBlockIdx() const noexcept { return col_block_idx_; }
+  const int *colBlockIdx() const noexcept { return col_block_idx_; }
   const ValueType *vals() const noexcept { return vals_; }
 
   size_t blockSize() const noexcept { return block_size_; }
@@ -73,7 +73,7 @@ class BELL {
   size_t nrows_ = 0;
   size_t ncols_ = 0;
 
-  size_t *col_block_idx_ = nullptr;
+  int *col_block_idx_ = nullptr;
   ValueType *vals_ = nullptr;
 
   std::unique_ptr<void, deleter_t> col_block_idx_owner_{nullptr, nullptr};
