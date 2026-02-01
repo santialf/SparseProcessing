@@ -71,7 +71,10 @@ void parseMtxHeader(std::ifstream &file, MtxStructure &mtx) {
   }
   file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-  if (banner != "%%MatrixMarket" || object != "matrix") {
+  object = toLower(object);
+  banner = toLower(banner);
+
+  if (banner != "%%matrixmarket" || object != "matrix") {
     throw std::runtime_error(
         "Invalid Matrix Market header. "
         "Expected banner '%%MatrixMarket matrix', but got '" +
@@ -84,9 +87,21 @@ void parseMtxHeader(std::ifstream &file, MtxStructure &mtx) {
 }
 
 void parseMtxSize(std::ifstream &file, MtxStructure &mtx) {
-  if (!(file >> mtx.num_rows >> mtx.num_cols >> mtx.num_entries)) {
-    throw std::runtime_error("Failed to read matrix dimensions");
+  std::string line;
+  if (!std::getline(file >> std::ws, line)) {
+    throw std::runtime_error("Failed to read mtx dimensions");
   }
+  std::istringstream iss(line);
+
+  if (!(iss >> mtx.num_rows >> mtx.num_cols >> mtx.num_entries)) {
+    throw std::runtime_error("Failed to read mtx dimensions");
+  }
+
+  if (iss >> std::ws && !iss.eof()) {
+    throw std::runtime_error(
+        "Invalid mtx dimensions: expected exactly 3 values");
+  }
+
   if (mtx.num_rows <= 0 || mtx.num_cols <= 0 || mtx.num_entries <= 0) {
     throw std::runtime_error("Matrix dimensions must be positive");
   }
@@ -102,28 +117,61 @@ MtxStructure parseMtx(std::ifstream &file) {
 }
 
 bool readCOOLine(std::ifstream &file, size_t &row, size_t &col) {
-  if (!(file >> row >> col)) {
+  std::string line;
+  if (!std::getline(file >> std::ws, line)) {
     return false;
   }
+  std::istringstream iss(line);
+
+  if (!(iss >> row >> col)) {
+    return false;
+  }
+
+  if (iss >> std::ws && !iss.eof()) {
+    return false;
+  }
+
   return true;
 }
 
 bool readCOOLine(std::ifstream &file, size_t &row, size_t &col,
                  std::complex<double> &val) {
+  std::string line;
+  if (!std::getline(file >> std::ws, line)) {
+    return false;
+  }
+  std::istringstream iss(line);
+
   double real, imag;
-  if (!(file >> row >> col >> real >> imag)) {
+  if (!(iss >> row >> col >> real >> imag)) {
     return false;
   }
   val = {real, imag};
+
+  if (iss >> std::ws && !iss.eof()) {
+    return false;
+  }
+
   return true;
 }
 
 template <typename ValueType>
 bool readCOOLine(std::ifstream &file, size_t &row, size_t &col,
                  ValueType &val) {
-  if (!(file >> row >> col >> val)) {
+  std::string line;
+  if (!std::getline(file >> std::ws, line)) {
     return false;
   }
+  std::istringstream iss(line);
+
+  if (!(iss >> row >> col >> val)) {
+    return false;
+  }
+
+  if (iss >> std::ws && !iss.eof()) {
+    return false;
+  }
+
   return true;
 }
 
@@ -164,6 +212,11 @@ COO<ValueType> readCOO(std::ifstream &file, const MtxStructure &mtx) {
     }
   }
   assert(ctr == mtx.num_nnzs);
+
+  file >> std::ws;
+  if (!file.eof()) {
+    throw std::runtime_error("Invalid mtx file: More entries than expected");
+  }
 
   return COO<ValueType>(COO<ValueType>::adopt, rowIdx.release(),
                         colIdx.release(), vals.release(), mtx.num_rows,
