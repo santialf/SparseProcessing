@@ -186,6 +186,30 @@ TEST(COOTest, ReadsInvalidMtxWithBadCharacters) {
   EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
 }
 
+TEST(COOTest, ReadsInvalidMtxWith0IndexCoordinate) {
+  const std::string mtx =
+      "%%MatrixMarket matrix coordinate real general\n"
+      "2 2 2\n"
+      "1 0 1.0\n"
+      "1 2 2.0\n";
+
+  auto path = writeTempMtx(mtx);
+
+  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+}
+
+TEST(COOTest, ReadsInvalidMtxWithNegativeCoordinate) {
+  const std::string mtx =
+      "%%MatrixMarket matrix coordinate real general\n"
+      "2 2 2\n"
+      "1 0 1.0\n"
+      "-1 2 2.0\n";
+
+  auto path = writeTempMtx(mtx);
+
+  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+}
+
 TEST(COOTest, ReadsRealGeneralMatrix) {
   const std::string mtx =
       "%%MatrixMarket matrix coordinate real general\n"
@@ -234,11 +258,11 @@ TEST(COOTest, ReadsRealSymmetricMatrix) {
 
   EXPECT_EQ(coo.nnz(), 10);
 
-  EXPECT_EQ(coo.vals()[0], coo.vals()[1]);
-  EXPECT_EQ(coo.vals()[2], coo.vals()[3]);
-  EXPECT_EQ(coo.vals()[4], coo.vals()[5]);
-  EXPECT_EQ(coo.vals()[6], coo.vals()[7]);
-  EXPECT_EQ(coo.vals()[8], coo.vals()[9]);
+  EXPECT_TRUE(coo.vals()[0] == coo.vals()[1] && coo.vals()[0] == 1.0);
+  EXPECT_TRUE(coo.vals()[2] == coo.vals()[3] && coo.vals()[2] == 2.0);
+  EXPECT_TRUE(coo.vals()[4] == coo.vals()[5] && coo.vals()[4] == 3.0);
+  EXPECT_TRUE(coo.vals()[6] == coo.vals()[7] && coo.vals()[6] == 4.0);
+  EXPECT_TRUE(coo.vals()[8] == coo.vals()[9] && coo.vals()[8] == 5.0);
 }
 
 TEST(COOTest, ReadsBinarySymmetricMatrix) {
@@ -252,36 +276,25 @@ TEST(COOTest, ReadsBinarySymmetricMatrix) {
       "5 4\n";
 
   auto path = writeTempMtx(mtx);
-  auto coo = readMtxToCOO<double>(path);
+  auto coo = readMtxToCOO<int>(path);
 
   EXPECT_EQ(coo.nnz(), 10);
 
-  EXPECT_EQ(coo.rowIdx()[0], coo.colIdx()[1]);
-  EXPECT_EQ(coo.rowIdx()[2], coo.colIdx()[3]);
-  EXPECT_EQ(coo.rowIdx()[4], coo.colIdx()[5]);
-  EXPECT_EQ(coo.rowIdx()[6], coo.colIdx()[7]);
-  EXPECT_EQ(coo.rowIdx()[8], coo.colIdx()[9]);
+  EXPECT_DOUBLE_EQ(coo.vals()[0], 1);
+  EXPECT_DOUBLE_EQ(coo.vals()[3], 1);
+  EXPECT_DOUBLE_EQ(coo.vals()[4], 1);
+  EXPECT_DOUBLE_EQ(coo.vals()[6], 1);
+  EXPECT_DOUBLE_EQ(coo.vals()[9], 1);
 
-  EXPECT_EQ(coo.colIdx()[0], coo.rowIdx()[1]);
-  EXPECT_EQ(coo.colIdx()[2], coo.rowIdx()[3]);
-  EXPECT_EQ(coo.colIdx()[4], coo.rowIdx()[5]);
-  EXPECT_EQ(coo.colIdx()[6], coo.rowIdx()[7]);
-  EXPECT_EQ(coo.colIdx()[8], coo.rowIdx()[9]);
+  EXPECT_TRUE(coo.rowIdx()[0] == coo.colIdx()[1] && coo.rowIdx()[0] == 1);
+  EXPECT_TRUE(coo.rowIdx()[2] == coo.colIdx()[3] && coo.rowIdx()[2] == 3);
+  EXPECT_TRUE(coo.rowIdx()[4] == coo.colIdx()[5] && coo.rowIdx()[4] == 2);
+  EXPECT_TRUE(coo.rowIdx()[6] == coo.colIdx()[7] && coo.rowIdx()[6] == 4);
+  EXPECT_TRUE(coo.rowIdx()[8] == coo.colIdx()[9] && coo.rowIdx()[8] == 4);
+
+  EXPECT_TRUE(coo.colIdx()[0] == coo.rowIdx()[1] && coo.colIdx()[0] == 0);
+  EXPECT_TRUE(coo.colIdx()[2] == coo.rowIdx()[3] && coo.colIdx()[2] == 0);
+  EXPECT_TRUE(coo.colIdx()[4] == coo.rowIdx()[5] && coo.colIdx()[4] == 1);
+  EXPECT_TRUE(coo.colIdx()[6] == coo.rowIdx()[7] && coo.colIdx()[6] == 2);
+  EXPECT_TRUE(coo.colIdx()[8] == coo.rowIdx()[9] && coo.colIdx()[8] == 3);
 }
-
-// tests where everything is passing
-/*
--COO
-    -square matrix
-    -rectangular matrix
-    -pattern
-    -general
-    -symmetric
-    -
--CSR
--CSC
- */
-// tests with edge cases
-// testing indexation
-// testing correct values
-// testing robustness (diff ordering, extra)
