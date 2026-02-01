@@ -17,7 +17,7 @@ static std::filesystem::path writeTempMtx(const std::string &content) {
   return path;
 }
 
-TEST(BELLTest, ConstructionKeepsDimensions) {
+TEST(BELLTest, ConstructionPadsDimensions) {
   size_t rows[] = {1, 3, 2, 4, 4, 0, 0, 1, 2, 3};
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -57,4 +57,98 @@ TEST(BELLTest, ConstructionCreatesBellPointers) {
     EXPECT_DOUBLE_EQ(bell.vals()[i], expectedVals[i])
         << "Mismatch in vals at index " << i;
   }
+}
+
+TEST(BELLTest, BlockSizeSameAsDimensions) {
+  size_t rows[] = {1, 3, 2, 4, 4, 0, 0, 1, 2, 3};
+  size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
+  double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  coo.sortByRow();
+  auto bell = COOToBELL(coo, 5);
+
+  // expected BELL data
+  const std::vector<int> expectedColBlockIdx = {0};
+  const std::vector<double> expectedVals = {0, 1, 0, 1, 0, 1, 0, 1, 0,
+                                            0, 0, 1, 0, 0, 1, 1, 0, 0,
+                                            0, 1, 0, 0, 1, 1, 0};
+
+  EXPECT_EQ(bell.ellCols(), 5);
+
+  // verify colBlockIdx
+  for (size_t i = 0; i < expectedColBlockIdx.size(); ++i) {
+    EXPECT_EQ(bell.colBlockIdx()[i], expectedColBlockIdx[i])
+        << "Mismatch in colBlockIdx at index " << i;
+  }
+
+  // verify vals
+  for (size_t i = 0; i < expectedVals.size(); ++i) {
+    EXPECT_DOUBLE_EQ(bell.vals()[i], expectedVals[i])
+        << "Mismatch in vals at index " << i;
+  }
+}
+
+TEST(BELLTest, BlockSizeBiggerThanDimensions) {
+  size_t rows[] = {1, 3, 2, 4, 4, 0, 0, 1, 2, 3};
+  size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
+  double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  coo.sortByRow();
+  auto bell = COOToBELL(coo, 8);
+
+  // expected BELL data
+  const std::vector<int> expectedColBlockIdx = {0};
+  const std::vector<double> expectedVals = {
+      0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0,
+      0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+  EXPECT_EQ(bell.ellCols(), 8);
+
+  // verify colBlockIdx
+  for (size_t i = 0; i < expectedColBlockIdx.size(); ++i) {
+    EXPECT_EQ(bell.colBlockIdx()[i], expectedColBlockIdx[i])
+        << "Mismatch in colBlockIdx at index " << i;
+  }
+
+  // verify vals
+  for (size_t i = 0; i < expectedVals.size(); ++i) {
+    EXPECT_DOUBLE_EQ(bell.vals()[i], expectedVals[i])
+        << "Mismatch in vals at index " << i;
+  }
+}
+
+TEST(BELLTest, BlockSizeBiggerThan64) {
+  size_t rows[] = {1, 3, 2, 4, 4, 0, 0, 1, 2, 3};
+  size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
+  double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  coo.sortByRow();
+
+  EXPECT_THROW({ COOToBELL(coo, 65); }, std::invalid_argument);
+}
+
+TEST(BELLTest, BlockSize0) {
+  size_t rows[] = {1, 3, 2, 4, 4, 0, 0, 1, 2, 3};
+  size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
+  double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  coo.sortByRow();
+
+  EXPECT_THROW({ COOToBELL(coo, 0); }, std::invalid_argument);
+}
+
+TEST(BELLTest, BlockSizeNegative) {
+  size_t rows[] = {1, 3, 2, 4, 4, 0, 0, 1, 2, 3};
+  size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
+  double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  coo.sortByRow();
+
+  EXPECT_THROW({ COOToBELL(coo, -1); }, std::invalid_argument);
 }

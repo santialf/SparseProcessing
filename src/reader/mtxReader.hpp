@@ -38,7 +38,7 @@ bool readCOOLine(std::ifstream &, size_t &, size_t &, ValueType &);
 template <typename ValueType>
 COO<ValueType> readCOO(std::ifstream &, const MtxStructure &);
 template <typename ValueType>
-COO<ValueType> readMtxToCOO(const std::filesystem::path &);
+COO<ValueType> readMtxToCOO(const std::string &);
 
 template <typename ValueType>
 size_t countNnzs(std::ifstream &, const MtxStructure &);

@@ -205,7 +205,8 @@ std::ifstream openFile(const std::filesystem::path &path) {
 }
 
 template <typename ValueType>
-COO<ValueType> readMtxToCOO(const std::filesystem::path &path) {
+COO<ValueType> readMtxToCOO(const std::string &file_name) {
+  std::filesystem::path path{file_name};
   std::ifstream file = openFile(path);
 
   auto mtx = parseMtx(file);

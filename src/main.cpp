@@ -27,8 +27,7 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  std::filesystem::path path{argv[1]};
-  auto coo = readMtxToCOO<ValueType>(path);
+  auto coo = readMtxToCOO<ValueType>(argv[1]);
 
   coo.sortByCol();
   auto csc = COOToCSC(coo);
@@ -36,7 +35,7 @@ int main(int argc, char *argv[]) {
   auto csr = COOToCSR(coo);
   auto coo_from_csr = CSRToCOO(csr);
   auto coo_from_csc = CSCToCOO(csc);
-  auto bell = COOToBELL(coo, 2);
+  auto bell = COOToBELL(coo, 8);
 
   std::cout << "COO:\n";
   coo.print();
