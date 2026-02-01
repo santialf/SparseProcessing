@@ -19,6 +19,10 @@ add_executable(TEST_csr
     testCsr.cpp
 )
 
+add_executable(TEST_csc
+    testCsc.cpp
+)
+
 target_link_libraries(TEST_coo
     PRIVATE
         my_lib
@@ -34,6 +38,13 @@ target_link_libraries(TEST_bell
 )
 
 target_link_libraries(TEST_csr
+    PRIVATE
+        my_lib
+        GTest::gtest
+        GTest::gtest_main
+)
+
+target_link_libraries(TEST_csc
     PRIVATE
         my_lib
         GTest::gtest
