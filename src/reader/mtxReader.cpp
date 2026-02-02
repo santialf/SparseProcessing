@@ -116,7 +116,8 @@ MtxStructure parseMtx(std::ifstream &file) {
   return mtx;
 }
 
-bool readCOOLine(std::ifstream &file, size_t &row, size_t &col) {
+template <typename IndexType>
+bool readCOOLine(std::ifstream &file, IndexType &row, IndexType &col) {
   std::string line;
   if (!std::getline(file >> std::ws, line)) {
     return false;
@@ -134,7 +135,8 @@ bool readCOOLine(std::ifstream &file, size_t &row, size_t &col) {
   return true;
 }
 
-bool readCOOLine(std::ifstream &file, size_t &row, size_t &col,
+template <typename IndexType>
+bool readCOOLine(std::ifstream &file, IndexType &row, IndexType &col,
                  std::complex<double> &val) {
   std::string line;
   if (!std::getline(file >> std::ws, line)) {
@@ -155,8 +157,8 @@ bool readCOOLine(std::ifstream &file, size_t &row, size_t &col,
   return true;
 }
 
-template <typename ValueType>
-bool readCOOLine(std::ifstream &file, size_t &row, size_t &col,
+template <typename IndexType, typename ValueType>
+bool readCOOLine(std::ifstream &file, IndexType &row, IndexType &col,
                  ValueType &val) {
   std::string line;
   if (!std::getline(file >> std::ws, line)) {
@@ -175,17 +177,18 @@ bool readCOOLine(std::ifstream &file, size_t &row, size_t &col,
   return true;
 }
 
-template <typename ValueType>
-COO<ValueType> readCOO(std::ifstream &file, const MtxStructure &mtx) {
-  size_t row, col;
+template <typename IndexType, typename ValueType>
+COO<IndexType, ValueType> readCOO(std::ifstream &file,
+                                  const MtxStructure &mtx) {
+  IndexType row, col;
   ValueType val{static_cast<ValueType>(1)};
 
-  auto rowIdx = std::make_unique<size_t[]>(mtx.num_nnzs);
-  auto colIdx = std::make_unique<size_t[]>(mtx.num_nnzs);
+  auto rowIdx = std::make_unique<IndexType[]>(mtx.num_nnzs);
+  auto colIdx = std::make_unique<IndexType[]>(mtx.num_nnzs);
   auto vals = std::make_unique<ValueType[]>(mtx.num_nnzs);
 
-  size_t ctr{0};
-  for (size_t i = 0; i < mtx.num_entries; i++) {
+  IndexType ctr{0};
+  for (IndexType i = 0; i < mtx.num_entries; i++) {
     bool ok = (mtx.type == MtxValueType::pattern)
                   ? readCOOLine(file, row, col)
                   : readCOOLine(file, row, col, val);
@@ -218,18 +221,18 @@ COO<ValueType> readCOO(std::ifstream &file, const MtxStructure &mtx) {
     throw std::runtime_error("Invalid mtx file: More entries than expected");
   }
 
-  return COO<ValueType>(COO<ValueType>::adopt, rowIdx.release(),
-                        colIdx.release(), vals.release(), mtx.num_rows,
-                        mtx.num_cols, mtx.num_nnzs);
+  return COO<IndexType, ValueType>(
+      COO<IndexType, ValueType>::adopt, rowIdx.release(), colIdx.release(),
+      vals.release(), mtx.num_rows, mtx.num_cols, mtx.num_nnzs);
 }
 
-template <typename ValueType>
-size_t countNnzs(std::ifstream &file, const MtxStructure &mtx) {
-  size_t nnzs{0};
-  size_t row, col;
+template <typename IndexType, typename ValueType>
+IndexType countNnzs(std::ifstream &file, const MtxStructure &mtx) {
+  IndexType nnzs{0};
+  IndexType row, col;
   ValueType val{static_cast<ValueType>(1)};
 
-  for (size_t i = 0; i < mtx.num_entries; i++) {
+  for (IndexType i = 0; i < mtx.num_entries; i++) {
     bool ok = (mtx.type == MtxValueType::pattern)
                   ? readCOOLine(file, row, col)
                   : readCOOLine(file, row, col, val);
@@ -257,8 +260,8 @@ std::ifstream openFile(const std::filesystem::path &path) {
   return file;
 }
 
-template <typename ValueType>
-COO<ValueType> readMtxToCOO(const std::string &file_name) {
+template <typename IndexType, typename ValueType>
+COO<IndexType, ValueType> readMtxToCOO(const std::string &file_name) {
   std::filesystem::path path{file_name};
   std::ifstream file = openFile(path);
 
@@ -268,11 +271,11 @@ COO<ValueType> readMtxToCOO(const std::string &file_name) {
   if (mtx.symmetry == MtxSymmetry::general) {
     mtx.num_nnzs = mtx.num_entries;
   } else {
-    mtx.num_nnzs = countNnzs<ValueType>(file, mtx);
+    mtx.num_nnzs = countNnzs<IndexType, ValueType>(file, mtx);
   }
 
   file.seekg(data_pos);
-  return readCOO<ValueType>(file, mtx);
+  return readCOO<IndexType, ValueType>(file, mtx);
 }
 
 }  // namespace mtx::io

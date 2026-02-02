@@ -8,6 +8,7 @@
 #include "reader/mtxReader.hpp"
 
 using ValueType = double;
+using IndexType = size_t;
 
 using namespace mtx;
 using namespace mtx::convert;
@@ -16,7 +17,6 @@ using namespace mtx::io;
 int main(int argc, char *argv[]) {
   // TODO:
   // add meaningful coments
-  // organize files and functions
   // add matrix features (feb)
   // add reordering functions (march)
   // move functions to outside of user scope?
@@ -27,15 +27,15 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  auto coo = readMtxToCOO<ValueType>(argv[1]);
+  auto coo = readMtxToCOO<IndexType, ValueType>(argv[1]);
 
   coo.sortByCol();
-  auto csc = COOToCSC(coo);
+  auto csc = COOToCSC<IndexType, ValueType>(coo);
   coo.sortByRow();
-  auto csr = COOToCSR(coo);
-  auto coo_from_csr = CSRToCOO(csr);
-  auto coo_from_csc = CSCToCOO(csc);
-  auto bell = COOToBELL(coo, 8);
+  auto csr = COOToCSR<IndexType, ValueType>(coo);
+  auto coo_from_csr = CSRToCOO<IndexType, ValueType>(csr);
+  auto coo_from_csc = CSCToCOO<IndexType, ValueType>(csc);
+  auto bell = COOToBELL<IndexType, ValueType>(coo, 8);
 
   std::cout << "COO:\n";
   coo.print();

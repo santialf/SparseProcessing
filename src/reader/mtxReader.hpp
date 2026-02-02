@@ -31,17 +31,20 @@ void parseMtxSymmetry(MtxStructure &, std::string);
 void parseMtxType(MtxStructure &, std::string);
 MtxStructure parseMtx(std::ifstream &);
 
-bool readCOOLine(std::ifstream &, size_t &, size_t &);
-bool readCOOLine(std::ifstream &, size_t &, size_t &, std::complex<double> &);
-template <typename ValueType>
-bool readCOOLine(std::ifstream &, size_t &, size_t &, ValueType &);
-template <typename ValueType>
-COO<ValueType> readCOO(std::ifstream &, const MtxStructure &);
-template <typename ValueType>
-COO<ValueType> readMtxToCOO(const std::string &);
+template <typename IndexType>
+bool readCOOLine(std::ifstream &, IndexType &, IndexType &);
+template <typename IndexType>
+bool readCOOLine(std::ifstream &, IndexType &, IndexType &,
+                 std::complex<double> &);
+template <typename IndexType, typename ValueType>
+bool readCOOLine(std::ifstream &, IndexType &, IndexType &, ValueType &);
+template <typename IndexType, typename ValueType>
+COO<IndexType, ValueType> readCOO(std::ifstream &, const MtxStructure &);
+template <typename IndexType, typename ValueType>
+COO<IndexType, ValueType> readMtxToCOO(const std::string &);
 
-template <typename ValueType>
-size_t countNnzs(std::ifstream &, const MtxStructure &);
+template <typename IndexType, typename ValueType>
+IndexType countNnzs(std::ifstream &, const MtxStructure &);
 
 std::ifstream openFile(const std::filesystem::path &);
 

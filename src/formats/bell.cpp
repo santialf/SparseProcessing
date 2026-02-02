@@ -4,8 +4,8 @@
 
 namespace mtx {
 
-template <typename ValueType>
-void BELL<ValueType>::print() const {
+template <typename IndexType, typename ValueType>
+void BELL<IndexType, ValueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << "\n"
             << "ellCols: " << ell_cols_ << "\n";

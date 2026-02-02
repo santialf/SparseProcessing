@@ -6,15 +6,15 @@
 
 namespace mtx {
 
-template <typename ValueType>
+template <typename IndexType, typename ValueType>
 class BELL {
  public:
   using deleter_t = void (*)(void *) noexcept;
-  static constexpr size_t MAX_BLOCK_SIZE = 64;
+  static constexpr IndexType MAX_BLOCK_SIZE = 64;
 
   // 1) Caller retains ownership of externally allocated buffers
-  BELL(int *col_block_idx, ValueType *vals, size_t block_size, size_t ell_cols,
-       size_t nrows, size_t ncols, size_t nnz)
+  BELL(int *col_block_idx, ValueType *vals, IndexType block_size,
+       IndexType ell_cols, IndexType nrows, IndexType ncols, IndexType nnz)
   noexcept
       : block_size_(block_size),
         ell_cols_(ell_cols),
@@ -27,8 +27,8 @@ class BELL {
   struct adopt_t {};
   static constexpr adopt_t adopt{};
 
-  BELL(adopt_t, int *col_block_idx, ValueType *vals, size_t block_size,
-       size_t ell_cols, size_t nrows, size_t ncols, size_t nnz)
+  BELL(adopt_t, int *col_block_idx, ValueType *vals, IndexType block_size,
+       IndexType ell_cols, IndexType nrows, IndexType ncols, IndexType nnz)
   noexcept
       : block_size_(block_size),
         ell_cols_(ell_cols),
@@ -47,14 +47,14 @@ class BELL {
   const int *colBlockIdx() const noexcept { return col_block_idx_; }
   const ValueType *vals() const noexcept { return vals_; }
 
-  size_t blockSize() const noexcept { return block_size_; }
-  size_t ellCols() const noexcept { return ell_cols_; }
-  size_t nrows() const noexcept { return nrows_; }
-  size_t ncols() const noexcept { return ncols_; }
-  size_t nblocks() const {
+  IndexType blockSize() const noexcept { return block_size_; }
+  IndexType ellCols() const noexcept { return ell_cols_; }
+  IndexType nrows() const noexcept { return nrows_; }
+  IndexType ncols() const noexcept { return ncols_; }
+  IndexType nblocks() const {
     return ell_cols_ / block_size_ * nrows_ / block_size_;
   }
-  size_t nvals() const { return ell_cols_ * nrows_; }
+  IndexType nvals() const { return ell_cols_ * nrows_; }
 
   bool ownsData() const noexcept { return col_block_idx_owner_ != nullptr; }
 
@@ -69,10 +69,10 @@ class BELL {
  private:
   static void bell_deleter(void *p) noexcept { std::free(p); }
 
-  size_t block_size_ = 0;
-  size_t ell_cols_ = 0;
-  size_t nrows_ = 0;
-  size_t ncols_ = 0;
+  IndexType block_size_ = 0;
+  IndexType ell_cols_ = 0;
+  IndexType nrows_ = 0;
+  IndexType ncols_ = 0;
 
   int *col_block_idx_ = nullptr;
   ValueType *vals_ = nullptr;

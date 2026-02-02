@@ -21,7 +21,7 @@ TEST(COOTest, ConstructionKeepsDimensions) {
   size_t cols[] = {1, 0};
   double vals[] = {3.0, 4.0};
 
-  COO<double> coo(rows, cols, vals, 2, 2, 2);
+  COO<size_t, double> coo(rows, cols, vals, 2, 2, 2);
 
   EXPECT_EQ(coo.nrows(), 2);
   EXPECT_EQ(coo.ncols(), 2);
@@ -33,7 +33,7 @@ TEST(COOTest, SortByRowProducesRowMajorOrder) {
   size_t cols[] = {0, 1, 0};
   int vals[] = {3, 1, 2};
 
-  COO<int> coo(rows, cols, vals, 3, 2, 3);
+  COO<size_t, int> coo(rows, cols, vals, 3, 2, 3);
   coo.sortByRow();
 
   const size_t *r = coo.rowIdx();
@@ -51,7 +51,7 @@ TEST(COOTest, ReadsMtxHeaderWithCases) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_NO_THROW({ auto coo = readMtxToCOO<double>(path); });
+  EXPECT_NO_THROW((readMtxToCOO<size_t, double>(path)));
 }
 
 TEST(COOTest, ReadsInvalidMtxHeaderSwappedInfo) {
@@ -63,7 +63,7 @@ TEST(COOTest, ReadsInvalidMtxHeaderSwappedInfo) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxHeaderMissingInfo) {
@@ -75,7 +75,7 @@ TEST(COOTest, ReadsInvalidMtxHeaderMissingInfo) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxHeaderMisspell) {
@@ -87,7 +87,7 @@ TEST(COOTest, ReadsInvalidMtxHeaderMisspell) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxDimensionsMissingParameter) {
@@ -99,7 +99,7 @@ TEST(COOTest, ReadsInvalidMtxDimensionsMissingParameter) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxDimensionsExtraParameter) {
@@ -111,7 +111,7 @@ TEST(COOTest, ReadsInvalidMtxDimensionsExtraParameter) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxBinaryWithValues) {
@@ -123,7 +123,7 @@ TEST(COOTest, ReadsInvalidMtxBinaryWithValues) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxGeneralWithoutValues) {
@@ -135,7 +135,7 @@ TEST(COOTest, ReadsInvalidMtxGeneralWithoutValues) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxGeneralWithExtraValues) {
@@ -147,7 +147,7 @@ TEST(COOTest, ReadsInvalidMtxGeneralWithExtraValues) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxWithMissingLines) {
@@ -158,7 +158,7 @@ TEST(COOTest, ReadsInvalidMtxWithMissingLines) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxWithExtraLines) {
@@ -171,7 +171,7 @@ TEST(COOTest, ReadsInvalidMtxWithExtraLines) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxWithBadCharacters) {
@@ -183,7 +183,7 @@ TEST(COOTest, ReadsInvalidMtxWithBadCharacters) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxWith0IndexCoordinate) {
@@ -195,7 +195,7 @@ TEST(COOTest, ReadsInvalidMtxWith0IndexCoordinate) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsInvalidMtxWithNegativeCoordinate) {
@@ -207,7 +207,7 @@ TEST(COOTest, ReadsInvalidMtxWithNegativeCoordinate) {
 
   auto path = writeTempMtx(mtx);
 
-  EXPECT_THROW({ auto coo = readMtxToCOO<double>(path); }, std::runtime_error);
+  EXPECT_THROW((readMtxToCOO<size_t, double>(path)), std::runtime_error);
 }
 
 TEST(COOTest, ReadsRealGeneralMatrix) {
@@ -218,7 +218,7 @@ TEST(COOTest, ReadsRealGeneralMatrix) {
       "2 2 -2.0\n";
 
   auto path = writeTempMtx(mtx);
-  auto coo = readMtxToCOO<double>(path);
+  auto coo = readMtxToCOO<size_t, double>(path);
 
   EXPECT_EQ(coo.nnz(), 2);
   EXPECT_EQ(coo.vals()[0], 1.0);
@@ -233,7 +233,7 @@ TEST(COOTest, ReadsComplexMatrix) {
       "2 2 2.0 -6.3\n";
 
   auto path = writeTempMtx(mtx);
-  auto coo = readMtxToCOO<std::complex<double>>(path);
+  auto coo = readMtxToCOO<size_t, std::complex<double>>(path);
 
   EXPECT_EQ(coo.nnz(), 2);
 
@@ -254,7 +254,7 @@ TEST(COOTest, ReadsRealSymmetricMatrix) {
       "5 4 5.0\n";
 
   auto path = writeTempMtx(mtx);
-  auto coo = readMtxToCOO<double>(path);
+  auto coo = readMtxToCOO<size_t, double>(path);
 
   EXPECT_EQ(coo.nnz(), 10);
 
@@ -276,7 +276,7 @@ TEST(COOTest, ReadsBinarySymmetricMatrix) {
       "5 4\n";
 
   auto path = writeTempMtx(mtx);
-  auto coo = readMtxToCOO<int>(path);
+  auto coo = readMtxToCOO<size_t, int>(path);
 
   EXPECT_EQ(coo.nnz(), 10);
 

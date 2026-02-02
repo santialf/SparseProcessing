@@ -14,7 +14,8 @@ TEST(CSCTest, COOToCSCProducesCorrectColPtr) {
   size_t cols[] = {0, 0, 1};
   double vals[] = {1, 2, 3};
 
-  COO<double> coo(rows, cols, vals, 2, 2, 3, COO<double>::Order::ColMajor);
+  COO<size_t, double> coo(rows, cols, vals, 2, 2, 3,
+                          COO<size_t, double>::Order::ColMajor);
   auto csc = COOToCSC(coo);
 
   EXPECT_EQ(csc.colPtr()[0], 0);
@@ -27,7 +28,7 @@ TEST(CSCTest, COOToCSCKeepsDimensions) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByCol();
   auto csc = COOToCSC(coo);
 
@@ -41,7 +42,7 @@ TEST(CSCTest, COOToCSCInvalidCOONotSorted) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
 
   EXPECT_THROW({ auto csc = COOToCSC(coo); }, std::invalid_argument);
 }
@@ -51,7 +52,7 @@ TEST(CSCTest, COOToCSCProducesCorrectArrays) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByCol();
   auto csc = COOToCSC(coo);
 

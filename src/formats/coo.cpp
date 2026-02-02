@@ -7,8 +7,8 @@
 
 namespace mtx {
 
-template <typename ValueType>
-void COO<ValueType>::print() const {
+template <typename IndexType, typename ValueType>
+void COO<IndexType, ValueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << " "
             << "nnzs: " << nnz_ << "\n";
@@ -18,14 +18,14 @@ void COO<ValueType>::print() const {
   }
 }
 
-template <typename ValueType>
-void COO<ValueType>::sort(Order order) {
+template <typename IndexType, typename ValueType>
+void COO<IndexType, ValueType>::sort(Order order) {
   if (nnz_ <= 1) return;
 
-  std::vector<size_t> perm(nnz_);
+  std::vector<IndexType> perm(nnz_);
   std::iota(perm.begin(), perm.end(), 0);
 
-  auto cmp = [&](size_t a, size_t b) {
+  auto cmp = [&](IndexType a, IndexType b) {
     if (order == Order::RowMajor) {
       if (row_idx_[a] != row_idx_[b]) return row_idx_[a] < row_idx_[b];
       return col_idx_[a] < col_idx_[b];
@@ -37,19 +37,19 @@ void COO<ValueType>::sort(Order order) {
 
   std::sort(perm.begin(), perm.end(), cmp);
 
-  auto tmp_row = std::make_unique<size_t[]>(nnz_);
-  auto tmp_col = std::make_unique<size_t[]>(nnz_);
+  auto tmp_row = std::make_unique<IndexType[]>(nnz_);
+  auto tmp_col = std::make_unique<IndexType[]>(nnz_);
   auto tmp_val = std::make_unique<ValueType[]>(nnz_);
 
-  for (size_t i = 0; i < nnz_; ++i) {
-    size_t j = perm[i];
+  for (IndexType i = 0; i < nnz_; ++i) {
+    IndexType j = perm[i];
     tmp_row[i] = row_idx_[j];
     tmp_col[i] = col_idx_[j];
     tmp_val[i] = vals_[j];
   }
 
-  std::memcpy(row_idx_, tmp_row.get(), nnz_ * sizeof(size_t));
-  std::memcpy(col_idx_, tmp_col.get(), nnz_ * sizeof(size_t));
+  std::memcpy(row_idx_, tmp_row.get(), nnz_ * sizeof(IndexType));
+  std::memcpy(col_idx_, tmp_col.get(), nnz_ * sizeof(IndexType));
   std::memcpy(vals_, tmp_val.get(), nnz_ * sizeof(ValueType));
 
   // Better than memcpy: swap ownership
@@ -58,15 +58,15 @@ void COO<ValueType>::sort(Order order) {
   val_.swap(tmp_val); */
 }
 
-template <typename ValueType>
-void COO<ValueType>::sortByRow() {
+template <typename IndexType, typename ValueType>
+void COO<IndexType, ValueType>::sortByRow() {
   if (order_ == Order::RowMajor) return;
   sort(Order::RowMajor);
   order_ = Order::RowMajor;
 }
 
-template <typename ValueType>
-void COO<ValueType>::sortByCol() {
+template <typename IndexType, typename ValueType>
+void COO<IndexType, ValueType>::sortByCol() {
   if (order_ == Order::ColMajor) return;
   sort(Order::ColMajor);
   order_ = Order::ColMajor;

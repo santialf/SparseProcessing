@@ -14,9 +14,9 @@ TEST(BELLTest, ConstructionPadsDimensions) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByRow();
-  auto bell = COOToBELL(coo, 2);
+  auto bell = COOToBELL<size_t, double>(coo, 2);
 
   EXPECT_EQ(bell.nrows(), 6);
   EXPECT_EQ(bell.ncols(), 6);
@@ -29,9 +29,9 @@ TEST(BELLTest, ConstructionCreatesBellPointers) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByRow();
-  auto bell = COOToBELL(coo, 2);
+  auto bell = COOToBELL<size_t, double>(coo, 2);
 
   // expected BELL data
   const std::vector<int> expectedColBlockIdx = {0, 1, 0, 2, 1, -1};
@@ -56,9 +56,9 @@ TEST(BELLTest, BlockSizeSameAsDimensions) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByRow();
-  auto bell = COOToBELL(coo, 5);
+  auto bell = COOToBELL<size_t, double>(coo, 5);
 
   // expected BELL data
   const std::vector<int> expectedColBlockIdx = {0};
@@ -86,9 +86,9 @@ TEST(BELLTest, BlockSizeBiggerThanDimensions) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByRow();
-  auto bell = COOToBELL(coo, 8);
+  auto bell = COOToBELL<size_t, double>(coo, 8);
 
   // expected BELL data
   const std::vector<int> expectedColBlockIdx = {0};
@@ -117,10 +117,10 @@ TEST(BELLTest, BlockSizeBiggerThan64) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByRow();
 
-  EXPECT_THROW({ COOToBELL(coo, 65); }, std::invalid_argument);
+  EXPECT_THROW((COOToBELL<size_t, double>(coo, 65)), std::invalid_argument);
 }
 
 TEST(BELLTest, BlockSize0) {
@@ -128,10 +128,10 @@ TEST(BELLTest, BlockSize0) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByRow();
 
-  EXPECT_THROW({ COOToBELL(coo, 0); }, std::invalid_argument);
+  EXPECT_THROW((COOToBELL<size_t, double>(coo, 0)), std::invalid_argument);
 }
 
 TEST(BELLTest, BlockSizeNegative) {
@@ -139,8 +139,8 @@ TEST(BELLTest, BlockSizeNegative) {
   size_t cols[] = {0, 0, 1, 2, 3, 1, 3, 2, 4, 4};
   double vals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-  COO<double> coo(rows, cols, vals, 5, 5, 10);
+  COO<size_t, double> coo(rows, cols, vals, 5, 5, 10);
   coo.sortByRow();
 
-  EXPECT_THROW({ COOToBELL(coo, -1); }, std::invalid_argument);
+  EXPECT_THROW((COOToBELL<size_t, double>(coo, -1)), std::invalid_argument);
 }
