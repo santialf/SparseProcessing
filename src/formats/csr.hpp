@@ -4,9 +4,11 @@
 #include <cstring>
 #include <memory>
 
+#include "concepts.hpp"
+
 namespace mtx {
 
-template <typename IndexType, typename ValueType>
+template <SparseIndex IndexType, SparseValue ValueType>
 class CSR {
  public:
   using deleter_t = void (*)(void *) noexcept;

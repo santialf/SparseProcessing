@@ -75,7 +75,8 @@ IndexType findEllCols(const COO<IndexType, ValueType> &coo,
 
     // If nz belongs to a different block row, reset the count
     if (block_row != current_block_row) {
-      ell_col_blocks = std::max(ell_col_blocks, seen_block_cols.size());
+      ell_col_blocks = std::max(ell_col_blocks,
+                                static_cast<IndexType>(seen_block_cols.size()));
       seen_block_cols.clear();
       current_block_row = block_row;
     }
@@ -83,7 +84,8 @@ IndexType findEllCols(const COO<IndexType, ValueType> &coo,
     // Add distinct block column to the count
     seen_block_cols.insert(block_col);
   }
-  ell_col_blocks = std::max(ell_col_blocks, seen_block_cols.size());
+  ell_col_blocks =
+      std::max(ell_col_blocks, static_cast<IndexType>(seen_block_cols.size()));
 
   return ell_col_blocks * block_size;
 }
