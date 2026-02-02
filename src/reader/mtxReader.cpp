@@ -10,7 +10,8 @@ std::string toLower(std::string s) {
   return s;
 }
 
-void parseMtxStorage(MtxStructure &mtx, std::string storage) {
+template <typename IndexType>
+void parseMtxStorage(MtxStructure<IndexType> &mtx, std::string storage) {
   storage = toLower(storage);
 
   if (storage == "coordinate") {
@@ -23,7 +24,8 @@ void parseMtxStorage(MtxStructure &mtx, std::string storage) {
   }
 }
 
-void parseMtxSymmetry(MtxStructure &mtx, std::string symmetry) {
+template <typename IndexType>
+void parseMtxSymmetry(MtxStructure<IndexType> &mtx, std::string symmetry) {
   symmetry = toLower(symmetry);
 
   if (symmetry == "general") {
@@ -41,7 +43,8 @@ void parseMtxSymmetry(MtxStructure &mtx, std::string symmetry) {
   }
 }
 
-void parseMtxType(MtxStructure &mtx, std::string type) {
+template <typename IndexType>
+void parseMtxType(MtxStructure<IndexType> &mtx, std::string type) {
   type = toLower(type);
 
   if (type == "real") {
@@ -64,7 +67,8 @@ void skipMtxCommentLines(std::ifstream &file) {
   }
 }
 
-void parseMtxHeader(std::ifstream &file, MtxStructure &mtx) {
+template <typename IndexType>
+void parseMtxHeader(std::ifstream &file, MtxStructure<IndexType> &mtx) {
   std::string banner, object, storage, type, symmetry;
   if (!(file >> banner >> object >> storage >> type >> symmetry)) {
     throw std::runtime_error("Failed to read mtx header");
@@ -86,7 +90,8 @@ void parseMtxHeader(std::ifstream &file, MtxStructure &mtx) {
   parseMtxSymmetry(mtx, symmetry);
 }
 
-void parseMtxSize(std::ifstream &file, MtxStructure &mtx) {
+template <typename IndexType>
+void parseMtxSize(std::ifstream &file, MtxStructure<IndexType> &mtx) {
   std::string line;
   if (!std::getline(file >> std::ws, line)) {
     throw std::runtime_error("Failed to read mtx dimensions");
@@ -107,11 +112,12 @@ void parseMtxSize(std::ifstream &file, MtxStructure &mtx) {
   }
 }
 
-MtxStructure parseMtx(std::ifstream &file) {
-  MtxStructure mtx;
-  parseMtxHeader(file, mtx);
+template <typename IndexType>
+MtxStructure<IndexType> parseMtx(std::ifstream &file) {
+  MtxStructure<IndexType> mtx;
+  parseMtxHeader<IndexType>(file, mtx);
   skipMtxCommentLines(file);
-  parseMtxSize(file, mtx);
+  parseMtxSize<IndexType>(file, mtx);
 
   return mtx;
 }
@@ -179,7 +185,7 @@ bool readCOOLine(std::ifstream &file, IndexType &row, IndexType &col,
 
 template <typename IndexType, typename ValueType>
 COO<IndexType, ValueType> readCOO(std::ifstream &file,
-                                  const MtxStructure &mtx) {
+                                  const MtxStructure<IndexType> &mtx) {
   IndexType row, col;
   ValueType val{static_cast<ValueType>(1)};
 
@@ -227,7 +233,7 @@ COO<IndexType, ValueType> readCOO(std::ifstream &file,
 }
 
 template <typename IndexType, typename ValueType>
-IndexType countNnzs(std::ifstream &file, const MtxStructure &mtx) {
+IndexType countNnzs(std::ifstream &file, const MtxStructure<IndexType> &mtx) {
   IndexType nnzs{0};
   IndexType row, col;
   ValueType val{static_cast<ValueType>(1)};
@@ -265,7 +271,7 @@ COO<IndexType, ValueType> readMtxToCOO(const std::string &file_name) {
   std::filesystem::path path{file_name};
   std::ifstream file = openFile(path);
 
-  auto mtx = parseMtx(file);
+  auto mtx = parseMtx<IndexType>(file);
   std::streampos data_pos = file.tellg();
 
   if (mtx.symmetry == MtxSymmetry::general) {

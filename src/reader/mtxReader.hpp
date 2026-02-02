@@ -15,21 +15,26 @@ enum class MtxValueType { pattern, integer, real, complex };
 
 enum class MtxStorage { sparse, dense };
 
+template <typename IndexType>
 struct MtxStructure {
-  size_t num_rows;
-  size_t num_cols;
-  size_t num_entries;
-  size_t num_nnzs;
+  IndexType num_rows;
+  IndexType num_cols;
+  IndexType num_entries;
+  IndexType num_nnzs;
   MtxSymmetry symmetry;
   MtxValueType type;
   MtxStorage storage;
 };
 
 std::string toLower(std::string s);
-void parseMtxStorage(MtxStructure &, std::string);
-void parseMtxSymmetry(MtxStructure &, std::string);
-void parseMtxType(MtxStructure &, std::string);
-MtxStructure parseMtx(std::ifstream &);
+template <typename IndexType>
+void parseMtxStorage(MtxStructure<IndexType> &, std::string);
+template <typename IndexType>
+void parseMtxSymmetry(MtxStructure<IndexType> &, std::string);
+template <typename IndexType>
+void parseMtxType(MtxStructure<IndexType> &, std::string);
+template <typename IndexType>
+MtxStructure<IndexType> parseMtx(std::ifstream &);
 
 template <typename IndexType>
 bool readCOOLine(std::ifstream &, IndexType &, IndexType &);
@@ -39,12 +44,13 @@ bool readCOOLine(std::ifstream &, IndexType &, IndexType &,
 template <typename IndexType, typename ValueType>
 bool readCOOLine(std::ifstream &, IndexType &, IndexType &, ValueType &);
 template <typename IndexType, typename ValueType>
-COO<IndexType, ValueType> readCOO(std::ifstream &, const MtxStructure &);
+COO<IndexType, ValueType> readCOO(std::ifstream &,
+                                  const MtxStructure<IndexType> &);
 template <typename IndexType, typename ValueType>
 COO<IndexType, ValueType> readMtxToCOO(const std::string &);
 
 template <typename IndexType, typename ValueType>
-IndexType countNnzs(std::ifstream &, const MtxStructure &);
+IndexType countNnzs(std::ifstream &, const MtxStructure<IndexType> &);
 
 std::ifstream openFile(const std::filesystem::path &);
 
