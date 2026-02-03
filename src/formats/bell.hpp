@@ -23,7 +23,8 @@ class BELL {
         col_block_idx_(col_block_idx),
         vals_(vals),
         nrows_(nrows),
-        ncols_(ncols) {}
+        ncols_(ncols),
+        nnzs_(nnz) {}
 
   // 2) Adopt ownership of externally allocated buffers
   struct adopt_t {};
@@ -38,6 +39,7 @@ class BELL {
         vals_(vals),
         nrows_(nrows),
         ncols_(ncols),
+        nnzs_(nnz),
         col_block_idx_owner_(col_block_idx, bell_deleter),
         vals_owner_(vals, bell_deleter) {}
 
@@ -53,10 +55,11 @@ class BELL {
   IndexType ellCols() const noexcept { return ell_cols_; }
   IndexType nrows() const noexcept { return nrows_; }
   IndexType ncols() const noexcept { return ncols_; }
+  IndexType nnzs() const noexcept { return nnzs_; }
+  IndexType nvals() const { return ell_cols_ * nrows_; }
   IndexType nblocks() const {
     return ell_cols_ / block_size_ * nrows_ / block_size_;
   }
-  IndexType nvals() const { return ell_cols_ * nrows_; }
 
   bool ownsData() const noexcept { return col_block_idx_owner_ != nullptr; }
 
@@ -75,6 +78,7 @@ class BELL {
   IndexType ell_cols_ = 0;
   IndexType nrows_ = 0;
   IndexType ncols_ = 0;
+  IndexType nnzs_ = 0;
 
   int *col_block_idx_ = nullptr;
   ValueType *vals_ = nullptr;
