@@ -4,7 +4,7 @@
 
 namespace mtx {
 
-template <typename IndexType, typename ValueType>
+template <SparseIndex IndexType, SparseValue ValueType>
 void CSC<IndexType, ValueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << " "

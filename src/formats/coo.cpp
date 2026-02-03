@@ -7,7 +7,7 @@
 
 namespace mtx {
 
-template <typename IndexType, typename ValueType>
+template <SparseIndex IndexType, SparseValue ValueType>
 void COO<IndexType, ValueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << " "
@@ -18,7 +18,7 @@ void COO<IndexType, ValueType>::print() const {
   }
 }
 
-template <typename IndexType, typename ValueType>
+template <SparseIndex IndexType, SparseValue ValueType>
 void COO<IndexType, ValueType>::sort(Order order) {
   if (nnz_ <= 1) return;
 
@@ -58,14 +58,14 @@ void COO<IndexType, ValueType>::sort(Order order) {
   val_.swap(tmp_val); */
 }
 
-template <typename IndexType, typename ValueType>
+template <SparseIndex IndexType, SparseValue ValueType>
 void COO<IndexType, ValueType>::sortByRow() {
   if (order_ == Order::RowMajor) return;
   sort(Order::RowMajor);
   order_ = Order::RowMajor;
 }
 
-template <typename IndexType, typename ValueType>
+template <SparseIndex IndexType, SparseValue ValueType>
 void COO<IndexType, ValueType>::sortByCol() {
   if (order_ == Order::ColMajor) return;
   sort(Order::ColMajor);
