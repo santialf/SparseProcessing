@@ -11,12 +11,12 @@ void BELL<IndexType, ValueType>::print() const {
             << "ellCols: " << ell_cols_ << "\n";
 
   std::cout << "colBlockIdx: ";
-  for (size_t i = 0; i < this->nblocks(); i++) {
+  for (IndexType i = 0; i < this->nblocks(); i++) {
     std::cout << col_block_idx_[i] << " ";
   }
   std::cout << "\n";
   std::cout << "vals: ";
-  for (size_t i = 0; i < this->nvals(); i++) {
+  for (IndexType i = 0; i < this->nvals(); i++) {
     std::cout << vals_[i] << " ";
   }
   std::cout << "\n";

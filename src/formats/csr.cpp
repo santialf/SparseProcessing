@@ -11,17 +11,17 @@ void CSR<IndexType, ValueType>::print() const {
             << "nnzs: " << nnz_ << "\n";
 
   std::cout << "rowPtr: ";
-  for (size_t i = 0; i < nrows_ + 1; i++) {
+  for (IndexType i = 0; i < nrows_ + 1; i++) {
     std::cout << row_ptr_[i] << " ";
   }
   std::cout << "\n";
   std::cout << "colIdx: ";
-  for (size_t i = 0; i < nnz_; i++) {
+  for (IndexType i = 0; i < nnz_; i++) {
     std::cout << col_idx_[i] << " ";
   }
   std::cout << "\n";
   std::cout << "vals: ";
-  for (size_t i = 0; i < nnz_; i++) {
+  for (IndexType i = 0; i < nnz_; i++) {
     std::cout << vals_[i] << " ";
   }
   std::cout << "\n";

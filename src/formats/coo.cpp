@@ -13,7 +13,7 @@ void COO<IndexType, ValueType>::print() const {
             << "cols: " << ncols_ << " "
             << "nnzs: " << nnz_ << "\n";
 
-  for (size_t i = 0; i < nnz_; i++) {
+  for (IndexType i = 0; i < nnz_; i++) {
     std::cout << row_idx_[i] << " " << col_idx_[i] << " " << vals_[i] << "\n";
   }
 }

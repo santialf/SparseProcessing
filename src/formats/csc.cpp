@@ -11,17 +11,17 @@ void CSC<IndexType, ValueType>::print() const {
             << "nnzs: " << nnz_ << "\n";
 
   std::cout << "rowIdx: ";
-  for (size_t i = 0; i < nnz_; i++) {
+  for (IndexType i = 0; i < nnz_; i++) {
     std::cout << row_idx_[i] << " ";
   }
   std::cout << "\n";
   std::cout << "colPtr: ";
-  for (size_t i = 0; i < ncols_ + 1; i++) {
+  for (IndexType i = 0; i < ncols_ + 1; i++) {
     std::cout << col_ptr_[i] << " ";
   }
   std::cout << "\n";
   std::cout << "vals: ";
-  for (size_t i = 0; i < nnz_; i++) {
+  for (IndexType i = 0; i < nnz_; i++) {
     std::cout << vals_[i] << " ";
   }
   std::cout << "\n";
