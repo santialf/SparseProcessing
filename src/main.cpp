@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "converter/convertFormats.hpp"
+#include "features/mtxFeatures.hpp"
 #include "formats/bell.hpp"
 #include "formats/coo.hpp"
 #include "formats/csc.hpp"
@@ -45,6 +46,11 @@ int main(int argc, char *argv[]) {
   csc.print();
   std::cout << "BELL:\n";
   bell.print();
+
+  double density = features::density(coo);
+  std::cout << "Density: " << density << "\n";
+  double sparsity = features::sparsity(coo);
+  std::cout << "Sparsity: " << sparsity << "\n";
 
   return 0;
 }

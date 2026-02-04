@@ -2,7 +2,25 @@
 
 namespace mtx::features {
 
-// density/sparsity
+namespace detail {
+
+template <typename FormatType>
+double totalEntries(const FormatType& mtx) {
+  return static_cast<double>(mtx.nrows()) * static_cast<double>(mtx.ncols());
+}
+
+}  // namespace detail
+
+template <typename FormatType>
+double density(const FormatType& mtx) {
+  return static_cast<double>(mtx.nnz()) / (detail::totalEntries(mtx));
+}
+
+template <typename FormatType>
+double sparsity(const FormatType& mtx) {
+  return 1 - density(mtx);
+}
+
 // nnz_per_row_mean
 // nnz_per_row_std
 // nnz_per_col_mean
