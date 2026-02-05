@@ -25,7 +25,7 @@ TEST(COOTest, ConstructionKeepsDimensions) {
 
   EXPECT_EQ(coo.nrows(), 2);
   EXPECT_EQ(coo.ncols(), 2);
-  EXPECT_EQ(coo.nnz(), 2);
+  EXPECT_EQ(coo.nnzs(), 2);
 }
 
 TEST(COOTest, SortByRowProducesRowMajorOrder) {
@@ -220,7 +220,7 @@ TEST(COOTest, ReadsRealGeneralMatrix) {
   auto path = writeTempMtx(mtx);
   auto coo = readMtxToCOO<size_t, double>(path);
 
-  EXPECT_EQ(coo.nnz(), 2);
+  EXPECT_EQ(coo.nnzs(), 2);
   EXPECT_EQ(coo.vals()[0], 1.0);
   EXPECT_EQ(coo.vals()[1], -2.0);
 }
@@ -235,7 +235,7 @@ TEST(COOTest, ReadsComplexMatrix) {
   auto path = writeTempMtx(mtx);
   auto coo = readMtxToCOO<size_t, std::complex<double>>(path);
 
-  EXPECT_EQ(coo.nnz(), 2);
+  EXPECT_EQ(coo.nnzs(), 2);
 
   EXPECT_DOUBLE_EQ(coo.vals()[0].real(), 1.0);
   EXPECT_DOUBLE_EQ(coo.vals()[0].imag(), 2.0);
@@ -256,7 +256,7 @@ TEST(COOTest, ReadsRealSymmetricMatrix) {
   auto path = writeTempMtx(mtx);
   auto coo = readMtxToCOO<size_t, double>(path);
 
-  EXPECT_EQ(coo.nnz(), 10);
+  EXPECT_EQ(coo.nnzs(), 10);
 
   EXPECT_TRUE(coo.vals()[0] == coo.vals()[1] && coo.vals()[0] == 1.0);
   EXPECT_TRUE(coo.vals()[2] == coo.vals()[3] && coo.vals()[2] == 2.0);
@@ -278,7 +278,7 @@ TEST(COOTest, ReadsBinarySymmetricMatrix) {
   auto path = writeTempMtx(mtx);
   auto coo = readMtxToCOO<size_t, int>(path);
 
-  EXPECT_EQ(coo.nnz(), 10);
+  EXPECT_EQ(coo.nnzs(), 10);
 
   EXPECT_DOUBLE_EQ(coo.vals()[0], 1);
   EXPECT_DOUBLE_EQ(coo.vals()[3], 1);

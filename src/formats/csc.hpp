@@ -15,28 +15,28 @@ class CSC {
 
   // 1) Caller retains ownership of externally allocated buffers
   CSC(IndexType *row_idx, IndexType *col_ptr, ValueType *vals, IndexType nrows,
-      IndexType ncols, IndexType nnz)
+      IndexType ncols, IndexType nnzs)
   noexcept
       : row_idx_(row_idx),
         col_ptr_(col_ptr),
         vals_(vals),
         nrows_(nrows),
         ncols_(ncols),
-        nnz_(nnz) {}
+        nnzs_(nnzs) {}
 
   // 2) Adopt ownership of externally allocated buffers
   struct adopt_t {};
   static constexpr adopt_t adopt{};
 
   CSC(adopt_t, IndexType *row_idx, IndexType *col_ptr, ValueType *vals,
-      IndexType nrows, IndexType ncols, IndexType nnz)
+      IndexType nrows, IndexType ncols, IndexType nnzs)
   noexcept
       : row_idx_(row_idx),
         col_ptr_(col_ptr),
         vals_(vals),
         nrows_(nrows),
         ncols_(ncols),
-        nnz_(nnz),
+        nnzs_(nnzs),
         row_idx_owner_(row_idx, csc_deleter),
         col_ptr_owner_(col_ptr, csc_deleter),
         vals_owner_(vals, csc_deleter) {}
@@ -53,7 +53,7 @@ class CSC {
 
   IndexType nrows() const noexcept { return nrows_; }
   IndexType ncols() const noexcept { return ncols_; }
-  IndexType nnz() const noexcept { return nnz_; }
+  IndexType nnzs() const noexcept { return nnzs_; }
 
   bool ownsData() const noexcept { return col_ptr_owner_ != nullptr; }
 
@@ -70,7 +70,7 @@ class CSC {
 
   IndexType nrows_ = 0;
   IndexType ncols_ = 0;
-  IndexType nnz_ = 0;
+  IndexType nnzs_ = 0;
 
   IndexType *row_idx_ = nullptr;
   IndexType *col_ptr_ = nullptr;

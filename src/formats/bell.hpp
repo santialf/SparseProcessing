@@ -16,7 +16,7 @@ class BELL {
 
   // 1) Caller retains ownership of externally allocated buffers
   BELL(int *col_block_idx, ValueType *vals, IndexType block_size,
-       IndexType ell_cols, IndexType nrows, IndexType ncols, IndexType nnz)
+       IndexType ell_cols, IndexType nrows, IndexType ncols, IndexType nnzs)
   noexcept
       : block_size_(block_size),
         ell_cols_(ell_cols),
@@ -24,14 +24,14 @@ class BELL {
         vals_(vals),
         nrows_(nrows),
         ncols_(ncols),
-        nnzs_(nnz) {}
+        nnzs_(nnzs) {}
 
   // 2) Adopt ownership of externally allocated buffers
   struct adopt_t {};
   static constexpr adopt_t adopt{};
 
   BELL(adopt_t, int *col_block_idx, ValueType *vals, IndexType block_size,
-       IndexType ell_cols, IndexType nrows, IndexType ncols, IndexType nnz)
+       IndexType ell_cols, IndexType nrows, IndexType ncols, IndexType nnzs)
   noexcept
       : block_size_(block_size),
         ell_cols_(ell_cols),
@@ -39,7 +39,7 @@ class BELL {
         vals_(vals),
         nrows_(nrows),
         ncols_(ncols),
-        nnzs_(nnz),
+        nnzs_(nnzs),
         col_block_idx_owner_(col_block_idx, bell_deleter),
         vals_owner_(vals, bell_deleter) {}
 

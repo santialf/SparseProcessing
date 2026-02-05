@@ -32,7 +32,7 @@ double rowCoefficientOfVariation(const CSR<IndexType, ValueType>&,
                                  const bool = false);
 
 template <typename IndexType, typename ValueType>
-IndexType maxNnzInRow(const CSR<IndexType, ValueType>&);
+IndexType maxNnzsInRow(const CSR<IndexType, ValueType>&);
 
 }  // namespace mtx::features
 

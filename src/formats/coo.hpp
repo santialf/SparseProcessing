@@ -16,14 +16,14 @@ class COO {
 
   // 1) Caller retains ownership of externally allocated buffers
   COO(IndexType *row_idx, IndexType *col_idx, ValueType *vals, IndexType nrows,
-      IndexType ncols, IndexType nnz, Order order = Order::Unsorted)
+      IndexType ncols, IndexType nnzs, Order order = Order::Unsorted)
   noexcept
       : row_idx_(row_idx),
         col_idx_(col_idx),
         vals_(vals),
         nrows_(nrows),
         ncols_(ncols),
-        nnz_(nnz),
+        nnzs_(nnzs),
         order_(order) {}
 
   // 2) Adopt ownership of externally allocated buffers
@@ -31,7 +31,7 @@ class COO {
   static constexpr adopt_t adopt{};
 
   COO(adopt_t, IndexType *row_idx, IndexType *col_idx, ValueType *vals,
-      IndexType nrows, IndexType ncols, IndexType nnz,
+      IndexType nrows, IndexType ncols, IndexType nnzs,
       Order order = Order::Unsorted)
   noexcept
       : row_idx_(row_idx),
@@ -39,7 +39,7 @@ class COO {
         vals_(vals),
         nrows_(nrows),
         ncols_(ncols),
-        nnz_(nnz),
+        nnzs_(nnzs),
         order_(order),
         row_idx_owner_(row_idx, coo_deleter),
         col_idx_owner_(col_idx, coo_deleter),
@@ -64,7 +64,7 @@ class COO {
 
   IndexType nrows() const noexcept { return nrows_; }
   IndexType ncols() const noexcept { return ncols_; }
-  IndexType nnz() const noexcept { return nnz_; }
+  IndexType nnzs() const noexcept { return nnzs_; }
 
   COO(const COO &) = delete;
   COO &operator=(const COO &) = delete;
@@ -82,7 +82,7 @@ class COO {
 
   IndexType nrows_ = 0;
   IndexType ncols_ = 0;
-  IndexType nnz_ = 0;
+  IndexType nnzs_ = 0;
 
   IndexType *row_idx_ = nullptr;
   IndexType *col_idx_ = nullptr;

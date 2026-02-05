@@ -8,10 +8,10 @@ template <SparseIndex IndexType, SparseValue ValueType>
 void CSC<IndexType, ValueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << " "
-            << "nnzs: " << nnz_ << "\n";
+            << "nnzs: " << nnzs_ << "\n";
 
   std::cout << "rowIdx: ";
-  for (IndexType i = 0; i < nnz_; i++) {
+  for (IndexType i = 0; i < nnzs_; i++) {
     std::cout << row_idx_[i] << " ";
   }
   std::cout << "\n";
@@ -21,7 +21,7 @@ void CSC<IndexType, ValueType>::print() const {
   }
   std::cout << "\n";
   std::cout << "vals: ";
-  for (IndexType i = 0; i < nnz_; i++) {
+  for (IndexType i = 0; i < nnzs_; i++) {
     std::cout << vals_[i] << " ";
   }
   std::cout << "\n";

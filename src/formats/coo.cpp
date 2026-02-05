@@ -11,18 +11,18 @@ template <SparseIndex IndexType, SparseValue ValueType>
 void COO<IndexType, ValueType>::print() const {
   std::cout << "rows: " << nrows_ << " "
             << "cols: " << ncols_ << " "
-            << "nnzs: " << nnz_ << "\n";
+            << "nnzs: " << nnzs_ << "\n";
 
-  for (IndexType i = 0; i < nnz_; i++) {
+  for (IndexType i = 0; i < nnzs_; i++) {
     std::cout << row_idx_[i] << " " << col_idx_[i] << " " << vals_[i] << "\n";
   }
 }
 
 template <SparseIndex IndexType, SparseValue ValueType>
 void COO<IndexType, ValueType>::sort(Order order) {
-  if (nnz_ <= 1) return;
+  if (nnzs_ <= 1) return;
 
-  std::vector<IndexType> perm(nnz_);
+  std::vector<IndexType> perm(nnzs_);
   std::iota(perm.begin(), perm.end(), 0);
 
   auto cmp = [&](IndexType a, IndexType b) {
@@ -37,20 +37,20 @@ void COO<IndexType, ValueType>::sort(Order order) {
 
   std::sort(perm.begin(), perm.end(), cmp);
 
-  auto tmp_row = std::make_unique<IndexType[]>(nnz_);
-  auto tmp_col = std::make_unique<IndexType[]>(nnz_);
-  auto tmp_val = std::make_unique<ValueType[]>(nnz_);
+  auto tmp_row = std::make_unique<IndexType[]>(nnzs_);
+  auto tmp_col = std::make_unique<IndexType[]>(nnzs_);
+  auto tmp_val = std::make_unique<ValueType[]>(nnzs_);
 
-  for (IndexType i = 0; i < nnz_; ++i) {
+  for (IndexType i = 0; i < nnzs_; ++i) {
     IndexType j = perm[i];
     tmp_row[i] = row_idx_[j];
     tmp_col[i] = col_idx_[j];
     tmp_val[i] = vals_[j];
   }
 
-  std::memcpy(row_idx_, tmp_row.get(), nnz_ * sizeof(IndexType));
-  std::memcpy(col_idx_, tmp_col.get(), nnz_ * sizeof(IndexType));
-  std::memcpy(vals_, tmp_val.get(), nnz_ * sizeof(ValueType));
+  std::memcpy(row_idx_, tmp_row.get(), nnzs_ * sizeof(IndexType));
+  std::memcpy(col_idx_, tmp_col.get(), nnzs_ * sizeof(IndexType));
+  std::memcpy(vals_, tmp_val.get(), nnzs_ * sizeof(ValueType));
 
   // Better than memcpy: swap ownership
   /* row_.swap(tmp_row);

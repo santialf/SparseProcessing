@@ -16,10 +16,10 @@ CSR<IndexType, ValueType> COOToCSR(const COO<IndexType, ValueType> &coo) {
 
   auto row_ptr = std::make_unique<IndexType[]>(coo.nrows() + 1);
   std::fill(row_ptr.get(), row_ptr.get() + coo.nrows() + 1, 0);
-  auto col_idx = std::make_unique<IndexType[]>(coo.nnz());
-  auto vals = std::make_unique<ValueType[]>(coo.nnz());
+  auto col_idx = std::make_unique<IndexType[]>(coo.nnzs());
+  auto vals = std::make_unique<ValueType[]>(coo.nnzs());
 
-  for (IndexType i = 0; i < coo.nnz(); i++) {
+  for (IndexType i = 0; i < coo.nnzs(); i++) {
     col_idx[i] = coo.colIdx()[i];
     vals[i] = coo.vals()[i];
     row_ptr[coo.rowIdx()[i] + 1]++;
@@ -31,7 +31,7 @@ CSR<IndexType, ValueType> COOToCSR(const COO<IndexType, ValueType> &coo) {
 
   return CSR<IndexType, ValueType>(
       CSR<IndexType, ValueType>::adopt, row_ptr.release(), col_idx.release(),
-      vals.release(), coo.nrows(), coo.ncols(), coo.nnz());
+      vals.release(), coo.nrows(), coo.ncols(), coo.nnzs());
 }
 
 template <typename IndexType, typename ValueType>
@@ -40,12 +40,12 @@ CSC<IndexType, ValueType> COOToCSC(const COO<IndexType, ValueType> &coo) {
     throw std::invalid_argument("COO must be col-major to convert to CSC");
   }
 
-  auto row_idx = std::make_unique<IndexType[]>(coo.nnz());
+  auto row_idx = std::make_unique<IndexType[]>(coo.nnzs());
   auto col_ptr = std::make_unique<IndexType[]>(coo.ncols() + 1);
-  auto vals = std::make_unique<ValueType[]>(coo.nnz());
+  auto vals = std::make_unique<ValueType[]>(coo.nnzs());
   std::fill(col_ptr.get(), col_ptr.get() + coo.ncols() + 1, 0);
 
-  for (IndexType i = 0; i < coo.nnz(); i++) {
+  for (IndexType i = 0; i < coo.nnzs(); i++) {
     row_idx[i] = coo.rowIdx()[i];
     vals[i] = coo.vals()[i];
     col_ptr[coo.colIdx()[i] + 1]++;
@@ -57,7 +57,7 @@ CSC<IndexType, ValueType> COOToCSC(const COO<IndexType, ValueType> &coo) {
 
   return CSC<IndexType, ValueType>(
       CSC<IndexType, ValueType>::adopt, row_idx.release(), col_ptr.release(),
-      vals.release(), coo.nrows(), coo.ncols(), coo.nnz());
+      vals.release(), coo.nrows(), coo.ncols(), coo.nnzs());
 }
 
 template <typename IndexType, typename ValueType>
@@ -67,7 +67,7 @@ IndexType findEllCols(const COO<IndexType, ValueType> &coo,
   std::unordered_set<IndexType> seen_block_cols;
 
   // Goes through all the non-zero elements
-  for (IndexType i = 0; i < coo.nnz(); i++) {
+  for (IndexType i = 0; i < coo.nnzs(); i++) {
     // Compute block row and block column of the nz
     IndexType block_row = coo.rowIdx()[i] / block_size;
     IndexType block_col = coo.colIdx()[i] / block_size;
@@ -107,7 +107,7 @@ std::unique_ptr<int[]> findColBlockIdx(const COO<IndexType, ValueType> &coo,
   std::vector<IndexType> seen_block_cols;
 
   // Goes through all the non-zero elements
-  for (IndexType i = 0; i < coo.nnz(); i++) {
+  for (IndexType i = 0; i < coo.nnzs(); i++) {
     // Compute block row and block column of the nz
     IndexType block_row = coo.rowIdx()[i] / block_size;
     IndexType block_col = coo.colIdx()[i] / block_size;
@@ -154,7 +154,7 @@ std::unique_ptr<ValueType[]> findVals(
   std::fill(vals.get(), vals.get() + padded_rows * ell_cols, 0);
 
   // Goes through all the non-zero elements
-  for (IndexType i = 0; i < coo.nnz(); i++) {
+  for (IndexType i = 0; i < coo.nnzs(); i++) {
     // Compute block row and block column of the nz
     IndexType block_row = coo.rowIdx()[i] / block_size;
     IndexType block_col = coo.colIdx()[i] / block_size;
@@ -202,14 +202,14 @@ BELL<IndexType, ValueType> COOToBELL(const COO<IndexType, ValueType> &coo,
   return BELL<IndexType, ValueType>(BELL<IndexType, ValueType>::adopt,
                                     col_block_idx.release(), vals.release(),
                                     block_size, ell_cols, padded_rows,
-                                    padded_cols, coo.nnz());
+                                    padded_cols, coo.nnzs());
 }
 
 template <typename IndexType, typename ValueType>
 COO<IndexType, ValueType> CSRToCOO(const CSR<IndexType, ValueType> &csr) {
-  auto row_idx = std::make_unique<IndexType[]>(csr.nnz());
-  auto col_idx = std::make_unique<IndexType[]>(csr.nnz());
-  auto vals = std::make_unique<ValueType[]>(csr.nnz());
+  auto row_idx = std::make_unique<IndexType[]>(csr.nnzs());
+  auto col_idx = std::make_unique<IndexType[]>(csr.nnzs());
+  auto vals = std::make_unique<ValueType[]>(csr.nnzs());
 
   IndexType k = 0;
   for (IndexType i = 0; i < csr.nrows(); i++) {
@@ -223,15 +223,15 @@ COO<IndexType, ValueType> CSRToCOO(const CSR<IndexType, ValueType> &csr) {
 
   return COO<IndexType, ValueType>(
       COO<IndexType, ValueType>::adopt, row_idx.release(), col_idx.release(),
-      vals.release(), csr.nrows(), csr.ncols(), csr.nnz(),
+      vals.release(), csr.nrows(), csr.ncols(), csr.nnzs(),
       COO<IndexType, ValueType>::Order::RowMajor);
 }
 
 template <typename IndexType, typename ValueType>
 COO<IndexType, ValueType> CSCToCOO(const CSC<IndexType, ValueType> &csc) {
-  auto row_idx = std::make_unique<IndexType[]>(csc.nnz());
-  auto col_idx = std::make_unique<IndexType[]>(csc.nnz());
-  auto vals = std::make_unique<ValueType[]>(csc.nnz());
+  auto row_idx = std::make_unique<IndexType[]>(csc.nnzs());
+  auto col_idx = std::make_unique<IndexType[]>(csc.nnzs());
+  auto vals = std::make_unique<ValueType[]>(csc.nnzs());
 
   IndexType k = 0;
   for (IndexType i = 0; i < csc.ncols(); i++) {
@@ -245,7 +245,7 @@ COO<IndexType, ValueType> CSCToCOO(const CSC<IndexType, ValueType> &csc) {
 
   return COO<IndexType, ValueType>(
       COO<IndexType, ValueType>::adopt, row_idx.release(), col_idx.release(),
-      vals.release(), csc.nrows(), csc.ncols(), csc.nnz(),
+      vals.release(), csc.nrows(), csc.ncols(), csc.nnzs(),
       COO<IndexType, ValueType>::Order::ColMajor);
 }
 

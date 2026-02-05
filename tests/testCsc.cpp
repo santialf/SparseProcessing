@@ -34,7 +34,7 @@ TEST(CSCTest, COOToCSCKeepsDimensions) {
 
   EXPECT_EQ(csc.nrows(), 5);
   EXPECT_EQ(csc.ncols(), 5);
-  EXPECT_EQ(csc.nnz(), 10);
+  EXPECT_EQ(csc.nnzs(), 10);
 }
 
 TEST(CSCTest, COOToCSCInvalidCOONotSorted) {

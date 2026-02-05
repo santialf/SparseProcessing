@@ -16,7 +16,7 @@ double totalEntries(const FormatType& mtx) {
 
 template <typename FormatType>
 double density(const FormatType& mtx) {
-  return static_cast<double>(mtx.nnz()) / (detail::totalEntries(mtx));
+  return static_cast<double>(mtx.nnzs()) / (detail::totalEntries(mtx));
 }
 
 template <typename FormatType>
@@ -90,8 +90,8 @@ IndexType maxNnzsInRow(const CSR<IndexType, ValueType>& csr) {
   return max;
 }
 
-// max_nnz_per_row
-// min_nnz_per_row
+// max_nnzs_per_row
+// min_nnzs_per_row
 
 // mtx bandwidth
 // average row bandwidth
