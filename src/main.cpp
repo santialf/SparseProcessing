@@ -53,8 +53,10 @@ int main(int argc, char *argv[]) {
   std::cout << "Sparsity: " << sparsity << "\n";
   double row_mean = features::nnzsPerRowMean(csr);
   std::cout << "average nnzs per row: " << row_mean << "\n";
-  double cv = features::rowImbalanceFactor(csr);
+  double cv = features::rowCoefficientOfVariation(csr);
   std::cout << "Row coefficient of variance: " << cv << "\n";
+  double maxNnzRow = features::maxNnzInRow(csr);
+  std::cout << "Max number of nzs in a row: " << maxNnzRow << "\n";
 
   return 0;
 }

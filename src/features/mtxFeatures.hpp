@@ -28,7 +28,11 @@ double nnzsPerRowStandardDeviation(const CSR<IndexType, ValueType>&,
                                    const bool = false, double = -1);
 
 template <typename IndexType, typename ValueType>
-double rowImbalanceFactor(const CSR<IndexType, ValueType>&, const bool = false);
+double rowCoefficientOfVariation(const CSR<IndexType, ValueType>&,
+                                 const bool = false);
+
+template <typename IndexType, typename ValueType>
+IndexType maxNnzInRow(const CSR<IndexType, ValueType>&);
 
 }  // namespace mtx::features
 

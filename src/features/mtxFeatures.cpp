@@ -1,5 +1,6 @@
 #include "mtxFeatures.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 namespace mtx::features {
@@ -70,19 +71,25 @@ double nnzsPerRowStandardDeviation(const CSR<IndexType, ValueType>& csr,
 }
 
 template <typename IndexType, typename ValueType>
-double rowImbalanceFactor(const CSR<IndexType, ValueType>& csr,
-                          const bool excludeEmptyRows) {
+double rowCoefficientOfVariation(const CSR<IndexType, ValueType>& csr,
+                                 const bool excludeEmptyRows) {
   auto rowMean = nnzsPerRowMean(csr, excludeEmptyRows);
   auto rowStd = nnzsPerRowStandardDeviation(csr, excludeEmptyRows, rowMean);
-  double imbalanceFactor =
-      static_cast<double>(rowStd) / static_cast<double>(rowMean);
+  double imbalanceFactor{static_cast<double>(rowStd) /
+                         static_cast<double>(rowMean)};
   return imbalanceFactor;
 }
 
-// nnz_per_row_mean
-// nnz_per_row_std
-// nnz_per_col_mean
-// nnz_per_col_std
+template <typename IndexType, typename ValueType>
+IndexType maxNnzsInRow(const CSR<IndexType, ValueType>& csr) {
+  IndexType max = 0;
+  for (IndexType i = 0; i < csr.nrows(); ++i) {
+    IndexType nnzs = csr.rowPtr()[i + 1] - csr.rowPtr()[i];
+    max = std::max(nnzs, max);
+  }
+  return max;
+}
+
 // max_nnz_per_row
 // min_nnz_per_row
 
