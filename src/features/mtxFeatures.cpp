@@ -1,5 +1,7 @@
 #include "mtxFeatures.hpp"
 
+#include <cmath>
+
 namespace mtx::features {
 
 namespace detail {
@@ -33,6 +35,7 @@ double nnzsPerRowMean(const CSR<IndexType, ValueType>& csr,
     rowMean += nnzs;
     nonEmptyRows++;
   }
+
   if (excludeEmptyRows) {
     rowMean = rowMean / nonEmptyRows;
   } else {
@@ -42,25 +45,39 @@ double nnzsPerRowMean(const CSR<IndexType, ValueType>& csr,
   return rowMean;
 }
 
-/* template <typename IndexType, typename ValueType>
+template <typename IndexType, typename ValueType>
 double nnzsPerRowStandardDeviation(const CSR<IndexType, ValueType>& csr,
-                                   const bool excludeEmptyRows,
-                                   const double mean) {
+                                   const bool excludeEmptyRows, double mean) {
   if (mean == -1) mean = nnzsPerRowMean(csr, excludeEmptyRows);
-
   double rowStandardDeviation = 0;
-  return rowStandardDeviation;
-} */
+  IndexType nonEmptyRows = 0;
 
-/* template <typename IndexType, typename ValueType>
+  for (IndexType i = 0; i < csr.nrows(); ++i) {
+    IndexType nnzs = csr.rowPtr()[i + 1] - csr.rowPtr()[i];
+    if (nnzs == 0) continue;
+    rowStandardDeviation += std::pow(nnzs - mean, 2.0);
+    nonEmptyRows++;
+  }
+
+  if (excludeEmptyRows) {
+    rowStandardDeviation = rowStandardDeviation / nonEmptyRows;
+  } else {
+    rowStandardDeviation = rowStandardDeviation / csr.nrows();
+  }
+  rowStandardDeviation = std::sqrt(rowStandardDeviation);
+
+  return rowStandardDeviation;
+}
+
+template <typename IndexType, typename ValueType>
 double rowImbalanceFactor(const CSR<IndexType, ValueType>& csr,
                           const bool excludeEmptyRows) {
   auto rowMean = nnzsPerRowMean(csr, excludeEmptyRows);
-  auto rowStd = nnzsPerRowStandardDeviation(csr, excludeEmptyRows);
+  auto rowStd = nnzsPerRowStandardDeviation(csr, excludeEmptyRows, rowMean);
   double imbalanceFactor =
       static_cast<double>(rowStd) / static_cast<double>(rowMean);
   return imbalanceFactor;
-} */
+}
 
 // nnz_per_row_mean
 // nnz_per_row_std

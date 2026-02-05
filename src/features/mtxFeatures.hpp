@@ -23,13 +23,12 @@ double sparsity(const FormatType&);
 template <typename IndexType, typename ValueType>
 double nnzsPerRowMean(const CSR<IndexType, ValueType>&, const bool = false);
 
-/* template <typename IndexType, typename ValueType>
+template <typename IndexType, typename ValueType>
 double nnzsPerRowStandardDeviation(const CSR<IndexType, ValueType>&,
-                                   const bool = false); */
-/*
+                                   const bool = false, double = -1);
+
 template <typename IndexType, typename ValueType>
 double rowImbalanceFactor(const CSR<IndexType, ValueType>&, const bool = false);
-*/
 
 }  // namespace mtx::features
 

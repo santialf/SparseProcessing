@@ -47,10 +47,14 @@ int main(int argc, char *argv[]) {
   std::cout << "BELL:\n";
   bell.print();
 
-  double density = features::density(coo);
+  double density = features::density(csr);
   std::cout << "Density: " << density << "\n";
-  double sparsity = features::sparsity(coo);
+  double sparsity = features::sparsity(csr);
   std::cout << "Sparsity: " << sparsity << "\n";
+  double row_mean = features::nnzsPerRowMean(csr);
+  std::cout << "average nnzs per row: " << row_mean << "\n";
+  double cv = features::rowImbalanceFactor(csr);
+  std::cout << "Row coefficient of variance: " << cv << "\n";
 
   return 0;
 }
