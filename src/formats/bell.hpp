@@ -74,11 +74,11 @@ class BELL {
  private:
   static void bell_deleter(void *p) noexcept { std::free(p); }
 
-  IndexType block_size_ = 0;
-  IndexType ell_cols_ = 0;
-  IndexType nrows_ = 0;
-  IndexType ncols_ = 0;
-  IndexType nnzs_ = 0;
+  IndexType block_size_{0};
+  IndexType ell_cols_{0};
+  IndexType nrows_{0};
+  IndexType ncols_{0};
+  IndexType nnzs_{0};
 
   int *col_block_idx_ = nullptr;
   ValueType *vals_ = nullptr;

@@ -27,11 +27,11 @@ double sparsity(const FormatType& mtx) {
 template <typename IndexType, typename ValueType>
 double nnzsPerRowMean(const CSR<IndexType, ValueType>& csr,
                       const bool exclude_empty_rows) {
-  double row_mean = 0;
-  IndexType non_empty_rows = 0;
+  double row_mean{0};
+  IndexType non_empty_rows{0};
 
   for (IndexType i = 0; i < csr.nrows(); ++i) {
-    IndexType nnzs = csr.rowPtr()[i + 1] - csr.rowPtr()[i];
+    IndexType nnzs{csr.rowPtr()[i + 1] - csr.rowPtr()[i]};
     if (nnzs == 0) continue;
     row_mean += nnzs;
     non_empty_rows++;
@@ -50,11 +50,11 @@ template <typename IndexType, typename ValueType>
 double nnzsPerRowStandardDeviation(const CSR<IndexType, ValueType>& csr,
                                    const bool exclude_empty_rows, double mean) {
   if (mean == -1) mean = nnzsPerRowMean(csr, exclude_empty_rows);
-  double row_standard_deviation = 0;
-  IndexType non_empty_rows = 0;
+  double row_standard_deviation{0};
+  IndexType non_empty_rows{0};
 
   for (IndexType i = 0; i < csr.nrows(); ++i) {
-    IndexType nnzs = csr.rowPtr()[i + 1] - csr.rowPtr()[i];
+    IndexType nnzs{csr.rowPtr()[i + 1] - csr.rowPtr()[i]};
     if (nnzs == 0) continue;
     row_standard_deviation += std::pow(nnzs - mean, 2.0);
     non_empty_rows++;
@@ -82,16 +82,13 @@ double rowCoefficientOfVariation(const CSR<IndexType, ValueType>& csr,
 
 template <typename IndexType, typename ValueType>
 IndexType maxNnzsInRow(const CSR<IndexType, ValueType>& csr) {
-  IndexType max = 0;
+  IndexType max{0};
   for (IndexType i = 0; i < csr.nrows(); ++i) {
-    IndexType nnzs = csr.rowPtr()[i + 1] - csr.rowPtr()[i];
+    IndexType nnzs{csr.rowPtr()[i + 1] - csr.rowPtr()[i]};
     max = std::max(nnzs, max);
   }
   return max;
 }
-
-// max_nnzs_per_row
-// min_nnzs_per_row
 
 // mtx bandwidth
 // average row bandwidth
@@ -101,7 +98,5 @@ IndexType maxNnzsInRow(const CSR<IndexType, ValueType>& csr) {
 // number of empty columns
 
 // ELL padding
-// row imbalance
-// column imbalance
 
 }  // namespace mtx::features

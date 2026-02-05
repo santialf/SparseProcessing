@@ -63,14 +63,14 @@ CSC<IndexType, ValueType> COOToCSC(const COO<IndexType, ValueType> &coo) {
 template <typename IndexType, typename ValueType>
 IndexType findEllCols(const COO<IndexType, ValueType> &coo,
                       const IndexType block_size) {
-  IndexType ell_col_blocks = 0, current_block_row = -1;
+  IndexType ell_col_blocks{0}, current_block_row{0};
   std::unordered_set<IndexType> seen_block_cols;
 
   // Goes through all the non-zero elements
   for (IndexType i = 0; i < coo.nnzs(); i++) {
     // Compute block row and block column of the nz
-    IndexType block_row = coo.rowIdx()[i] / block_size;
-    IndexType block_col = coo.colIdx()[i] / block_size;
+    IndexType block_row{coo.rowIdx()[i] / block_size};
+    IndexType block_col{coo.colIdx()[i] / block_size};
 
     // If nz belongs to a different block row, reset the count
     if (block_row != current_block_row) {
@@ -94,23 +94,23 @@ std::unique_ptr<int[]> findColBlockIdx(const COO<IndexType, ValueType> &coo,
                                        const IndexType block_size,
                                        const IndexType ell_cols,
                                        const IndexType padded_rows) {
-  const IndexType nblock_rows = padded_rows / block_size;
-  const IndexType nblock_cols = ell_cols / block_size;
-  const IndexType nblocks = nblock_rows * nblock_cols;
+  const IndexType nblock_rows{padded_rows / block_size};
+  const IndexType nblock_cols{ell_cols / block_size};
+  const IndexType nblocks{nblock_rows * nblock_cols};
 
   auto col_block_idx = std::make_unique<int[]>(nblocks);
   std::fill(col_block_idx.get(), col_block_idx.get() + nblocks, -1);
 
-  IndexType current_block_row = -1;
-  IndexType slot = 0;
-  IndexType prev_k = -1;
+  IndexType current_block_row{0};
+  IndexType slot{0};
+  double prev_k{-1};
   std::vector<IndexType> seen_block_cols;
 
   // Goes through all the non-zero elements
   for (IndexType i = 0; i < coo.nnzs(); i++) {
     // Compute block row and block column of the nz
-    IndexType block_row = coo.rowIdx()[i] / block_size;
-    IndexType block_col = coo.colIdx()[i] / block_size;
+    IndexType block_row{coo.rowIdx()[i] / block_size};
+    IndexType block_col{coo.colIdx()[i] / block_size};
 
     // If nz belongs to a different block row, reset the count
     if (block_row != current_block_row) {
@@ -149,17 +149,17 @@ std::unique_ptr<ValueType[]> findVals(
     const COO<IndexType, ValueType> &coo, const IndexType block_size,
     const IndexType ell_cols, const IndexType padded_rows,
     const std::unique_ptr<int[]> &col_block_idx) {
-  const IndexType nblock_cols = ell_cols / block_size;
+  const IndexType nblock_cols{ell_cols / block_size};
   auto vals = std::make_unique<ValueType[]>(padded_rows * ell_cols);
   std::fill(vals.get(), vals.get() + padded_rows * ell_cols, 0);
 
   // Goes through all the non-zero elements
   for (IndexType i = 0; i < coo.nnzs(); i++) {
     // Compute block row and block column of the nz
-    IndexType block_row = coo.rowIdx()[i] / block_size;
-    IndexType block_col = coo.colIdx()[i] / block_size;
+    IndexType block_row{coo.rowIdx()[i] / block_size};
+    IndexType block_col{coo.colIdx()[i] / block_size};
 
-    IndexType block_row_offset = block_row * nblock_cols;
+    IndexType block_row_offset{block_row * nblock_cols};
     IndexType block_index;
 
     for (IndexType k = 0; k < nblock_cols; ++k) {
@@ -169,9 +169,9 @@ std::unique_ptr<ValueType[]> findVals(
       }
     }
 
-    IndexType local_col = coo.colIdx()[i] % block_size;
-    IndexType value_index =
-        coo.rowIdx()[i] * ell_cols + block_index * block_size + local_col;
+    IndexType local_col{coo.colIdx()[i] % block_size};
+    IndexType value_index{coo.rowIdx()[i] * ell_cols +
+                          block_index * block_size + local_col};
 
     vals[value_index] = coo.vals()[i];
   }

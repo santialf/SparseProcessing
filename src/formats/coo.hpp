@@ -80,9 +80,9 @@ class COO {
   Order order_ = Order::Unsorted;
   void sort(Order);
 
-  IndexType nrows_ = 0;
-  IndexType ncols_ = 0;
-  IndexType nnzs_ = 0;
+  IndexType nrows_{0};
+  IndexType ncols_{0};
+  IndexType nnzs_{0};
 
   IndexType *row_idx_ = nullptr;
   IndexType *col_idx_ = nullptr;
