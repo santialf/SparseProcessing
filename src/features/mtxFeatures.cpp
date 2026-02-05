@@ -26,58 +26,58 @@ double sparsity(const FormatType& mtx) {
 
 template <typename IndexType, typename ValueType>
 double nnzsPerRowMean(const CSR<IndexType, ValueType>& csr,
-                      const bool excludeEmptyRows) {
-  double rowMean = 0;
-  IndexType nonEmptyRows = 0;
+                      const bool exclude_empty_rows) {
+  double row_mean = 0;
+  IndexType non_empty_rows = 0;
 
   for (IndexType i = 0; i < csr.nrows(); ++i) {
     IndexType nnzs = csr.rowPtr()[i + 1] - csr.rowPtr()[i];
     if (nnzs == 0) continue;
-    rowMean += nnzs;
-    nonEmptyRows++;
+    row_mean += nnzs;
+    non_empty_rows++;
   }
 
-  if (excludeEmptyRows) {
-    rowMean = rowMean / nonEmptyRows;
+  if (exclude_empty_rows) {
+    row_mean = row_mean / non_empty_rows;
   } else {
-    rowMean = rowMean / csr.nrows();
+    row_mean = row_mean / csr.nrows();
   }
 
-  return rowMean;
+  return row_mean;
 }
 
 template <typename IndexType, typename ValueType>
 double nnzsPerRowStandardDeviation(const CSR<IndexType, ValueType>& csr,
-                                   const bool excludeEmptyRows, double mean) {
-  if (mean == -1) mean = nnzsPerRowMean(csr, excludeEmptyRows);
-  double rowStandardDeviation = 0;
-  IndexType nonEmptyRows = 0;
+                                   const bool exclude_empty_rows, double mean) {
+  if (mean == -1) mean = nnzsPerRowMean(csr, exclude_empty_rows);
+  double row_standard_deviation = 0;
+  IndexType non_empty_rows = 0;
 
   for (IndexType i = 0; i < csr.nrows(); ++i) {
     IndexType nnzs = csr.rowPtr()[i + 1] - csr.rowPtr()[i];
     if (nnzs == 0) continue;
-    rowStandardDeviation += std::pow(nnzs - mean, 2.0);
-    nonEmptyRows++;
+    row_standard_deviation += std::pow(nnzs - mean, 2.0);
+    non_empty_rows++;
   }
 
-  if (excludeEmptyRows) {
-    rowStandardDeviation = rowStandardDeviation / nonEmptyRows;
+  if (exclude_empty_rows) {
+    row_standard_deviation = row_standard_deviation / non_empty_rows;
   } else {
-    rowStandardDeviation = rowStandardDeviation / csr.nrows();
+    row_standard_deviation = row_standard_deviation / csr.nrows();
   }
-  rowStandardDeviation = std::sqrt(rowStandardDeviation);
+  row_standard_deviation = std::sqrt(row_standard_deviation);
 
-  return rowStandardDeviation;
+  return row_standard_deviation;
 }
 
 template <typename IndexType, typename ValueType>
 double rowCoefficientOfVariation(const CSR<IndexType, ValueType>& csr,
-                                 const bool excludeEmptyRows) {
-  auto rowMean = nnzsPerRowMean(csr, excludeEmptyRows);
-  auto rowStd = nnzsPerRowStandardDeviation(csr, excludeEmptyRows, rowMean);
-  double imbalanceFactor{static_cast<double>(rowStd) /
-                         static_cast<double>(rowMean)};
-  return imbalanceFactor;
+                                 const bool exclude_empty_rows) {
+  auto row_mean = nnzsPerRowMean(csr, exclude_empty_rows);
+  auto row_std = nnzsPerRowStandardDeviation(csr, exclude_empty_rows, row_mean);
+  double imbalance_factor{static_cast<double>(row_std) /
+                          static_cast<double>(row_mean)};
+  return imbalance_factor;
 }
 
 template <typename IndexType, typename ValueType>
