@@ -34,6 +34,9 @@ double rowCoefficientOfVariation(const CSR<IndexType, ValueType>&,
 template <typename IndexType, typename ValueType>
 IndexType maxNnzsInRow(const CSR<IndexType, ValueType>&);
 
+template <typename IndexType, typename ValueType>
+double bandwidth(const CSR<IndexType, ValueType>&);
+
 }  // namespace mtx::features
 
 #ifdef _HEADER_ONLY

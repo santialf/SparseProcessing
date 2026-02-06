@@ -57,6 +57,8 @@ int main(int argc, char *argv[]) {
   std::cout << "Row coefficient of variance: " << cv << "\n";
   auto maxNnzsRow = features::maxNnzsInRow(csr);
   std::cout << "Max number of nzs in a row: " << maxNnzsRow << "\n";
+  double bw = features::bandwidth(csr);
+  std::cout << "Bandwidth: " << bw << "\n";
 
   return 0;
 }

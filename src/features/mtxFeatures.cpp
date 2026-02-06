@@ -90,6 +90,21 @@ IndexType maxNnzsInRow(const CSR<IndexType, ValueType>& csr) {
   return max;
 }
 
+template <typename IndexType, typename ValueType>
+double bandwidth(const CSR<IndexType, ValueType>& csr) {
+  double bw = 0;
+  for (int i = 0; i < csr.nrows(); i++) {
+    for (int j = csr.rowPtr()[i]; j < csr.rowPtr()[i + 1]; j++) {
+      // Compute the absolute distance from the diagonal
+      IndexType dist =
+          (i > csr.colIdx()[j]) ? (i - csr.colIdx()[j]) : (csr.colIdx()[j] - i);
+      if (dist > bw) bw = dist;
+    }
+  }
+  bw = bw / csr.nrows();
+  return bw;
+}
+
 // mtx bandwidth
 // average row bandwidth
 // symmmetry
