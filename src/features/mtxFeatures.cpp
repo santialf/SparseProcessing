@@ -105,8 +105,30 @@ double bandwidth(const CSR<IndexType, ValueType>& csr) {
   return bw;
 }
 
-// mtx bandwidth
-// average row bandwidth
+template <typename IndexType, typename ValueType>
+bool isSymmetric(const CSR<IndexType, ValueType>& csr) {
+  if (csr.nrows() != csr.ncols()) return false;
+
+  for (IndexType i = 0; i < csr.nrows(); i++) {
+    for (IndexType j = csr.rowPtr()[i]; j < csr.rowPtr()[i + 1]; j++) {
+      IndexType col{csr.colIdx()[j]};
+      ValueType val{csr.vals()[j]};
+
+      bool found{false};
+      for (IndexType jj = csr.rowPtr()[col]; jj < csr.rowPtr()[col + 1]; jj++) {
+        if (csr.colIdx()[jj] == i) {
+          if (csr.vals()[jj] != val) return false;
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) return false;
+    }
+  }
+  return true;
+}
+
 // symmmetry
 // diagonal density
 // number of empty rows

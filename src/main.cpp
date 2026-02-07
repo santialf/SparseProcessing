@@ -59,6 +59,8 @@ int main(int argc, char *argv[]) {
   std::cout << "Max number of nzs in a row: " << maxNnzsRow << "\n";
   double bw = features::bandwidth(csr);
   std::cout << "Bandwidth: " << bw << "\n";
+  double symm = features::isSymmetric(csr);
+  std::cout << "Is symmetric?: " << symm << "\n";
 
   return 0;
 }
