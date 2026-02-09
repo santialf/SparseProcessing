@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "converter/convertFormats.hpp"
+
 namespace mtx::features {
 
 namespace detail {
@@ -129,10 +131,32 @@ bool isSymmetric(const CSR<IndexType, ValueType>& csr) {
   return true;
 }
 
-// symmmetry
-// diagonal density
-// number of empty rows
-// number of empty columns
+template <typename IndexType, typename ValueType>
+IndexType numEmptyRows(const CSR<IndexType, ValueType>& csr) {
+  IndexType ctr = 0;
+
+  for (int i = 0; i < csr.nrows(); i++) {
+    if (csr.rowPtr()[i] == csr.rowPtr()[i + 1]) ctr++;
+  }
+
+  return ctr;
+}
+
+template <typename IndexType, typename ValueType>
+IndexType numEmptyCols(const CSR<IndexType, ValueType>& csr) {
+  IndexType ctr = 0;
+
+  // to change when CSRToCSC is implemented...
+  auto coo = convert::CSRToCOO(csr);
+  coo.sortByCol();
+  auto csc = convert::COOToCSC(coo);
+
+  for (int i = 0; i < csc.ncols(); i++) {
+    if (csc.colPtr()[i] == csc.colPtr()[i + 1]) ctr++;
+  }
+
+  return ctr;
+}
 
 // ELL padding
 

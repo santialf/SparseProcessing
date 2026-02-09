@@ -40,6 +40,12 @@ double bandwidth(const CSR<IndexType, ValueType>&);
 template <typename IndexType, typename ValueType>
 bool isSymmetric(const CSR<IndexType, ValueType>&);
 
+template <typename IndexType, typename ValueType>
+IndexType numEmptyRows(const CSR<IndexType, ValueType>&);
+
+template <typename IndexType, typename ValueType>
+IndexType numEmptyCols(const CSR<IndexType, ValueType>&);
+
 }  // namespace mtx::features
 
 #ifdef _HEADER_ONLY

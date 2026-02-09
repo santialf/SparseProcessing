@@ -61,6 +61,9 @@ int main(int argc, char *argv[]) {
   std::cout << "Bandwidth: " << bw << "\n";
   double symm = features::isSymmetric(csr);
   std::cout << "Is symmetric?: " << symm << "\n";
-
+  double emptyRowCtr = features::numEmptyRows(csr);
+  double emptyColCtr = features::numEmptyCols(csr);
+  std::cout << "Empty rows: " << emptyRowCtr << " Empty cols:" << emptyColCtr
+            << "\n";
   return 0;
 }
