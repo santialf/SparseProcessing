@@ -178,15 +178,34 @@ IndexType countDiagonal(const CSR<IndexType, ValueType>& csr) {
 
 // graph
 template <typename IndexType, typename ValueType>
-IndexType averageDegree(const CSR<IndexType, ValueType>& csr,
-                        const bool exclude_empty_rows) {
+IndexType averageDegree(const CSR<IndexType, ValueType>& csr) {
   if (csr.nrows() != csr.ncols()) {
     throw std::runtime_error(
         "Matrix does not represent an adjacency matrix of a graph (not "
         "square)");
   }
+  IndexType edges{csr.nnzs() + countDiagonal(csr)};
+  IndexType vertices{csr.nrows()};
+  return edges / vertices;
+}
 
-  return (csr.nnzs() + countDiagonal(csr)) / csr.nrows();
+// graph
+template <typename IndexType, typename ValueType>
+IndexType averageInDegree(const CSR<IndexType, ValueType>& csr) {
+  if (csr.nrows() != csr.ncols()) {
+    throw std::runtime_error(
+        "Matrix does not represent an adjacency matrix of a graph (not "
+        "square)");
+  }
+  IndexType edges{csr.nnzs() + countDiagonal(csr)};
+  IndexType vertices{csr.nrows()};
+  return (edges / 2) / vertices;
+}
+
+// graph
+template <typename IndexType, typename ValueType>
+IndexType averageOutDegree(const CSR<IndexType, ValueType>& csr) {
+  return averageInDegree(csr);
 }
 
 // average degree

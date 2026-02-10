@@ -67,6 +67,10 @@ int main(int argc, char *argv[]) {
             << "\n";
 
   auto avgDegree = features::averageDegree(csr);
-  std::cout << "Average Degree: " << avgDegree << "\n";
+  std::cout << "Average degree: " << avgDegree << "\n";
+  auto avgInDegree = features::averageInDegree(csr);
+  std::cout << "Average in degree: " << avgInDegree << "\n";
+  auto avgOutDegree = features::averageOutDegree(csr);
+  std::cout << "Average out degree: " << avgOutDegree << "\n";
   return 0;
 }

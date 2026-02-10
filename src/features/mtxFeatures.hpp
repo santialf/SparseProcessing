@@ -50,7 +50,13 @@ template <typename IndexType, typename ValueType>
 IndexType countDiagonal(const CSR<IndexType, ValueType>&);
 
 template <typename IndexType, typename ValueType>
-IndexType averageDegree(const CSR<IndexType, ValueType>&, const bool = false);
+IndexType averageDegree(const CSR<IndexType, ValueType>&);
+
+template <typename IndexType, typename ValueType>
+IndexType averageInDegree(const CSR<IndexType, ValueType>&);
+
+template <typename IndexType, typename ValueType>
+IndexType averageOutDegree(const CSR<IndexType, ValueType>&);
 
 }  // namespace mtx::features
 
