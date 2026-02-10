@@ -158,6 +158,31 @@ IndexType numEmptyCols(const CSR<IndexType, ValueType>& csr) {
   return ctr;
 }
 
+template <typename IndexType, typename ValueType>
+IndexType averageDegree(const CSR<IndexType, ValueType>& csr,
+                        const bool exclude_empty_rows) {
+  IndexType avg{0};
+  if (exclude_empty_rows) {
+    for (IndexType i = 0; i < csr.nrows(); ++i) {
+      IndexType nnzs{csr.rowPtr()[i + 1] - csr.rowPtr()[i]};
+      if (nnzs == 0) continue;
+      avg += nnzs;
+    }
+    avg = avg / csr.nrows();
+  } else {
+    avg = csr.nnzs() / csr.nrows();
+  }
+
+  return avg;
+}
+
+// average degree
+// average degree cols
+// average degree rows
+// minimum degree cols
+// minimum degree rows
+// elements in diagonal of length n
+// elements in block diagonal of length n
 // ELL padding
 
 }  // namespace mtx::features

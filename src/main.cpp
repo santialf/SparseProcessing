@@ -65,5 +65,8 @@ int main(int argc, char *argv[]) {
   double emptyColCtr = features::numEmptyCols(csr);
   std::cout << "Empty rows: " << emptyRowCtr << " Empty cols:" << emptyColCtr
             << "\n";
+
+  auto avgDegree = features::averageDegree(csr);
+  std::cout << "Average Degree: " << avgDegree << "\n";
   return 0;
 }

@@ -46,6 +46,9 @@ IndexType numEmptyRows(const CSR<IndexType, ValueType>&);
 template <typename IndexType, typename ValueType>
 IndexType numEmptyCols(const CSR<IndexType, ValueType>&);
 
+template <typename IndexType, typename ValueType>
+IndexType averageDegree(const CSR<IndexType, ValueType>&, const bool = false);
+
 }  // namespace mtx::features
 
 #ifdef _HEADER_ONLY
