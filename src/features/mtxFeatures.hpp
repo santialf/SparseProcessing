@@ -47,6 +47,9 @@ template <typename IndexType, typename ValueType>
 IndexType numEmptyCols(const CSR<IndexType, ValueType>&);
 
 template <typename IndexType, typename ValueType>
+IndexType countDiagonal(const CSR<IndexType, ValueType>&);
+
+template <typename IndexType, typename ValueType>
 IndexType averageDegree(const CSR<IndexType, ValueType>&, const bool = false);
 
 }  // namespace mtx::features

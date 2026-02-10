@@ -159,21 +159,34 @@ IndexType numEmptyCols(const CSR<IndexType, ValueType>& csr) {
 }
 
 template <typename IndexType, typename ValueType>
-IndexType averageDegree(const CSR<IndexType, ValueType>& csr,
-                        const bool exclude_empty_rows) {
-  IndexType avg{0};
-  if (exclude_empty_rows) {
-    for (IndexType i = 0; i < csr.nrows(); ++i) {
-      IndexType nnzs{csr.rowPtr()[i + 1] - csr.rowPtr()[i]};
-      if (nnzs == 0) continue;
-      avg += nnzs;
-    }
-    avg = avg / csr.nrows();
-  } else {
-    avg = csr.nnzs() / csr.nrows();
+IndexType countDiagonal(const CSR<IndexType, ValueType>& csr) {
+  if (csr.nrows() != csr.ncols()) {
+    throw std::runtime_error("Matrix is not square");
   }
 
-  return avg;
+  IndexType count{0};
+  for (IndexType i = 0; i < csr.nrows(); i++) {
+    for (IndexType j = csr.rowPtr()[i]; j < csr.rowPtr()[i + 1]; j++) {
+      IndexType col{csr.colIdx()[j]};
+      ValueType val{csr.vals()[j]};
+
+      if (col == i) count++;
+    }
+  }
+  return count;
+}
+
+// graph
+template <typename IndexType, typename ValueType>
+IndexType averageDegree(const CSR<IndexType, ValueType>& csr,
+                        const bool exclude_empty_rows) {
+  if (csr.nrows() != csr.ncols()) {
+    throw std::runtime_error(
+        "Matrix does not represent an adjacency matrix of a graph (not "
+        "square)");
+  }
+
+  return (csr.nnzs() + countDiagonal(csr)) / csr.nrows();
 }
 
 // average degree
