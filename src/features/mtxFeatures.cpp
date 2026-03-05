@@ -208,9 +208,6 @@ IndexType averageOutDegree(const CSR<IndexType, ValueType>& csr) {
   return averageInDegree(csr);
 }
 
-// average degree
-// average degree cols
-// average degree rows
 // minimum degree cols
 // minimum degree rows
 // elements in diagonal of length n
