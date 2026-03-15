@@ -12,15 +12,26 @@ IndexType findPeripheralNodeId(const CSR<IndexType, ValueType>& csr,
 
 template <typename IndexType, typename ValueType>
 std::vector<IndexType> rcm(const CSR<IndexType, ValueType>& csr) {
-  std::vector<IndexType> perm(csr.nrows()), visited_nodes;
+  std::vector<IndexType> perm;
   std::queue<IndexType> visit_queue;
 
-  IndexType peripheral_node_id = findPeripheralNodeId(csr, visited_nodes);
-  // place peripheral node in the queue
-  // while loop iterating over the queue
-  // place neighboring nodes in the queue by order of minimum degree
-  // if queue is empty but there are still nodes to visit start over with
-  // finding peripheral node
+  // while (perm.size() < csr.nrows()) {
+  IndexType peripheral_node_id = findPeripheralNodeId(csr, perm);
+  visit_queue.push(peripheral_node_id);
+
+  while (!visit_queue.empty()) {
+    IndexType current_node = visit_queue.back();
+
+    for (IndexType i = csr.rowPtr()[current_node];
+         i < csr.rowPtr()[current_node + 1]; i++) {
+      // if neighbor hasnt been visited
+      // add neighbours by order of minimum degree
+    }
+
+    perm.push_back(current_node);
+    visit_queue.pop();
+  }
+  //}
 
   return perm;
 }
