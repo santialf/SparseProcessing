@@ -7,6 +7,7 @@
 #include "formats/csc.hpp"
 #include "formats/csr.hpp"
 #include "reader/mtxReader.hpp"
+#include "reorderings/rcm.hpp"
 
 using ValueType = double;
 using IndexType = size_t;
@@ -72,5 +73,9 @@ int main(int argc, char *argv[]) {
   std::cout << "Average in degree: " << avgInDegree << "\n";
   auto avgOutDegree = features::averageOutDegree(csr);
   std::cout << "Average out degree: " << avgOutDegree << "\n";
+
+  // reorderings
+  std::vector<IndexType> perm = reorderings::rcm(csr);
+
   return 0;
 }
