@@ -10,11 +10,11 @@
 namespace mtx::reorderings {
 
 template <typename IndexType, typename ValueType>
-IndexType getDegree(const CSR<IndexType, ValueType>&, IndexType);
+IndexType getNodeDegree(const CSR<IndexType, ValueType>&, IndexType);
 
 template <typename IndexType, typename ValueType>
 IndexType findPeripheralNodeId(const CSR<IndexType, ValueType>&,
-                               std::vector<IndexType>);
+                               const std::vector<IndexType>&, IndexType);
 
 template <typename IndexType, typename ValueType>
 std::vector<IndexType> rcm(const CSR<IndexType, ValueType>&);

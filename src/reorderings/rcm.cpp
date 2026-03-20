@@ -6,14 +6,15 @@
 namespace mtx::reorderings {
 
 template <typename IndexType, typename ValueType>
-IndexType getDegree(const CSR<IndexType, ValueType>& csr,
+IndexType getNodeDegree(const CSR<IndexType, ValueType>& csr,
                     IndexType current_node) {
   return csr.rowPtr()[current_node + 1] - csr.rowPtr()[current_node];
 }
 
 template <typename IndexType, typename ValueType>
 IndexType findPeripheralNodeId(const CSR<IndexType, ValueType>& csr,
-                               std::vector<IndexType> visited_nodes) {
+                               const std::vector<IndexType>& visited_nodes,
+                               IndexType root) {
   // TODO
   return 0;
 }
@@ -25,8 +26,9 @@ std::vector<IndexType> rcm(const CSR<IndexType, ValueType>& csr) {
   std::queue<IndexType> visit_queue;
   IndexType node_counter = 0;
 
-  while (node_counter < csr.nrows()) {
-    IndexType peripheral_node_id = findPeripheralNodeId(csr, perm);
+  for (IndexType i = 0; i < csr.nrows(); i++) {
+    if (!visited_nodes[i]) {
+      IndexType peripheral_node_id = findPeripheralNodeId(csr, perm, i);
     visit_queue.push(peripheral_node_id);
 
     // go through all of the nodes in a connected component
@@ -48,7 +50,7 @@ std::vector<IndexType> rcm(const CSR<IndexType, ValueType>& csr) {
       // sort neighbors by degree
       std::sort(neighbors.begin(), neighbors.end(),
                 [&](IndexType a, IndexType b) {
-                  return getDegree(csr, a) < getDegree(csr, b);
+                    return getNodeDegree(csr, a) < getNodeDegree(csr, b);
                 });
 
       // push neighbors to queue
@@ -60,6 +62,7 @@ std::vector<IndexType> rcm(const CSR<IndexType, ValueType>& csr) {
       perm.push_back(current_node);
       visit_queue.pop();
       node_counter++;
+      }
     }
   }
 
