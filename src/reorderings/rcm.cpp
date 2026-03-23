@@ -17,7 +17,9 @@ IndexType findPeripheralNodeId(const CSR<IndexType, ValueType>& csr,
                                IndexType root) {
   std::vector<bool> visited_nodes(csr.nrows(), false);
   std::queue<std::pair<IndexType, IndexType>> bfs_queue;
-  IndexType number_of_levels = 0, max_number_of_levels = 1, local_root;
+  IndexType number_of_levels = 1, max_number_of_levels = 0, local_root;
+  bfs_queue.push({root, 0});
+
   while (number_of_levels > max_number_of_levels) {
     // go through all of the nodes in a connected component
     while (!bfs_queue.empty()) {
