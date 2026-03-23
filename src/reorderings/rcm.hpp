@@ -13,8 +13,7 @@ template <typename IndexType, typename ValueType>
 IndexType getNodeDegree(const CSR<IndexType, ValueType>&, IndexType);
 
 template <typename IndexType, typename ValueType>
-IndexType findPeripheralNodeId(const CSR<IndexType, ValueType>&,
-                               const std::vector<IndexType>&, IndexType);
+IndexType findPeripheralNodeId(const CSR<IndexType, ValueType>&, IndexType);
 
 template <typename IndexType, typename ValueType>
 std::vector<IndexType> rcm(const CSR<IndexType, ValueType>&);
