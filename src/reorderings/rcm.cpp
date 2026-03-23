@@ -15,12 +15,10 @@ IndexType getNodeDegree(const CSR<IndexType, ValueType>& csr,
 template <typename IndexType, typename ValueType>
 IndexType findPeripheralNodeId(const CSR<IndexType, ValueType>& csr,
                                IndexType root) {
-  // TODO
   std::vector<bool> visited_nodes(csr.nrows(), false);
   std::queue<std::pair<IndexType, IndexType>> bfs_queue;
   IndexType number_of_levels = 0, max_number_of_levels = 1, local_root;
   while (number_of_levels > max_number_of_levels) {
-    std::cout << "hello\n";
     // go through all of the nodes in a connected component
     while (!bfs_queue.empty()) {
       IndexType current_node = bfs_queue.front().first;
