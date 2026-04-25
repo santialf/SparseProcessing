@@ -50,15 +50,15 @@ IndexType findPeripheralNode(const CSR<IndexType, ValueType>& csr,
 template <typename IndexType, typename ValueType>
 std::vector<IndexType> rcm(const CSR<IndexType, ValueType>& csr) {
   std::vector<IndexType> perm;
-  std::vector<bool> visited_nodes(csr.nrows(), false);
+  std::vector<char> visited_nodes(csr.nrows(), 0);
   std::queue<IndexType> visit_queue;
   IndexType node_counter = 0;
 
   for (IndexType i = 0; i < csr.nrows(); i++) {
-    if (!visited_nodes[i]) {
+    if (visited_nodes[i] == 0) {
       IndexType peripheral_node_id = findPeripheralNode(csr, i);
       visit_queue.push(peripheral_node_id);
-      visited_nodes[peripheral_node_id] = true;
+      visited_nodes[peripheral_node_id] = 1;
 
       // go through all of the nodes in a connected component
       while (!visit_queue.empty()) {
@@ -70,9 +70,9 @@ std::vector<IndexType> rcm(const CSR<IndexType, ValueType>& csr) {
              j < csr.rowPtr()[current_node + 1]; j++) {
           IndexType neighborId = csr.colIdx()[j];
 
-          if (!visited_nodes[neighborId]) {
+          if (visited_nodes[neighborId] == 0) {
             neighbors.push_back(neighborId);
-            visited_nodes[neighborId] = true;
+            visited_nodes[neighborId] = 1;
           }
         }
 
