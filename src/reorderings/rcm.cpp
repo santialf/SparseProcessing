@@ -12,26 +12,40 @@ IndexType getNodeDegree(const CSR<IndexType, ValueType>& csr, IndexType node) {
   return csr.rowPtr()[node + 1] - csr.rowPtr()[node];
 }
 
-// Function to find the farthest node from a given root using BFS
+// Function to find the farthest node with smallest degree at max level using
+// BFS
 template <typename IndexType, typename ValueType>
 IndexType findFarthestNode(const CSR<IndexType, ValueType>& csr,
                            IndexType root) {
   std::vector<char> visited(csr.nrows(), 0);
-  std::queue<IndexType> bfs_queue;
-  bfs_queue.push(root);
+  std::queue<std::pair<IndexType, IndexType>> bfs_queue;
+  bfs_queue.push({root, 0});
   visited[root] = 1;
   IndexType farthest = root;
+  IndexType max_level = 0;
+  IndexType min_degree = getNodeDegree(csr, root);
 
   while (!bfs_queue.empty()) {
-    IndexType node = bfs_queue.front();
+    auto [node, level] = bfs_queue.front();
     bfs_queue.pop();
-    farthest = node;
+
+    if (level > max_level) {
+      max_level = level;
+      farthest = node;
+      min_degree = getNodeDegree(csr, node);
+    } else if (level == max_level) {
+      IndexType degree = getNodeDegree(csr, node);
+      if (degree < min_degree) {
+        min_degree = degree;
+        farthest = node;
+      }
+    }
 
     for (IndexType i = csr.rowPtr()[node]; i < csr.rowPtr()[node + 1]; ++i) {
       IndexType neighbor = csr.colIdx()[i];
       if (!visited[neighbor]) {
         visited[neighbor] = 1;
-        bfs_queue.push(neighbor);
+        bfs_queue.push({neighbor, level + 1});
       }
     }
   }
