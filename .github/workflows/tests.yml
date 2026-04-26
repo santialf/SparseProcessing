@@ -25,7 +25,7 @@ jobs:
 
       - name: Run all tests
         run: |
-          for test_bin in build/tests/test*; do
+          for test_bin in build/tests/TEST_*; do
             echo "Running $test_bin"
             "$test_bin"
           done
