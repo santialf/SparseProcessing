@@ -18,9 +18,7 @@ using namespace mtx::io;
 
 int main(int argc, char *argv[]) {
   // TODO:
-  // add meaningful coments
-  // add matrix features (feb)
-  // add reordering functions (march)
+  // add meaningful comments
   // move functions to outside of user scope?
 
   if (argc != 2) {
@@ -76,6 +74,17 @@ int main(int argc, char *argv[]) {
 
   // reorderings
   std::vector<IndexType> perm = reorderings::rcm(csr);
+  for (IndexType i = 0; i < perm.size(); i++) {
+    std::cout << "perm[" << i << "] = " << perm[i] << "\n";
+  }
+  /*   std::vector<IndexType> perm = reorderings::slashBurn(csr);
+    std::vector<IndexType> perm = reorderings::minDegree(csr);
+    std::vector<IndexType> perm = reorderings::maxDegree(csr);
+    std::vector<IndexType> perm = reorderings::amd(csr);
+    std::vector<IndexType> perm = reorderings::gray(csr);
+    std::vector<IndexType> perm = reorderings::rabbit(csr);
+    std::vector<IndexType> perm = reorderings::boba(csr);
+    std::vector<IndexType> perm = reorderings::gorder(csr); */
 
   return 0;
 }

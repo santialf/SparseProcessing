@@ -61,6 +61,8 @@ IndexType findPeripheralNode(const CSR<IndexType, ValueType>& csr,
   return findFarthestNode(csr, farthest);
 }
 
+// RCM reordering: reorder nodes by BFS from a peripheral node, sorting
+// neighbors by degree
 template <typename IndexType, typename ValueType>
 std::vector<IndexType> rcm(const CSR<IndexType, ValueType>& csr) {
   std::vector<IndexType> perm;
