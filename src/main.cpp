@@ -7,6 +7,7 @@
 #include "formats/csc.hpp"
 #include "formats/csr.hpp"
 #include "reader/mtxReader.hpp"
+#include "reorderings/minDegree.hpp"
 #include "reorderings/rcm.hpp"
 
 using ValueType = double;
@@ -77,9 +78,9 @@ int main(int argc, char *argv[]) {
   for (IndexType i = 0; i < perm.size(); i++) {
     std::cout << "perm[" << i << "] = " << perm[i] << "\n";
   }
-  /*   std::vector<IndexType> perm = reorderings::slashBurn(csr);
-    std::vector<IndexType> perm = reorderings::minDegree(csr);
-    std::vector<IndexType> perm = reorderings::maxDegree(csr);
+  // std::vector<IndexType> perm = reorderings::slashBurn(csr);
+  perm = reorderings::minDegree(csr);
+  /*  std::vector<IndexType> perm = reorderings::maxDegree(csr);
     std::vector<IndexType> perm = reorderings::amd(csr);
     std::vector<IndexType> perm = reorderings::gray(csr);
     std::vector<IndexType> perm = reorderings::rabbit(csr);
