@@ -1,85 +1,133 @@
 #include "slashBurn.hpp"
 
 #include <algorithm>
-#include <limits>
 #include <numeric>
 #include <queue>
 #include <vector>
 
-using namespace mtx;
-
 namespace mtx::reorderings {
 
-// SlashBurn reordering: reorder nodes by burn time to group communities
 template <typename IndexType, typename ValueType>
-std::vector<IndexType> slashBurn(const mtx::CSR<IndexType, ValueType>& csr) {
-  // first step: find strongest connected component and its size
-  // second step: in that component, find the node with highest degree and
-  // remove it third step: repeat until all nodes are removed, keeping track of
-  // the order fourth step: every iteration put the removed node at the start of
-  // the permutation vector, repeat until all nodes are removed. Nodes outside
-  // of the largest component are added at the end of the permutation vector in
-  // any order every iteration.
+std::vector<std::vector<IndexType>> findComponents(
+    const mtx::CSR<IndexType, ValueType>& csr,
+    const std::vector<IndexType>& nodes) {
+  std::vector<std::vector<IndexType>> components;
+  std::vector<char> visited(csr.nrows(), 0);
+  std::vector<char> in_nodes(csr.nrows(), 0);
 
-  std::vector<IndexType> perm;
-  std::vector<char> visited_nodes(csr.nrows(), 0);
-  std::vector<IndexType> node_degrees(csr.nrows(), 0);
-  std::iota(node_degrees.begin(), node_degrees.end(), 0);
-  for (IndexType i = 0; i < csr.nrows(); i++) {
-    node_degrees[i] = getNodeDegree(csr, i);
+  for (IndexType node : nodes) {
+    in_nodes[node] = 1;
   }
 
-  // continue with an implementation of slash burn until all nodes are visited
-  while (perm.size() < csr.nrows()) {
-    // find the largest connected component
-    std::vector<IndexType> component;
-    std::queue<IndexType> visit_queue;
-    IndexType max_component_size = 0;
-    IndexType max_component_start = 0;
-    for (IndexType i = 0; i < csr.nrows(); i++) {
-      if (visited_nodes[i] == 0) {
-        IndexType component_size = 0;
-        visit_queue.push(i);
-        visited_nodes[i] = 1;
+  for (IndexType node : nodes) {
+    if (!visited[node]) {
+      std::vector<IndexType> component;
+      std::queue<IndexType> q;
+      q.push(node);
+      visited[node] = 1;
+      component.push_back(node);
 
-        while (!visit_queue.empty()) {
-          IndexType current_node = visit_queue.front();
-          component_size++;
-
-          for (IndexType j = csr.rowPtr()[current_node];
-               j < csr.rowPtr()[current_node + 1]; j++) {
-            IndexType neighborId = csr.colIdx()[j];
-
-            if (visited_nodes[neighborId] == 0) {
-              visit_queue.push(neighborId);
-              visited_nodes[neighborId] = 1;
-            }
+      while (!q.empty()) {
+        IndexType current = q.front();
+        q.pop();
+        for (IndexType j = csr.rowPtr()[current]; j < csr.rowPtr()[current + 1];
+             ++j) {
+          IndexType neighbor = csr.colIdx()[j];
+          if (in_nodes[neighbor] && !visited[neighbor]) {
+            visited[neighbor] = 1;
+            q.push(neighbor);
+            component.push_back(neighbor);
           }
-
-          visit_queue.pop();
-        }
-
-        if (component_size > max_component_size) {
-          max_component_size = component_size;
-          max_component_start = i;
         }
       }
+      components.push_back(std::move(component));
     }
+  }
 
-    // find the node with the highest degree in the largest component
-    IndexType max_degree_node = max_component_start;
-    for (IndexType i = 0; i < csr.nrows(); i++) {
-      if (visited_nodes[i] == 1 &&
-          node_degrees[i] > node_degrees[max_degree_node]) {
-        max_degree_node = i;
-      }
+  return components;
+}
+
+// Recursive function to burn a component and place nodes within the current
+// window
+template <typename IndexType, typename ValueType>
+void burnComponent(const mtx::CSR<IndexType, ValueType>& csr,
+                   std::vector<IndexType> component,
+                   std::vector<IndexType>& perm, IndexType left,
+                   IndexType right) {
+  if (component.empty() || left >= right) {
+    return;
+  }
+
+  std::sort(component.begin(), component.end());
+
+  IndexType max_degree = 0;
+  for (IndexType node : component) {
+    max_degree = std::max(max_degree, getNodeDegree(csr, node));
+  }
+
+  std::vector<IndexType> burned;
+  for (IndexType node : component) {
+    if (getNodeDegree(csr, node) == max_degree) {
+      burned.push_back(node);
     }
+  }
 
-    // remove the node with the highest degree from the component
-    visited_nodes[max_degree_node] = 2;
-    perm.push_back(max_degree_node);
+  for (IndexType node : burned) {
+    perm[left++] = node;
+  }
+
+  std::vector<IndexType> remaining;
+  std::set_difference(component.begin(), component.end(), burned.begin(),
+                      burned.end(), std::back_inserter(remaining));
+
+  if (remaining.empty()) {
+    return;
+  }
+
+  auto sub_components = findComponents(csr, remaining);
+  std::sort(
+      sub_components.begin(), sub_components.end(),
+      [](const std::vector<IndexType>& a, const std::vector<IndexType>& b) {
+        return a.size() > b.size();
+      });
+
+  for (size_t idx = 1; idx < sub_components.size(); ++idx) {
+    for (IndexType node : sub_components[idx]) {
+      perm[--right] = node;
+    }
+  }
+
+  if (!sub_components.empty()) {
+    burnComponent(csr, std::move(sub_components[0]), perm, left, right);
+  }
+}
+
+// SlashBurn reordering
+template <typename IndexType, typename ValueType>
+std::vector<IndexType> slashBurn(const mtx::CSR<IndexType, ValueType>& csr) {
+  std::vector<IndexType> perm(csr.nrows());
+  std::vector<IndexType> all_nodes(csr.nrows());
+  std::iota(all_nodes.begin(), all_nodes.end(), 0);
+
+  auto components = findComponents(csr, all_nodes);
+  std::sort(
+      components.begin(), components.end(),
+      [](const std::vector<IndexType>& a, const std::vector<IndexType>& b) {
+        return a.size() > b.size();
+      });
+
+  IndexType right = csr.nrows();
+  for (size_t idx = 1; idx < components.size(); ++idx) {
+    for (IndexType node : components[idx]) {
+      perm[--right] = node;
+    }
+  }
+
+  if (!components.empty()) {
+    burnComponent(csr, std::move(components[0]), perm, IndexType{0}, right);
   }
 
   return perm;
 }
+
 }  // namespace mtx::reorderings

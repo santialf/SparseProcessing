@@ -10,6 +10,7 @@
 #include "reorderings/maxDegree.hpp"
 #include "reorderings/minDegree.hpp"
 #include "reorderings/rcm.hpp"
+#include "reorderings/slashBurn.hpp"
 
 using ValueType = double;
 using IndexType = size_t;
@@ -76,15 +77,22 @@ int main(int argc, char *argv[]) {
 
   // reorderings
   std::vector<IndexType> perm = reorderings::rcm(csr);
+  std::cout << "RCM permutation:\n";
   for (IndexType i = 0; i < perm.size(); i++) {
     std::cout << "perm[" << i << "] = " << perm[i] << "\n";
   }
-  // std::vector<IndexType> perm = reorderings::slashBurn(csr);
+  perm = reorderings::slashBurn(csr);
+  std::cout << "SlashBurn permutation:\n";
+  for (IndexType i = 0; i < perm.size(); i++) {
+    std::cout << "perm[" << i << "] = " << perm[i] << "\n";
+  }
   perm = reorderings::minDegree(csr);
+  std::cout << "MinDegree permutation:\n";
   for (IndexType i = 0; i < perm.size(); i++) {
     std::cout << "perm[" << i << "] = " << perm[i] << "\n";
   }
   perm = reorderings::maxDegree(csr);
+  std::cout << "MaxDegree permutation:\n";
   for (IndexType i = 0; i < perm.size(); i++) {
     std::cout << "perm[" << i << "] = " << perm[i] << "\n";
   }
