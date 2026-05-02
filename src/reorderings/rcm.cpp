@@ -7,11 +7,6 @@
 
 namespace mtx::reorderings {
 
-template <typename IndexType, typename ValueType>
-IndexType getNodeDegree(const CSR<IndexType, ValueType>& csr, IndexType node) {
-  return csr.rowPtr()[node + 1] - csr.rowPtr()[node];
-}
-
 // Function to find the farthest node with smallest degree at max level using
 // BFS
 template <typename IndexType, typename ValueType>

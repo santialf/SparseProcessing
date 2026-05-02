@@ -4,6 +4,7 @@
 #include "formats/coo.hpp"
 #include "formats/csr.hpp"
 #include "reader/mtxReader.hpp"
+#include "reorderings/common.hpp"
 #include "reorderings/rcm.hpp"
 
 using namespace mtx;

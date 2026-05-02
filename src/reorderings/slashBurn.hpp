@@ -4,8 +4,7 @@
 #include <cstring>
 #include <vector>
 
-#include "formats/concepts.hpp"
-#include "formats/csr.hpp"
+#include "common.hpp"
 
 namespace mtx::reorderings {
 
@@ -14,5 +13,5 @@ std::vector<IndexType> slashBurn(const CSR<IndexType, ValueType>&);
 }  // namespace mtx::reorderings
 
 #ifdef _HEADER_ONLY
-#include "rcm.cpp"
+#include "slashBurn.cpp"
 #endif

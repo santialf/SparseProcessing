@@ -4,13 +4,10 @@
 #include <cstring>
 #include <vector>
 
-#include "formats/concepts.hpp"
-#include "formats/csr.hpp"
+#include "common.hpp"
 
 namespace mtx::reorderings {
 
-template <typename IndexType, typename ValueType>
-IndexType getNodeDegree(const CSR<IndexType, ValueType>&, IndexType);
 template <typename IndexType, typename ValueType>
 IndexType findFarthestNode(const CSR<IndexType, ValueType>&, IndexType);
 template <typename IndexType, typename ValueType>

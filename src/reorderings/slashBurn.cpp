@@ -6,8 +6,6 @@
 #include <queue>
 #include <vector>
 
-#include "../formats/csr.hpp"
-
 using namespace mtx;
 
 namespace mtx::reorderings {
@@ -83,4 +81,5 @@ std::vector<IndexType> slashBurn(const mtx::CSR<IndexType, ValueType>& csr) {
   }
 
   return perm;
+}
 }  // namespace mtx::reorderings
