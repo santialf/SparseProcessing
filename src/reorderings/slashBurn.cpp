@@ -7,6 +7,8 @@
 
 namespace mtx::reorderings {
 
+// Function to find connected components in the subgraph induced by the given
+// nodes
 template <typename IndexType, typename ValueType>
 std::vector<std::vector<IndexType>> findComponents(
     const mtx::CSR<IndexType, ValueType>& csr,
@@ -53,27 +55,21 @@ template <typename IndexType, typename ValueType>
 void burnComponent(const mtx::CSR<IndexType, ValueType>& csr,
                    std::vector<IndexType> component,
                    std::vector<IndexType>& perm, IndexType left,
-                   IndexType right) {
+                   IndexType right, const IndexType k) {
   if (component.empty() || left >= right) {
     return;
   }
 
-  std::sort(component.begin(), component.end());
+  // sort component nodes by degree
+  std::sort(component.begin(), component.end(), [&](IndexType a, IndexType b) {
+    return getNodeDegree(csr, a) > getNodeDegree(csr, b);
+  });
 
-  IndexType max_degree = 0;
-  for (IndexType node : component) {
-    max_degree = std::max(max_degree, getNodeDegree(csr, node));
-  }
-
+  // burn top k nodes
   std::vector<IndexType> burned;
-  for (IndexType node : component) {
-    if (getNodeDegree(csr, node) == max_degree) {
-      burned.push_back(node);
-    }
-  }
-
-  for (IndexType node : burned) {
-    perm[left++] = node;
+  for (size_t i = 0; i < k; ++i) {
+    burned.push_back(component[i]);
+    perm[left++] = component[i];
   }
 
   std::vector<IndexType> remaining;
@@ -98,13 +94,14 @@ void burnComponent(const mtx::CSR<IndexType, ValueType>& csr,
   }
 
   if (!sub_components.empty()) {
-    burnComponent(csr, std::move(sub_components[0]), perm, left, right);
+    burnComponent(csr, std::move(sub_components[0]), perm, left, right, k);
   }
 }
 
 // SlashBurn reordering
 template <typename IndexType, typename ValueType>
-std::vector<IndexType> slashBurn(const mtx::CSR<IndexType, ValueType>& csr) {
+std::vector<IndexType> slashBurn(const mtx::CSR<IndexType, ValueType>& csr,
+                                 const IndexType k) {
   std::vector<IndexType> perm(csr.nrows());
   std::vector<IndexType> all_nodes(csr.nrows());
   std::iota(all_nodes.begin(), all_nodes.end(), 0);
@@ -124,7 +121,7 @@ std::vector<IndexType> slashBurn(const mtx::CSR<IndexType, ValueType>& csr) {
   }
 
   if (!components.empty()) {
-    burnComponent(csr, std::move(components[0]), perm, IndexType{0}, right);
+    burnComponent(csr, std::move(components[0]), perm, IndexType{0}, right, k);
   }
 
   return perm;

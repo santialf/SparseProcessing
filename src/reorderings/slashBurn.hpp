@@ -9,7 +9,8 @@
 namespace mtx::reorderings {
 
 template <typename IndexType, typename ValueType>
-std::vector<IndexType> slashBurn(const CSR<IndexType, ValueType>&);
+std::vector<IndexType> slashBurn(const mtx::CSR<IndexType, ValueType>&,
+                                 const IndexType k = 1);
 }  // namespace mtx::reorderings
 
 #ifdef _HEADER_ONLY
