@@ -5,6 +5,15 @@
 #include <queue>
 #include <vector>
 
+// TODO: update degree of nodes after burning, currently we only compute degree
+// once at the start
+//  implement the two optimizations mentioned in the paper:
+//  1) greedy burn: update degree of nodes as you pick the top k nodes and pick
+//  the next node with the highest degree 2) hub ordering: order spokes by node
+//  ID k to which is connected, so that nodes connected to the same hub are
+//  placed close together in the ordering, which can improve locality and reduce
+//  bandwidth
+
 namespace mtx::reorderings {
 
 // Function to find connected components in the subgraph induced by the given
